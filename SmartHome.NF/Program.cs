@@ -17,6 +17,7 @@ namespace SmartHome.NF
     {
         private static GpioController GpioController;
         private static GpioPin IsAliveLED;
+        private static GpioPin TransmitLED;
         private static Hcsr04 DistanceSensor;
         private static DeviceClient azureIoT;
         private static WebServer server = new WebServer();
@@ -49,11 +50,13 @@ namespace SmartHome.NF
 
                 IsAliveLED = GpioController.OpenPin(22, PinMode.Output);
                 IsAliveLED.Write(PinValue.Low);
+                TransmitLED = GpioController.OpenPin(23, PinMode.Output);
+                TransmitLED.Write(PinValue.Low);
                 startLED.Write(PinValue.Low);
-                Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, 5000);
+                Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, (int)new TimeSpan(0, 0, 3).TotalMilliseconds);
 
                 DistanceSensor = new Hcsr04(14, 12);
-                Timer distanceTimer = new Timer(MeassureDistance, null, 1000, 5000);
+                Timer distanceTimer = new Timer(MeassureDistance, null, 1000, (int)new TimeSpan(0,10,0).TotalMilliseconds);
                 Debug.WriteLine("Done");
             }
             Thread.Sleep(Timeout.Infinite);
@@ -139,8 +142,10 @@ namespace SmartHome.NF
         {
             if (DistanceSensor.TryGetDistance(out Length distance))
             {
+                TransmitLED.Write(PinValue.High);
                 Debug.WriteLine($"Distance: {distance.Centimeters} cm");
-                azureIoT.SendMessage($"{{\"deviceId\":\"{DeviceID}\",\"ZisterneLevel\":{distance.Centimeters}}}");
+                azureIoT.SendMessage($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"ZisterneLevel\":{distance.Centimeters}}}");
+                TransmitLED.Write(PinValue.Low);
             }
             else
             {
