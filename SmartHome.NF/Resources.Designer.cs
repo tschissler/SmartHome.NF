@@ -37,6 +37,7 @@ namespace SmartHome.NF
         internal enum BinaryResources : short
         {
             favicon = -22914,
+            AzureRoot = 22997,
         }
         [System.SerializableAttribute()]
         internal enum StringResources : short

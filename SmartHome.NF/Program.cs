@@ -2,8 +2,10 @@ using System;
 using System.Device.Gpio;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Iot.Device.Hcsr04;
+using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
 using UnitsNet;
@@ -16,20 +18,20 @@ namespace SmartHome.NF
         private static GpioController GpioController;
         private static GpioPin IsAliveLED;
         private static Hcsr04 DistanceSensor;
+        private static DeviceClient azureIoT;
         private static WebServer server = new WebServer();
         private static int connectedCount = 0;
-
-        const string DeviceID = "nanoEdgeTwin";
-        const string IotBrokerAddress = "youriothub.azure-devices.net";
-        const string SasKey = "yoursaskey";
-        const string Ssid = "WLAN_M1";
-        const string Password = "Dimako_WLAN_M1";
+        public static string DeviceID = "M1_Keller";
 
         // One minute unit
         const int sleepTimeMinutes = 60000;
 
         public static void Main()
         {
+            GpioController = new GpioController();
+            var startLED = GpioController.OpenPin(21, PinMode.Output);
+            startLED.Write(PinValue.High);
+
             Debug.WriteLine("----- SmartHome.NF ------");
             Debug.WriteLine("Initializing...");
             Debug.Write("   - Wifi...");
@@ -38,15 +40,20 @@ namespace SmartHome.NF
             {
                 Debug.WriteLine("Done");
 
+                Debug.Write("   - Azure IoT Hub...");
+                azureIoT = new DeviceClient(Secrets.IotBrokerAddress, DeviceID, Secrets.SasKey, azureCert: new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot)));
+                var isOpen = azureIoT.Open(); 
+                Debug.WriteLine("Done");
+
                 Debug.Write("   - GPIO...");
-                GpioController = new GpioController();
 
                 IsAliveLED = GpioController.OpenPin(22, PinMode.Output);
                 IsAliveLED.Write(PinValue.Low);
+                startLED.Write(PinValue.Low);
                 Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, 5000);
 
                 DistanceSensor = new Hcsr04(14, 12);
-                Timer distanceTimer = new Timer(MeassureDistance, null, 1000, 1000);
+                Timer distanceTimer = new Timer(MeassureDistance, null, 1000, 5000);
                 Debug.WriteLine("Done");
             }
             Thread.Sleep(Timeout.Infinite);
@@ -56,7 +63,7 @@ namespace SmartHome.NF
         {
             // As we are using TLS, we need a valid date & time
             // We will wait maximum 1 minute to get connected and have a valid date
-            var success = NetworkHelper.ConnectWifiDhcp(Ssid, Password, setDateTime: true, token: new CancellationTokenSource(sleepTimeMinutes).Token);
+            var success = NetworkHelper.ConnectWifiDhcp(Secrets.Ssid, Secrets.Password, setDateTime: true, token: new CancellationTokenSource(sleepTimeMinutes).Token);
             if (!success)
             {
                 Debug.WriteLine($"Can't connect to wifi: {NetworkHelper.ConnectionError.Error}");
@@ -66,7 +73,6 @@ namespace SmartHome.NF
                 }
             }
 
-            Debug.WriteLine($"Date and time is now {DateTime.UtcNow}");
             return success;
         }
 
@@ -131,10 +137,10 @@ namespace SmartHome.NF
 
         private static void MeassureDistance(object state)
         {
-            Debug.WriteLine("Meassuring distance");
             if (DistanceSensor.TryGetDistance(out Length distance))
             {
                 Debug.WriteLine($"Distance: {distance.Centimeters} cm");
+                azureIoT.SendMessage($"{{\"deviceId\":\"{DeviceID}\",\"ZisterneLevel\":{distance.Centimeters}}}");
             }
             else
             {

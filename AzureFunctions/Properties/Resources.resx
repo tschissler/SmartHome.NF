@@ -117,14 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AzureRoot" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AzureRoot.der;System.Byte[], mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731</value>
-  </data>
-  <data name="favicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\images\favicon.png;System.Byte[], mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731</value>
-  </data>
-  <data name="main" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\html\main.html;System.String, mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731;Windows-1252</value>
+  <data name="IotHubEndpoint" xml:space="preserve">
+    <value>Endpoint=sb://germanywestcentraldedns006.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=ixbigT6lDh6sg7JOZLTy7/qpf9GJ9ej6PVI6lgX1Jaw=;EntityPath=iothub-ehub-iothub-m1-15874603-750b141509ehub-iothub-m1-15874603-750b141509</value>
+    <comment>EnventHub Endpoint from IoT Hub</comment>
   </data>
 </root>
