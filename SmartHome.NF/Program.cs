@@ -8,6 +8,7 @@ using Iot.Device.Hcsr04;
 using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
+using NFLibs;
 using UnitsNet;
 using WiFiAP;
 
@@ -24,9 +25,6 @@ namespace SmartHome.NF
         private static int connectedCount = 0;
         public static string DeviceID = "M1_Keller";
 
-        // One minute unit
-        const int sleepTimeMinutes = 60000;
-
         public static void Main()
         {
             GpioController = new GpioController();
@@ -36,7 +34,7 @@ namespace SmartHome.NF
             Debug.WriteLine("----- SmartHome.NF ------");
             Debug.WriteLine("Initializing...");
             Debug.Write("   - Wifi...");
-            bool isConnected = ConnectToWifi();
+            bool isConnected = WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
             if (isConnected)
             {
                 Debug.WriteLine("Done");
@@ -60,23 +58,6 @@ namespace SmartHome.NF
                 Debug.WriteLine("Done");
             }
             Thread.Sleep(Timeout.Infinite);
-        }
-
-        static bool ConnectToWifi()
-        {
-            // As we are using TLS, we need a valid date & time
-            // We will wait maximum 1 minute to get connected and have a valid date
-            var success = NetworkHelper.ConnectWifiDhcp(Secrets.Ssid, Secrets.Password, setDateTime: true, token: new CancellationTokenSource(sleepTimeMinutes).Token);
-            if (!success)
-            {
-                Debug.WriteLine($"Can't connect to wifi: {NetworkHelper.ConnectionError.Error}");
-                if (NetworkHelper.ConnectionError.Exception != null)
-                {
-                    Debug.WriteLine($"NetworkHelper.ConnectionError.Exception");
-                }
-            }
-
-            return success;
         }
 
         private static void ConnectWiFi()

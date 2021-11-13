@@ -2,15 +2,14 @@ using IoTHubTrigger = Microsoft.Azure.WebJobs.EventHubTriggerAttribute;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Azure.EventHubs;
 using System.Text;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using Microsoft.WindowsAzure.Storage;
 using System;
+using Azure.Messaging.EventHubs;
+using Microsoft.Azure.Cosmos.Table;
 
 namespace AzureFunctions
 {
@@ -21,7 +20,7 @@ namespace AzureFunctions
         [FunctionName("IoTHubToTableStorage")]
         public static void Run([IoTHubTrigger("messages/events", Connection = "IotHubEndpoint")]EventData message, ILogger log)
         {
-            var messageStr = Encoding.UTF8.GetString(message.Body.Array);
+            var messageStr = Encoding.UTF8.GetString(message.Body.ToArray());
             messageStr = messageStr.Replace("nan", "\"nan\"");
             log.LogInformation($"IoT Hub trigger function processed a message: {messageStr}");
             var data = JObject.Parse(messageStr);
