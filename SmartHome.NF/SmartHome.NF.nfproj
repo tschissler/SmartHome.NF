@@ -31,8 +31,10 @@
     <Compile Include="Wifi\WirelessAP.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Iot.Device.Hcsr04">
-      <HintPath>..\packages\nanoFramework.Iot.Device.Hcsr04.1.0.155\lib\Iot.Device.Hcsr04.dll</HintPath>
+    <Reference Include="Iot.Device.Hcsr04, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\nanoFramework.Iot.Device.Hcsr04.1.0.218\lib\Iot.Device.Hcsr04.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.10.5\lib\mscorlib.dll</HintPath>
@@ -99,8 +101,10 @@
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="UnitsNet.Length">
-      <HintPath>..\packages\UnitsNet.nanoFramework.Length.4.101.0\lib\UnitsNet.Length.dll</HintPath>
+    <Reference Include="UnitsNet.Length, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Length.5.0.0-alpha001\lib\UnitsNet.Length.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Wifi">
       <HintPath>..\packages\nanoFramework.Windows.Devices.Wifi.1.3.4-preview.19\lib\Windows.Devices.Wifi.dll</HintPath>

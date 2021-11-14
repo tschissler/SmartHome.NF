@@ -26,6 +26,24 @@ namespace RemoteDisplay
             }
             Debug.WriteLine("Done");
 
+            var display = new LEDMatrix(8);
+            bool showSeparators = true;
+            string text;
+
+            while (true)
+            {
+                if (showSeparators)
+                {
+                    text = $"{(DateTime.UtcNow.Hour+1).ToString("D2")}:{DateTime.UtcNow.Minute.ToString("D2")}:{DateTime.UtcNow.Second.ToString("D2")}";
+                }
+                else
+                {
+                    text = $"{(DateTime.UtcNow.Hour+1).ToString("D2")} {DateTime.UtcNow.Minute.ToString("D2")} {DateTime.UtcNow.Second.ToString("D2")}";
+                }
+                display.ShowText(text, 1, characterSpace:1);
+                Thread.Sleep(400);
+                showSeparators = !showSeparators;
+            }
 
         }
     }
