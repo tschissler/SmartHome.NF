@@ -19,6 +19,7 @@
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
     <Compile Include="LEDMatrix.cs" />
+    <Compile Include="I2CSensors.cs" />
     <Compile Include="WifiLib.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -45,6 +46,9 @@
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="System.Device.I2c">
+      <HintPath>..\packages\nanoFramework.System.Device.I2c.1.0.1\lib\System.Device.I2c.dll</HintPath>
+    </Reference>
     <Reference Include="System.Device.Spi, Version=1.0.2.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>..\packages\nanoFramework.System.Device.Spi.1.0.2-preview.15\lib\System.Device.Spi.dll</HintPath>
       <Private>True</Private>
@@ -61,6 +65,27 @@
     <Reference Include="System.Threading">
       <HintPath>..\packages\nanoFramework.System.Threading.1.0.2\lib\System.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="UnitsNet.Duration">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Duration.5.0.0-alpha003\lib\UnitsNet.Duration.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.ElectricResistance">
+      <HintPath>..\packages\UnitsNet.nanoFramework.ElectricResistance.5.0.0-alpha003\lib\UnitsNet.ElectricResistance.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Illuminance">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Illuminance.5.0.0-alpha003\lib\UnitsNet.Illuminance.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Length">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Length.5.0.0-alpha003\lib\UnitsNet.Length.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Pressure">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Pressure.5.0.0-alpha003\lib\UnitsNet.Pressure.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.RelativeHumidity">
+      <HintPath>..\packages\UnitsNet.nanoFramework.RelativeHumidity.5.0.0-alpha003\lib\UnitsNet.RelativeHumidity.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Temperature">
+      <HintPath>..\packages\UnitsNet.nanoFramework.Temperature.5.0.0-alpha003\lib\UnitsNet.Temperature.dll</HintPath>
+    </Reference>
     <Reference Include="Windows.Devices.Wifi">
       <HintPath>..\packages\nanoFramework.Windows.Devices.Wifi.1.3.4-preview.19\lib\Windows.Devices.Wifi.dll</HintPath>
     </Reference>
@@ -70,7 +95,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Bh1750fvi\Bh1750fvi.nfproj" />
+    <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Bmp180\Bmp180.nfproj" />
     <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Max7219\Max7219.nfproj" />
+    <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Shtc3\Shtc3.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>

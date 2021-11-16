@@ -33,7 +33,7 @@ namespace NFLibs
             devices.Init();
 
             graphics = new(devices, Fonts.Default);
-            devices.Rotation = RotationType.Left;
+            devices.Rotation = RotationType.Right;
         }
 
         public void SetBigthness(int brightness)
@@ -49,7 +49,7 @@ namespace NFLibs
         public void ShowText(string text, int brightness, int characterSpace = 1)
         {
             devices.Brightness(brightness);
-            //graphics.Font = currentFont;
+            //devices.Init();
             var g = new MatrixGraphics(devices, currentFont);
             g.ShowMessage(text, alwaysScroll: false, characterSpace: characterSpace);
         }
