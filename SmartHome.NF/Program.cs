@@ -30,6 +30,9 @@ namespace SmartHome.NF
         private static int connectedCount = 0;
         private static int reedCounter = 0;
         private static GpioPin reedContact;
+        private static GpioPin RedLED;
+        private static GpioPin GreenLED;
+        private static GpioPin BlueLED;
 
 #if DEBUG
         //Dev Board
@@ -62,12 +65,18 @@ namespace SmartHome.NF
         public static void Main()
         {
             GpioController = new GpioController();
-            var startLED = GpioController.OpenPin(Red_LED_Pin, PinMode.Output);
+
+            RedLED = GpioController.OpenPin(Red_LED_Pin, PinMode.Output);
+            GreenLED = GpioController.OpenPin(Green_LED_Pin, PinMode.Output);
+            BlueLED = GpioController.OpenPin(Blue_LED_Pin, PinMode.Output);
+            RedLED.Write(PinValue.Low);
+            GreenLED.Write(PinValue.Low);
+            BlueLED.Write(PinValue.Low);
+
+            var startLED = RedLED;
             startLED.Write(PinValue.High);
-            IsAliveLED = GpioController.OpenPin(Green_LED_Pin, PinMode.Output);
-            IsAliveLED.Write(PinValue.Low);
-            TransmitLED = GpioController.OpenPin(Blue_LED_Pin, PinMode.Output);
-            TransmitLED.Write(PinValue.Low);
+            IsAliveLED = GreenLED;
+            TransmitLED = BlueLED;           
 
             Debug.WriteLine("----- SmartHome.NF ------");
             Debug.WriteLine("Initializing...");
@@ -83,7 +92,6 @@ namespace SmartHome.NF
                 Debug.WriteLine("Done");
 
                 Debug.Write("   - GPIO...");
-
 
                 startLED.Write(PinValue.Low);
                 Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, (int)new TimeSpan(0, 0, 3).TotalMilliseconds);
@@ -183,6 +191,8 @@ namespace SmartHome.NF
 
         private static void TransmitDataToIotHub(object state)
         {
+            IsAliveLED = GreenLED;
+
             var message = new StringBuilder();
             message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
 
@@ -194,6 +204,7 @@ namespace SmartHome.NF
             else
             {
                 Debug.WriteLine("Error reading sensor for distance");
+                IsAliveLED = RedLED;
             }
 
             if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
@@ -205,6 +216,7 @@ namespace SmartHome.NF
             else
             {
                 Debug.WriteLine("Error reading temperature and humidity");
+                IsAliveLED = RedLED;
             }
 
             message.Append("}");
