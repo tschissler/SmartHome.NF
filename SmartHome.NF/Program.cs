@@ -39,7 +39,7 @@ namespace SmartHome.NF
         private static double maxDistance;
         private static double sum;
 
-#if DEBUG
+#if DEV
         //Dev Board
         private const string DeviceID = "DevBoard";
         private const int Red_LED_Pin = 21;
@@ -157,17 +157,17 @@ namespace SmartHome.NF
                 message.Append($",\"ZisterneLevel\":{distanceAverage}");
             }
 
-            //if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
-            //{
-            //    message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
-            //    Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
-            //    Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
-            //}
-            //else
-            //{
-            //    Debug.WriteLine("Error reading temperature and humidity");
-            //    IsAliveLED = RedLED;
-            //}
+            if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
+            {
+                message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
+                Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
+                Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
+            }
+            else
+            {
+                Debug.WriteLine("Error reading temperature and humidity");
+                IsAliveLED = RedLED;
+            }
 
             message.Append("}");
 

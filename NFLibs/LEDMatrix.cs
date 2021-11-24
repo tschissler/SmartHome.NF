@@ -8,7 +8,7 @@ namespace NFLibs
     {
         private Max7219 devices;
         private MatrixGraphics graphics;
-        private IFont currentFont = Fonts.LCDMonoSpace;
+        private IFont currentFont = Fonts.LCD;
         SpiDevice spi;
 
         public LEDMatrix(int cascadedDevices)
