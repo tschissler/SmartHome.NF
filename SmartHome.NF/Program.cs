@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Device.Gpio;
 using System.Device.I2c;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using Iot.Device.Hcsr04;
+using Iot.Device.Hcsr04.Esp32;
 using Iot.Device.Shtc3;
 using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Hardware.Esp32;
@@ -24,7 +25,7 @@ namespace SmartHome.NF
         private static GpioPin IsAliveLED;
         private static GpioPin TransmitLED;
         private static Hcsr04 DistanceSensor;
-        private static Shtc3 TempHumiditySensor; 
+        private static Shtc3 TempHumiditySensor;
         private static DeviceClient azureIoT;
         private static WebServer server = new WebServer();
         private static int connectedCount = 0;
@@ -33,6 +34,10 @@ namespace SmartHome.NF
         private static GpioPin RedLED;
         private static GpioPin GreenLED;
         private static GpioPin BlueLED;
+        private static ArrayList DistanceMeasures = new ArrayList();
+        private static double minDistance = 999;
+        private static double maxDistance;
+        private static double sum;
 
 #if DEBUG
         //Dev Board
@@ -45,7 +50,7 @@ namespace SmartHome.NF
         private const int I2CDataPin = 18;
         private const int I2CClockPin = 5;
         private const int ReedPin = 19;
-        private static int TransmitInterval = (int)new TimeSpan(0, 0, 10).TotalMilliseconds;
+        private static int TransmitInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
 
 #else
 
@@ -76,7 +81,7 @@ namespace SmartHome.NF
             var startLED = RedLED;
             startLED.Write(PinValue.High);
             IsAliveLED = GreenLED;
-            TransmitLED = BlueLED;           
+            TransmitLED = BlueLED;
 
             Debug.WriteLine("----- SmartHome.NF ------");
             Debug.WriteLine("Initializing...");
@@ -88,7 +93,7 @@ namespace SmartHome.NF
 
                 Debug.Write("   - Azure IoT Hub...");
                 azureIoT = new DeviceClient(Secrets.IotBrokerAddress, DeviceID, Secrets.SasKey, azureCert: new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot)));
-                var isOpen = azureIoT.Open(); 
+                var isOpen = azureIoT.Open();
                 Debug.WriteLine("Done");
 
                 Debug.Write("   - GPIO...");
@@ -111,14 +116,14 @@ namespace SmartHome.NF
                 //reedContact.SetDriveMode(PinMode.InputPullUp);
 
                 // add a debounce timeout 
-                //reedContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 100);
-                //reedContact.ValueChanged += TriggerReedContact;
+                reedContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 300);
+                reedContact.ValueChanged += TriggerReedContact;
 
 
-                GpioController.RegisterCallbackForPinValueChangedEvent(
-                    19,
-                    PinEventTypes.Falling | PinEventTypes.Rising,
-                    TriggerReedContact);
+                //GpioController.RegisterCallbackForPinValueChangedEvent(
+                //    ReedPin,
+                //    PinEventTypes.Falling | PinEventTypes.Rising,
+                //    TriggerReedContact);
 
                 Debug.WriteLine("Done");
             }
@@ -130,65 +135,6 @@ namespace SmartHome.NF
             reedCounter++;
         }
 
-        private static void ConnectWiFi()
-        {
-            if (!Wireless80211.IsEnabled())
-            {
-                Wireless80211.Disable();
-                if (WirelessAP.Setup() == false)
-                {
-                    // Reboot device to Activate Access Point on restart
-                    Debug.WriteLine($"Setup Soft AP, Rebooting device");
-                    Power.RebootDevice();
-                }
-
-                Debug.WriteLine($"Running Soft AP, waiting for client to connect");
-                Debug.WriteLine($"Soft AP IP address :{WirelessAP.GetIP()}");
-
-                // Link up Network event to show Stations connecting/disconnecting to Access point.
-                //NetworkChange.NetworkAPStationChanged += NetworkChange_NetworkAPStationChanged;
-                // Now that the normal Wifi is deactivated, that we have setup a static IP
-                // We can start the Web server
-                server.Start();
-                Thread.Sleep(Timeout.Infinite);
-
-            }
-            else
-            {
-                Debug.WriteLine($"Running in normal mode, connecting to Access point");
-                var conf = Wireless80211.GetConfiguration();
-                bool success;
-                // For devices like STM32, the password can't be read
-                if (string.IsNullOrEmpty(conf.Password))
-                {
-                    // In this case, we will let the automatic connection happen
-                    success = NetworkHelper.ReconnectWifi(setDateTime: true, token: new CancellationTokenSource(60000).Token);
-                }
-                else
-                {
-                    // If we have access to the password, we will force the reconnection
-                    // This is mainly for ESP32 which will connect normaly like that.
-                    success = NetworkHelper.ConnectWifiDhcp(conf.Ssid, conf.Password, token: new CancellationTokenSource(60000).Token);
-                }
-                Debug.WriteLine($"Connection is {success}");
-                if (success)
-                {
-                    string IpAdr = Wireless80211.WaitIP();
-                    Debug.WriteLine($"Connected as {IpAdr}");
-                    // We can even wait for a DateTime now
-                    success = NetworkHelper.WaitForValidIPAndDate(true, NetworkInterfaceType.Wireless80211, new CancellationTokenSource(60000).Token);
-                    if (success)
-                    {
-                        Debug.WriteLine($"We have a valid date: {DateTime.UtcNow}");
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine($"Something wrong happened, can't connect at all");
-                }
-            }
-        }
-
         private static void TransmitDataToIotHub(object state)
         {
             IsAliveLED = GreenLED;
@@ -196,28 +142,32 @@ namespace SmartHome.NF
             var message = new StringBuilder();
             message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
 
-            if (DistanceSensor.TryGetDistance(out Length distance))
+            if (DistanceMeasures.Count > 0)
             {
-                message.Append($",\"ZisterneLevel\":{distance.Centimeters}");
-                Debug.WriteLine($"Distance: {distance.Centimeters} cm");
-            }
-            else
-            {
-                Debug.WriteLine("Error reading sensor for distance");
-                IsAliveLED = RedLED;
+                double distanceAverage = 0;
+                foreach (Length distance in DistanceMeasures)
+                {
+                    distanceAverage += distance.Centimeters;
+                }
+                distanceAverage = distanceAverage / DistanceMeasures.Count;
+                minDistance = 999;
+                maxDistance = 0;
+                DistanceMeasures = new ArrayList();
+
+                message.Append($",\"ZisterneLevel\":{distanceAverage}");
             }
 
-            if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
-            {
-                message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
-                Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
-                Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
-            }
-            else
-            {
-                Debug.WriteLine("Error reading temperature and humidity");
-                IsAliveLED = RedLED;
-            }
+            //if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
+            //{
+            //    message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
+            //    Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
+            //    Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
+            //}
+            //else
+            //{
+            //    Debug.WriteLine("Error reading temperature and humidity");
+            //    IsAliveLED = RedLED;
+            //}
 
             message.Append("}");
 
@@ -238,6 +188,33 @@ namespace SmartHome.NF
         }
         private static void IsAliveBlink(object state)
         {
+            if (DistanceSensor.TryGetDistance(out Length distance))
+            {
+                DistanceMeasures.Add(distance);
+                Debug.WriteLine($"Distance: {distance.Centimeters} cm");
+
+                if (distance.Centimeters < minDistance)
+                    minDistance = distance.Centimeters;
+                if (distance.Centimeters > maxDistance)
+                    maxDistance = distance.Centimeters;
+            }
+            else
+            {
+                Debug.WriteLine("Error reading sensor for distance");
+                IsAliveLED = RedLED;
+            }
+
+            sum = 0;
+            foreach (Length measurement in DistanceMeasures)
+            {
+                sum += measurement.Centimeters;
+            }
+
+            if (DistanceMeasures.Count > 0)
+            {
+                Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {sum / DistanceMeasures.Count}");
+            }
+
             IsAliveLED.Toggle();
             Thread.Sleep(10);
             IsAliveLED.Toggle();
@@ -249,47 +226,5 @@ namespace SmartHome.NF
             Debug.WriteLine($"{reedContact.Read().ToString()} - {reedCounter}");
         }
 
-        /// <summary>
-        /// Event handler for Stations connecting or Disconnecting
-        /// </summary>
-        /// <param name="NetworkIndex">The index of Network Interface raising event</param>
-        /// <param name="e">Event argument</param>
-        private static void NetworkChange_NetworkAPStationChanged(int NetworkIndex, NetworkAPStationEventArgs e)
-        {
-            Debug.WriteLine($"NetworkAPStationChanged event Index:{NetworkIndex} Connected:{e.IsConnected} Station:{e.StationIndex} ");
-
-            // if connected then get information on the connecting station 
-            if (e.IsConnected)
-            {
-                WirelessAPConfiguration wapconf = WirelessAPConfiguration.GetAllWirelessAPConfigurations()[0];
-                WirelessAPStation station = wapconf.GetConnectedStations(e.StationIndex);
-
-                string macString = BitConverter.ToString(station.MacAddres);
-                Debug.WriteLine($"Station mac {macString} Rssi:{station.Rssi} PhyMode:{station.PhyModes} ");
-
-                connectedCount++;
-
-                // Start web server when it connects otherwise the bind to network will fail as 
-                // no connected network. Start web server when first station connects 
-                if (connectedCount == 1)
-                {
-                    // Wait for Station to be fully connected before starting web server
-                    // other you will get a Network error
-                    Thread.Sleep(2000);
-                    server.Start();
-                }
-            }
-            else
-            {
-                // Station disconnected. When no more station connected then stop web server
-                if (connectedCount > 0)
-                {
-                    connectedCount--;
-                    if (connectedCount == 0)
-                        server.Stop();
-                }
-            }
-
-        }
     }
 }
