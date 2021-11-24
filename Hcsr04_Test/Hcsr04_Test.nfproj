@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Hcsr04.Esp32">
-      <HintPath>..\packages\nanoFramework.Iot.Device.Hcsr04.Esp32.1.0.238\lib\Iot.Device.Hcsr04.Esp32.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Iot.Device.Hcsr04.Esp32.1.0.240\lib\Iot.Device.Hcsr04.Esp32.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.10.5\lib\mscorlib.dll</HintPath>
