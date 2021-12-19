@@ -13,8 +13,8 @@ using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
+using SmartHome.NF.Logging;
 using UnitsNet;
-using WiFiAP;
 using WifiLib;
 
 namespace SmartHome.NF
@@ -27,7 +27,6 @@ namespace SmartHome.NF
         private static Hcsr04 DistanceSensor;
         private static Shtc3 TempHumiditySensor;
         private static DeviceClient azureIoT;
-        private static WebServer server = new WebServer();
         private static int connectedCount = 0;
         private static int reedCounter = 0;
         private static GpioPin reedContact;
@@ -39,7 +38,9 @@ namespace SmartHome.NF
         private static double maxDistance;
         private static double sum;
 
-#if DEV
+        private static string logUrl = "https://smarthomeweb.azurewebsites.net/api/logging/";
+
+#if !DEV
         //Dev Board
         private const string DeviceID = "DevBoard";
         private const int Red_LED_Pin = 21;
@@ -96,6 +97,10 @@ namespace SmartHome.NF
                 var isOpen = azureIoT.Open();
                 Debug.WriteLine("Done");
 
+                Debug.Write("   - Logging Service...");
+                LogManager.SendLogMessage(logUrl, "Application started, logging enabeled");
+                Debug.WriteLine("Done");
+
                 Debug.Write("   - GPIO...");
 
                 startLED.Write(PinValue.Low);
@@ -137,93 +142,109 @@ namespace SmartHome.NF
 
         private static void TransmitDataToIotHub(object state)
         {
-            IsAliveLED = GreenLED;
-
-            var message = new StringBuilder();
-            message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
-
-            if (DistanceMeasures.Count > 0)
+            try
             {
-                double distanceAverage = 0;
-                foreach (Length distance in DistanceMeasures)
+                IsAliveLED = GreenLED;
+
+                var message = new StringBuilder();
+                message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
+
+                if (DistanceMeasures.Count > 0)
                 {
-                    distanceAverage += distance.Centimeters;
+                    double distanceAverage = 0;
+                    foreach (Length distance in DistanceMeasures)
+                    {
+                        distanceAverage += distance.Centimeters;
+                    }
+                    distanceAverage = distanceAverage / DistanceMeasures.Count;
+                    minDistance = 999;
+                    maxDistance = 0;
+                    DistanceMeasures = new ArrayList();
+
+                    message.Append($",\"ZisterneLevel\":{distanceAverage}");
                 }
-                distanceAverage = distanceAverage / DistanceMeasures.Count;
-                minDistance = 999;
-                maxDistance = 0;
-                DistanceMeasures = new ArrayList();
 
-                message.Append($",\"ZisterneLevel\":{distanceAverage}");
-            }
+                if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
+                {
+                    message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
+                    Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
+                    Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
+                }
+                else
+                {
+                    Debug.WriteLine("Error reading temperature and humidity");
+                    IsAliveLED = RedLED;
+                }
 
-            if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
-            {
-                message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
-                Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
-                Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
+                message.Append("}");
+
+                TransmitLED.Write(PinValue.High);
+                var t = message.ToString();
+                Debug.WriteLine(t);
+                if (azureIoT.SendMessage(message.ToString()))
+                {
+                    Debug.Write("Data has been transmitted to Azure IoT Hub");
+                }
+                else
+                {
+                    Debug.WriteLine("Error transmitting data to Azure IoT Hub");
+                }
+                reedCounter = 0;
+                TransmitLED.Write(PinValue.Low);
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("Error reading temperature and humidity");
                 IsAliveLED = RedLED;
+                LogManager.SendLogMessage(logUrl, "Exception in TransmitDataToIotHub: " + ex.Message);
             }
-
-            message.Append("}");
-
-            TransmitLED.Write(PinValue.High);
-            var t = message.ToString();
-            Debug.WriteLine(t);
-            if (azureIoT.SendMessage(message.ToString()))
-            {
-                Debug.Write("Data has been transmitted to Azure IoT Hub");
-            }
-            else
-            {
-                Debug.WriteLine("Error transmitting data to Azure IoT Hub");
-            }
-            reedCounter = 0;
-            TransmitLED.Write(PinValue.Low);
-
         }
         private static void IsAliveBlink(object state)
         {
-            if (DistanceSensor.TryGetDistance(out Length distance))
+            try
             {
-                DistanceMeasures.Add(distance);
-                Debug.WriteLine($"Distance: {distance.Centimeters} cm");
+                if (DistanceSensor.TryGetDistance(out Length distance))
+                {
+                    DistanceMeasures.Add(distance);
+                    Debug.WriteLine($"Distance: {distance.Centimeters} cm");
+                    LogManager.SendLogMessage(logUrl, $"Distance: {distance.Centimeters} cm");
 
-                if (distance.Centimeters < minDistance)
-                    minDistance = distance.Centimeters;
-                if (distance.Centimeters > maxDistance)
-                    maxDistance = distance.Centimeters;
+                    if (distance.Centimeters < minDistance)
+                        minDistance = distance.Centimeters;
+                    if (distance.Centimeters > maxDistance)
+                        maxDistance = distance.Centimeters;
+                }
+                else
+                {
+                    Debug.WriteLine("Error reading sensor for distance");
+                    IsAliveLED = RedLED;
+                }
+
+                sum = 0;
+                foreach (Length measurement in DistanceMeasures)
+                {
+                    sum += measurement.Centimeters;
+                }
+
+                if (DistanceMeasures.Count > 0)
+                {
+                    Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {sum / DistanceMeasures.Count}");
+                }
+
+                IsAliveLED.Toggle();
+                Thread.Sleep(10);
+                IsAliveLED.Toggle();
+                Thread.Sleep(200);
+                IsAliveLED.Toggle();
+                Thread.Sleep(10);
+                IsAliveLED.Toggle();
+
+                Debug.WriteLine($"{reedContact.Read().ToString()} - {reedCounter}");
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("Error reading sensor for distance");
-                IsAliveLED = RedLED;
+               IsAliveLED = RedLED;
+               LogManager.SendLogMessage(logUrl, "Exception in IsAliveBlink: " + ex.Message);
             }
-
-            sum = 0;
-            foreach (Length measurement in DistanceMeasures)
-            {
-                sum += measurement.Centimeters;
-            }
-
-            if (DistanceMeasures.Count > 0)
-            {
-                Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {sum / DistanceMeasures.Count}");
-            }
-
-            IsAliveLED.Toggle();
-            Thread.Sleep(10);
-            IsAliveLED.Toggle();
-            Thread.Sleep(200);
-            IsAliveLED.Toggle();
-            Thread.Sleep(10);
-            IsAliveLED.Toggle();
-
-            Debug.WriteLine($"{reedContact.Read().ToString()} - {reedCounter}");
         }
 
     }

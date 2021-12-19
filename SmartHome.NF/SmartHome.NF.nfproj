@@ -35,6 +35,7 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
+    <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -43,9 +44,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Secrets.cs" />
-    <Compile Include="Wifi\WebServer.cs" />
-    <Compile Include="Wifi\Wireless80211.cs" />
-    <Compile Include="Wifi\WirelessAP.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Hcsr04.Esp32">
@@ -106,7 +104,7 @@
       <HintPath>..\packages\nanoFramework.System.Net.1.7.1\lib\System.Net.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http">
-      <HintPath>..\packages\nanoFramework.System.Net.Http.Server.1.3.6\lib\System.Net.Http.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.System.Net.Http.Client.1.3.6\lib\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading">
       <HintPath>..\packages\nanoFramework.System.Threading.1.0.3\lib\System.Threading.dll</HintPath>
