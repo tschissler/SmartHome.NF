@@ -17,7 +17,7 @@ namespace RemoteDisplay
             Debug.WriteLine("");
 
             Debug.Write("Connecting to Wifi ... ");
-            var isWifiConnected = WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
+            var isWifiConnected = WifiLib.WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
             if (!isWifiConnected)
             {
                 Debug.WriteLine("");

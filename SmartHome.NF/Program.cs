@@ -13,9 +13,9 @@ using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
-using NFLibs;
 using UnitsNet;
 using WiFiAP;
+using WifiLib;
 
 namespace SmartHome.NF
 {
@@ -86,7 +86,7 @@ namespace SmartHome.NF
             Debug.WriteLine("----- SmartHome.NF ------");
             Debug.WriteLine("Initializing...");
             Debug.Write("   - Wifi...");
-            bool isConnected = WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
+            bool isConnected = WifiLib.WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
             if (isConnected)
             {
                 Debug.WriteLine("Done");

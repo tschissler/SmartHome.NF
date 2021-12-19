@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /SmartHome.NF/Secrets.cs
 /RemoteDisplay/Secrets.cs
+/AzureFunctions/Secrets.cs
+/SmartHome.Web/Client/Secrets.cs

@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace NFLibs
+namespace WifiLib
 {
     public class WifiLib
     {
