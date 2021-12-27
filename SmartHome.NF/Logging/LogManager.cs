@@ -5,6 +5,7 @@ using System.Net;
 using nanoFramework.Json;
 using nanoFramework.Networking;
 using System.Security.Cryptography.X509Certificates;
+using ExtensionMethods;
 
 namespace SmartHome.NF.Logging
 {
@@ -34,6 +35,11 @@ namespace SmartHome.NF.Logging
             httpWebRequest.GetRequestStream().Write(buffer, 0, buffer.Length);
 
             httpWebRequest.Dispose();
+        }
+
+        public static void SendLogException(string url, Exception ex)
+        {
+            SendLogMessage(url, ex.FlattenExceptionMessage() + "\n\n" + ex.StackTrace);
         }
     }
 }

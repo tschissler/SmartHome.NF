@@ -40,7 +40,7 @@ namespace SmartHome.NF
 
         private static string logUrl = "https://smarthomeweb.azurewebsites.net/api/logging/";
 
-#if !DEV
+#if DEV
         //Dev Board
         private const string DeviceID = "DevBoard";
         private const int Red_LED_Pin = 21;
@@ -206,7 +206,7 @@ namespace SmartHome.NF
                 {
                     DistanceMeasures.Add(distance);
                     Debug.WriteLine($"Distance: {distance.Centimeters} cm");
-                    LogManager.SendLogMessage(logUrl, $"Distance: {distance.Centimeters} cm");
+                    //LogManager.SendLogMessage(logUrl, $"Distance: {distance.Centimeters} cm");
 
                     if (distance.Centimeters < minDistance)
                         minDistance = distance.Centimeters;
