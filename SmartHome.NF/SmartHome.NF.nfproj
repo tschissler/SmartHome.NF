@@ -5,10 +5,6 @@
       <Configuration>Debug</Configuration>
       <Platform>AnyCPU</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Dev|AnyCPU">
-      <Configuration>Dev</Configuration>
-      <Platform>AnyCPU</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|AnyCPU">
       <Configuration>Release</Configuration>
       <Platform>AnyCPU</Platform>
@@ -29,9 +25,6 @@
     <RootNamespace>SmartHome.NF</RootNamespace>
     <AssemblyName>SmartHome.NF</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Dev' ">
-    <DefineConstants>DEBUG;DEV</DefineConstants>
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
@@ -127,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Directory.Build.props" />
     <None Include="packages.config" />
     <None Include="Resources\AzureRoot.der" />
   </ItemGroup>
