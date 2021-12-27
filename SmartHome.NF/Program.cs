@@ -16,6 +16,7 @@ using nanoFramework.Runtime.Native;
 using SmartHome.NF.Logging;
 using UnitsNet;
 using WifiLib;
+using GC = nanoFramework.Runtime.Native.GC;
 
 namespace SmartHome.NF
 {
@@ -33,10 +34,10 @@ namespace SmartHome.NF
         private static GpioPin RedLED;
         private static GpioPin GreenLED;
         private static GpioPin BlueLED;
-        private static ArrayList DistanceMeasures = new ArrayList();
         private static double minDistance = 999;
         private static double maxDistance;
-        private static double sum;
+        private static double distanceSum;
+        private static int distanceCount;
 
         private static string logUrl = "https://smarthomeweb.azurewebsites.net/api/logging/";
 
@@ -149,19 +150,14 @@ namespace SmartHome.NF
                 var message = new StringBuilder();
                 message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
 
-                if (DistanceMeasures.Count > 0)
+                if (distanceCount > 0)
                 {
-                    double distanceAverage = 0;
-                    foreach (Length distance in DistanceMeasures)
-                    {
-                        distanceAverage += distance.Centimeters;
-                    }
-                    distanceAverage = distanceAverage / DistanceMeasures.Count;
+                    message.Append($",\"ZisterneLevel\":{distanceSum / distanceCount}");
+
                     minDistance = 999;
                     maxDistance = 0;
-                    DistanceMeasures = new ArrayList();
-
-                    message.Append($",\"ZisterneLevel\":{distanceAverage}");
+                    distanceCount = 0;
+                    distanceSum = 0;
                 }
 
                 if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
@@ -176,6 +172,7 @@ namespace SmartHome.NF
                     IsAliveLED = RedLED;
                 }
 
+                message.Append($",\"Memory\":{GC.Run(false)}");
                 message.Append("}");
 
                 TransmitLED.Write(PinValue.High);
@@ -204,7 +201,8 @@ namespace SmartHome.NF
             {
                 if (DistanceSensor.TryGetDistance(out Length distance))
                 {
-                    DistanceMeasures.Add(distance);
+                    distanceSum += distance.Centimeters;
+                    distanceCount++;
                     Debug.WriteLine($"Distance: {distance.Centimeters} cm");
                     //LogManager.SendLogMessage(logUrl, $"Distance: {distance.Centimeters} cm");
 
@@ -219,16 +217,12 @@ namespace SmartHome.NF
                     IsAliveLED = RedLED;
                 }
 
-                sum = 0;
-                foreach (Length measurement in DistanceMeasures)
+                if (distanceCount > 0)
                 {
-                    sum += measurement.Centimeters;
+                    Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {distanceSum / distanceCount}");
                 }
 
-                if (DistanceMeasures.Count > 0)
-                {
-                    Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {sum / DistanceMeasures.Count}");
-                }
+                Debug.WriteLine($"Available memory: {GC.Run(false)}");
 
                 IsAliveLED.Toggle();
                 Thread.Sleep(10);
