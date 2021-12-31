@@ -121,6 +121,9 @@
   <data name="AzureRoot" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\AzureRoot.der;System.Byte[], mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731</value>
   </data>
+  <data name="DigiCertGlobalRootCA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\DigiCertGlobalRootCA.crt;System.Byte[], mscorlib, Version=1.11.7.2, Culture=neutral, PublicKeyToken=c07d481e9758c731</value>
+  </data>
   <data name="favicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\images\favicon.png;System.Byte[], mscorlib, Version=1.10.5.4, Culture=neutral, PublicKeyToken=c07d481e9758c731</value>
   </data>

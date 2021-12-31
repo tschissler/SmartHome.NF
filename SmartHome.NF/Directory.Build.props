@@ -1,6 +1,6 @@
 ﻿<Project>
   <!-- Shared solution settings -->
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);DEV</DefineConstants>
+    <DefineConstants>$(DefineConstants);PROD</DefineConstants>
   </PropertyGroup>
 </Project>

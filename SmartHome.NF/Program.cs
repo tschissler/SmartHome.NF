@@ -3,6 +3,7 @@ using System.Collections;
 using System.Device.Gpio;
 using System.Device.I2c;
 using System.Diagnostics;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -86,6 +87,7 @@ namespace SmartHome.NF
             TransmitLED = BlueLED;
 
             Debug.WriteLine("----- SmartHome.NF ------");
+            Debug.WriteLine($"Device: {DeviceID}");
             Debug.WriteLine("Initializing...");
             Debug.Write("   - Wifi...");
             bool isConnected = WifiLib.WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
@@ -105,7 +107,6 @@ namespace SmartHome.NF
                 Debug.Write("   - GPIO...");
 
                 startLED.Write(PinValue.Low);
-                Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, (int)new TimeSpan(0, 0, 3).TotalMilliseconds);
 
                 DistanceSensor = new Hcsr04(DistanceSensor_Trigger_Pin, DistanceSensor_Echo_Pin);
                 Configuration.SetPinFunction(I2CDataPin, DeviceFunction.I2C1_DATA);
@@ -114,6 +115,7 @@ namespace SmartHome.NF
                 I2cDevice device = I2cDevice.Create(settings);
                 TempHumiditySensor = new Shtc3(device);
 
+                Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, (int)new TimeSpan(0, 0, 10).TotalMilliseconds);
                 Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 1000, TransmitInterval);
 
                 //GpioController.OpenPin(19, PinMode.Input);
@@ -132,6 +134,22 @@ namespace SmartHome.NF
                 //    TriggerReedContact);
 
                 Debug.WriteLine("Done");
+            }
+
+            while (true)
+            {
+                var pingLED = RedLED;
+
+                var status = LogManager.PingLogService(logUrl);
+                if (status == HttpStatusCode.OK)
+                {
+                    pingLED = BlueLED;
+                }
+
+                pingLED.Write(PinValue.High);
+                Thread.Sleep(10);
+                pingLED.Toggle();
+                Thread.Sleep(1000);
             }
             Thread.Sleep(Timeout.Infinite);
         }
@@ -224,7 +242,7 @@ namespace SmartHome.NF
 
                 Debug.WriteLine($"Available memory: {GC.Run(false)}");
 
-                IsAliveLED.Toggle();
+                IsAliveLED.Write(PinValue.High);
                 Thread.Sleep(10);
                 IsAliveLED.Toggle();
                 Thread.Sleep(200);
