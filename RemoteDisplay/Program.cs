@@ -27,7 +27,7 @@ namespace RemoteDisplay
             Debug.WriteLine("Done");
 
             Debug.Write("Initializing sensors ... ");
-            var isInitalized = I2CSensors.Init(32, 33, false, true, true);
+            var isInitalized = I2CSensors.Init(32, 33, true, true, false);
             //var isInitalized = I2CSensors.Init(21, 22, false, true, true);
             if (!isInitalized)
             {
@@ -50,22 +50,42 @@ namespace RemoteDisplay
                     brightness = 15;
 
                 Debug.WriteLine($"Illumination: {light} lux");
+                Debug.WriteLine($"BMP180 Temperature: {I2CSensors.ReadBMP180Temperature().ToString("F1")}°C");
                 if (cycle < 6)
                 {
                     // Show clock
-                    if (cycle % 2 == 0)
+                    var hour = DateTime.UtcNow.Hour;
+                    var minute = DateTime.UtcNow.Minute;
+                    var second = DateTime.UtcNow.Second;
+                    
+                    if (IsSummerTime(DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.DayOfWeek))
                     {
-                        text = $"{(DateTime.UtcNow.Hour + 1).ToString("D2")}:{DateTime.UtcNow.Minute.ToString("D2")}:{DateTime.UtcNow.Second.ToString("D2")}";
+                        hour += 2;
                     }
                     else
                     {
-                        text = $"{(DateTime.UtcNow.Hour + 1).ToString("D2")} {DateTime.UtcNow.Minute.ToString("D2")} {DateTime.UtcNow.Second.ToString("D2")}";
+                        hour++;
+                    }
+                    if (hour >= 24)
+                    {
+                        hour-=24;
+                    }
+
+                    if (cycle % 2 == 0)
+                    {
+
+                        text = $"{hour.ToString("D2")}:{minute.ToString("D2")}:{second.ToString("D2")}";
+                    }
+                    else
+                    {
+                        text = $"{hour.ToString("D2")} {minute.ToString("D2")} {second.ToString("D2")}";
                     }
                     display.ShowText(text, brightness, characterSpace: 1);
                 }
                 else if (cycle < 12)
                 {
-                    text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
+                    //                    text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
+                    text = $"{I2CSensors.ReadBMP180Temperature().ToString("F1")}°C";
                     display.ShowText(text, brightness, characterSpace: 1);
                 }
                 else
@@ -76,6 +96,19 @@ namespace RemoteDisplay
                 cycle++;
             }
 
+        }
+
+        public static bool IsSummerTime(int day, int month, DayOfWeek dayOfWeek)
+        {
+            if (month < 3 || month > 10) return false;
+            if (month > 3 && month < 10) return true;
+
+            int previousSunday = day - (int)dayOfWeek;
+
+            if (month == 3) return previousSunday >= 25;
+            if (month == 10) return previousSunday < 25;
+
+            return false; //this line never gonna happend
         }
     }
 }

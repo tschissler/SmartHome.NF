@@ -8,7 +8,7 @@ namespace NFLibs
     {
         private Max7219 devices;
         private MatrixGraphics graphics;
-        private IFont currentFont = Fonts.LCD;
+        private IFont currentFont = Fonts.LCDMonoSpace;
         SpiDevice spi;
 
         public LEDMatrix(int cascadedDevices)
@@ -33,7 +33,7 @@ namespace NFLibs
             devices.Init();
 
             graphics = new(devices, Fonts.Default);
-            devices.Rotation = RotationType.Right;
+            devices.Rotation = RotationType.Left;
         }
 
         public void SetBigthness(int brightness)

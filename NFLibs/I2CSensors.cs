@@ -60,6 +60,14 @@ namespace NFLibs
             return tempValue.DegreesCelsius;
         }
 
+        public static double ReadBMP180Pressure()
+        {
+            if (!isInitialized)
+                throw new Exception("Call Init-method before reading data");
+            Pressure pressureValue = i2cBmp180.ReadPressure();
+            return pressureValue.Hectopascals;
+        }
+
         public static double ReadBH1750Illuminance()
         {
             if (!isInitialized)
