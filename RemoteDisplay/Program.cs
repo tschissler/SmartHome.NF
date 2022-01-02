@@ -27,8 +27,8 @@ namespace RemoteDisplay
             Debug.WriteLine("Done");
 
             Debug.Write("Initializing sensors ... ");
-            var isInitalized = I2CSensors.Init(32, 33, true, true, false);
-            //var isInitalized = I2CSensors.Init(21, 22, false, true, true);
+            //var isInitalized = I2CSensors.Init(32, 33, true, true, false, true);
+            var isInitalized = I2CSensors.Init(21, 22, true, true, false, true);
             if (!isInitalized)
             {
                 Debug.WriteLine("");
@@ -50,7 +50,8 @@ namespace RemoteDisplay
                     brightness = 15;
 
                 Debug.WriteLine($"Illumination: {light} lux");
-                Debug.WriteLine($"BMP180 Temperature: {I2CSensors.ReadBMP180Temperature().ToString("F1")}°C");
+                Debug.WriteLine($"BMP180 Temperature: {I2CSensors.ReadBMP180Temperature().ToString("F1")}°C - BMP180 Pressure: {I2CSensors.ReadBMP180Pressure().ToString("F1")}hPa");
+                Debug.WriteLine($"SHT31  Temperature: {I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C - SHT31 Humidity: {I2CSensors.ReadSHT3xHumitidy().ToString("F0")}%");
                 if (cycle < 6)
                 {
                     // Show clock
@@ -73,7 +74,6 @@ namespace RemoteDisplay
 
                     if (cycle % 2 == 0)
                     {
-
                         text = $"{hour.ToString("D2")}:{minute.ToString("D2")}:{second.ToString("D2")}";
                     }
                     else
@@ -92,6 +92,7 @@ namespace RemoteDisplay
                 {
                     cycle = 0;
                 }
+
                 Thread.Sleep(300);
                 cycle++;
             }

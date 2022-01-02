@@ -1,5 +1,6 @@
 ﻿using Iot.Device.Bh1750fvi;
 using Iot.Device.Bmp180;
+using Iot.Device.Sht3x;
 using Iot.Device.Shtc3;
 using nanoFramework.Hardware.Esp32;
 using System;
@@ -17,8 +18,9 @@ namespace NFLibs
         private static Bmp180 i2cBmp180;
         private static Bh1750fvi bh1750sensor;
         private static Shtc3 shtc3Sensor;
+        private static Sht3x sht3xSensor;
 
-        public static bool Init(int dataPin, int clockPin, bool useBMP180, bool useBH1750, bool useSHTC3)
+        public static bool Init(int dataPin, int clockPin, bool useBMP180, bool useBH1750, bool useSHTC3, bool useSHT3x)
         {
             Configuration.SetPinFunction(dataPin, DeviceFunction.I2C1_DATA);
             Configuration.SetPinFunction(clockPin, DeviceFunction.I2C1_CLOCK);
@@ -34,7 +36,7 @@ namespace NFLibs
 
             if (useBH1750)
             {
-                I2cConnectionSettings settings = new I2cConnectionSettings(busId: 1, (int)I2cAddress.AddPinLow);
+                I2cConnectionSettings settings = new I2cConnectionSettings(busId: 1, (int)Iot.Device.Bh1750fvi.I2cAddress.AddPinLow);
                 I2cDevice device = I2cDevice.Create(settings);
 
                 bh1750sensor = new Bh1750fvi(device);
@@ -46,6 +48,14 @@ namespace NFLibs
                 I2cDevice device = I2cDevice.Create(settings);
 
                 shtc3Sensor = new Shtc3(device);
+            }
+
+            if (useSHT3x)
+            {
+                I2cConnectionSettings settings = new I2cConnectionSettings(busId: 1, (int)Iot.Device.Sht3x.I2cAddress.AddrLow);
+                I2cDevice device = I2cDevice.Create(settings);
+
+                sht3xSensor = new Sht3x(device);
             }
 
             isInitialized = true;
@@ -100,6 +110,20 @@ namespace NFLibs
             {
                 return -999;
             }
+        }
+
+        public static double ReadSHT3xTemperature()
+        {
+            if (!isInitialized)
+                throw new Exception("Call Init-method before reading data");
+            return sht3xSensor.Temperature.DegreesCelsius;
+        }
+
+        public static double ReadSHT3xHumitidy()
+        {
+            if (!isInitialized)
+                throw new Exception("Call Init-method before reading data");
+            return sht3xSensor.Humidity.Percent;
         }
     }
 }

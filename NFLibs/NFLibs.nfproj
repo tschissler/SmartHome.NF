@@ -40,6 +40,12 @@
     <Reference Include="Iot.Device.Bh1750fvi">
       <HintPath>..\packages\nanoFramework.Iot.Device.Bh1750fvi.1.0.259\lib\Iot.Device.Bh1750fvi.dll</HintPath>
     </Reference>
+    <Reference Include="Iot.Device.Bmp180">
+      <HintPath>..\packages\nanoFramework.Iot.Device.Bmp180.1.0.259\lib\Iot.Device.Bmp180.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Sht3x">
+      <HintPath>..\packages\nanoFramework.Iot.Device.Sht3x.1.0.259\lib\Iot.Device.Sht3x.dll</HintPath>
+    </Reference>
     <Reference Include="Iot.Device.Shtc3">
       <HintPath>..\packages\nanoFramework.Iot.Device.Shtc3.1.0.259\lib\Iot.Device.Shtc3.dll</HintPath>
     </Reference>
@@ -106,7 +112,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Bmp180\Bmp180.nfproj" />
     <ProjectReference Include="..\..\nanoFramework.IoT.Device\devices\Max7219\Max7219.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />

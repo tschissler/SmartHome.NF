@@ -25,7 +25,7 @@ namespace NFLibs
                 Mode = Iot.Device.Max7219.Max7219.SpiMode
             };
             spi = SpiDevice.Create(connectionSettings);
-            devices = new(spi, cascadedDevices: cascadedDevices);
+            devices = new(spi, cascadedDevices: cascadedDevices, rotation: RotationType.Right, rotateFullDisplay: true);
             // initialize the devices
             devices.Init();
 
@@ -33,7 +33,6 @@ namespace NFLibs
             devices.Init();
 
             graphics = new(devices, Fonts.Default);
-            devices.Rotation = RotationType.Left;
         }
 
         public void SetBigthness(int brightness)
