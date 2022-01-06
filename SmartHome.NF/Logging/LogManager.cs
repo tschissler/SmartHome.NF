@@ -37,7 +37,7 @@ namespace SmartHome.NF.Logging
             {
                 httpWebRequest.GetRequestStream().Write(buffer, 0, buffer.Length);
             }
-            catch(Exception ex)
+            catch (Exception)
             {
 
             }

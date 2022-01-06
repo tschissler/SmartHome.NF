@@ -212,7 +212,7 @@ namespace RemoteDisplay
                     Debug.WriteLine("Error transmitting data to Azure IoT Hub");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
