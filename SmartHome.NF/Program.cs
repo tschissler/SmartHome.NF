@@ -53,7 +53,8 @@ namespace SmartHome.NF
         private const int I2CDataPin = 18;
         private const int I2CClockPin = 5;
         private const int ReedPin = 19;
-        private static int TransmitInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
+        private static int TransmitInterval = (int)new TimeSpan(0, 10, 30).TotalMilliseconds;
+        private static int BlinkInterval = (int)new TimeSpan(0, 0, 3).TotalMilliseconds;
 
 #else
 
@@ -68,6 +69,8 @@ namespace SmartHome.NF
         private const int I2CClockPin = 33;
         private const int ReedPin = 19;
         private static int TransmitInterval = (int)new TimeSpan(0, 10, 0).TotalMilliseconds;
+        private static int BlinkInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
+
 #endif
 
         public static void Main()
@@ -115,41 +118,42 @@ namespace SmartHome.NF
                 I2cDevice device = I2cDevice.Create(settings);
                 TempHumiditySensor = new Shtc3(device);
 
-                Timer blinkTimer = new Timer(IsAliveBlink, null, 1000, (int)new TimeSpan(0, 0, 10).TotalMilliseconds);
-                Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 1000, TransmitInterval);
+                Timer blinkTimer = new Timer(IsAliveBlink, null, 0, BlinkInterval);
+                Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 0, TransmitInterval);
 
                 //GpioController.OpenPin(19, PinMode.Input);
 
-                reedContact = GpioController.OpenPin(ReedPin, PinMode.InputPullUp);
+                reedContact = GpioController.OpenPin(ReedPin, PinMode.InputPullDown);
                 //reedContact.SetDriveMode(PinMode.InputPullUp);
 
                 // add a debounce timeout 
-                reedContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 300);
-                reedContact.ValueChanged += TriggerReedContact;
+                //reedContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
+                //reedContact.ValueChanged += TriggerReedContact;
 
 
-                //GpioController.RegisterCallbackForPinValueChangedEvent(
-                //    ReedPin,
-                //    PinEventTypes.Falling | PinEventTypes.Rising,
-                //    TriggerReedContact);
+                GpioController.RegisterCallbackForPinValueChangedEvent(
+                    ReedPin,
+                    PinEventTypes.Falling,
+                    TriggerReedContact);
 
                 Debug.WriteLine("Done");
-            }
 
-            while (true)
-            {
-                var pingLED = RedLED;
 
-                var status = LogManager.PingLogService(logUrl);
-                if (status == HttpStatusCode.OK)
+                while (true)
                 {
-                    pingLED = BlueLED;
-                }
+                    var pingLED = RedLED;
 
-                pingLED.Write(PinValue.High);
-                Thread.Sleep(10);
-                pingLED.Toggle();
-                Thread.Sleep(1000);
+                    var status = LogManager.PingLogService(logUrl);
+                    if (status == HttpStatusCode.OK)
+                    {
+                        pingLED = BlueLED;
+                    }
+
+                    pingLED.Write(PinValue.High);
+                    Thread.Sleep(10);
+                    pingLED.Toggle();
+                    Thread.Sleep(1000);
+                }
             }
             Thread.Sleep(Timeout.Infinite);
         }
