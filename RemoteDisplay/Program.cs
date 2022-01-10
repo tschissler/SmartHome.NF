@@ -139,10 +139,18 @@ namespace RemoteDisplay
                 }
                 else if (cycle < 12)
                 {
-                    if (IsSHTC3SensorPresent)
+                    if (IsSHT3xSensorPresent)
+                    {
+                        text = $"{I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C";
+                    }
+                    else if (IsSHTC3SensorPresent)
+                    {
                         text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
-                    if (IsBMP180SensorPresent)
+                    }
+                    else if (IsBMP180SensorPresent)
+                    {
                         text = $"{I2CSensors.ReadBMP180Temperature().ToString("F1")}°C";
+                    }
                     display.ShowText(text, brightness, characterSpace: 1);
                 }
                 else
