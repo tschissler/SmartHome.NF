@@ -22,7 +22,7 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Max7219", "..\nanoFramework
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Devices", "Devices", "{B50847A3-0558-4B37-B036-CD5F7DEF933E}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Hcsr04_Test", "Hcsr04_Test\Hcsr04_Test.nfproj", "{52363FA3-50C2-4AD9-8094-FC898C81F4C7}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Sandbox", "Hcsr04_Test\Sandbox.nfproj", "{52363FA3-50C2-4AD9-8094-FC898C81F4C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHome.Web.Server", "SmartHome.Web\Server\SmartHome.Web.Server.csproj", "{9D7BFD3F-8CAF-4F98-A113-0D08E2B47963}"
 EndProject

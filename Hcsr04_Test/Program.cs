@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections;
 //using Iot.Device.Hcsr04.Esp32;
 using Windows.Devices.Adc;
+using System.Device.Gpio;
 
 namespace Hcsr04_Test
 {
@@ -15,6 +16,7 @@ namespace Hcsr04_Test
         //private static Hcsr04 DistanceSensor;
         //private static double minDistance = 999;
         //private static double maxDistance;
+        private static GpioController GpioController;
 
         public static void Main()
         {
@@ -50,6 +52,10 @@ namespace Hcsr04_Test
 
             //Thread.Sleep(Timeout.Infinite);
 
+
+            //////////////////////////////////
+            ////// ADC
+
             string devs = AdcController.GetDeviceSelector();
 
             Debug.WriteLine("devs=" + devs);
@@ -71,8 +77,21 @@ namespace Hcsr04_Test
 
                 Debug.WriteLine("value0=" + value.ToString() + " ratio=" + percent.ToString());
 
-                //Thread.Sleep(1000);
+                Thread.Sleep(300);
             }
+
+
+            ////////////////////////////////////
+            /////// Digital IO
+            ///
+            //GpioController = new GpioController();
+            //GpioPin pin = GpioController.OpenPin(13, PinMode.InputPullUp);
+
+            //while (true)
+            //{
+            //    Debug.WriteLine(pin.Read().ToString());
+            //    Thread.Sleep(500);
+            //}
         }
     }
 }

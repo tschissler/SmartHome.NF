@@ -30,8 +30,10 @@ namespace SmartHome.NF
         private static Shtc3 TempHumiditySensor;
         private static DeviceClient azureIoT;
         private static int connectedCount = 0;
-        private static int reedCounter = 0;
-        private static GpioPin reedContact;
+        private static int gasCounter = 0;
+        private static GpioPin gasContact;
+        private static int stromCounter = 0;
+        private static GpioPin stromContact;
         private static GpioPin RedLED;
         private static GpioPin GreenLED;
         private static GpioPin BlueLED;
@@ -52,7 +54,8 @@ namespace SmartHome.NF
         private const int DistanceSensor_Echo_Pin = 12;
         private const int I2CDataPin = 18;
         private const int I2CClockPin = 5;
-        private const int ReedPin = 19;
+        private const int gasPin = 19;
+        private const int stromPin = 18;
         private static int TransmitInterval = (int)new TimeSpan(0, 10, 30).TotalMilliseconds;
         private static int BlinkInterval = (int)new TimeSpan(0, 0, 3).TotalMilliseconds;
 
@@ -67,7 +70,8 @@ namespace SmartHome.NF
         private const int DistanceSensor_Echo_Pin = 2;
         private const int I2CDataPin = 32;
         private const int I2CClockPin = 33;
-        private const int ReedPin = 19;
+        private const int gasPin = 19;
+        private const int stromPin = 18;
         private static int TransmitInterval = (int)new TimeSpan(0, 10, 0).TotalMilliseconds;
         private static int BlinkInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
 
@@ -123,18 +127,25 @@ namespace SmartHome.NF
 
                 //GpioController.OpenPin(19, PinMode.Input);
 
-                reedContact = GpioController.OpenPin(ReedPin, PinMode.InputPullDown);
-                //reedContact.SetDriveMode(PinMode.InputPullUp);
+                gasContact = GpioController.OpenPin(gasPin, PinMode.InputPullDown);
+                stromContact = GpioController.OpenPin(stromPin, PinMode.InputPullUp);
+
+                //gasContact.SetDriveMode(PinMode.InputPullUp);
 
                 // add a debounce timeout 
-                //reedContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
-                //reedContact.ValueChanged += TriggerReedContact;
+                //gasContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
+                //gasContact.ValueChanged += TriggerGasContact;
 
 
                 GpioController.RegisterCallbackForPinValueChangedEvent(
-                    ReedPin,
+                    gasPin,
                     PinEventTypes.Falling,
-                    TriggerReedContact);
+                    TriggerGasContact);
+
+                GpioController.RegisterCallbackForPinValueChangedEvent(
+                    stromPin,
+                    PinEventTypes.Falling,
+                    TriggerStromContact);
 
                 Debug.WriteLine("Done");
 
@@ -158,9 +169,14 @@ namespace SmartHome.NF
             Thread.Sleep(Timeout.Infinite);
         }
 
-        private static void TriggerReedContact(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
+        private static void TriggerGasContact(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
         {
-            reedCounter++;
+            gasCounter++;
+        }
+
+        private static void TriggerStromContact(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
+        {
+            stromCounter++;
         }
 
         private static void TransmitDataToIotHub(object state)
@@ -170,7 +186,10 @@ namespace SmartHome.NF
                 IsAliveLED = GreenLED;
 
                 var message = new StringBuilder();
-                message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{reedCounter}");
+                message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{gasCounter},\"StromPulse\":{stromCounter}");
+
+                gasCounter = 0;
+                stromCounter = 0;
 
                 if (distanceCount > 0)
                 {
@@ -208,7 +227,6 @@ namespace SmartHome.NF
                 {
                     Debug.WriteLine("Error transmitting data to Azure IoT Hub");
                 }
-                reedCounter = 0;
                 TransmitLED.Write(PinValue.Low);
             }
             catch (Exception ex)
@@ -254,12 +272,12 @@ namespace SmartHome.NF
                 Thread.Sleep(10);
                 IsAliveLED.Toggle();
 
-                Debug.WriteLine($"{reedContact.Read().ToString()} - {reedCounter}");
+                Debug.WriteLine($"{gasContact.Read().ToString()} - {gasCounter} | {stromContact.Read().ToString()} - {stromCounter}");
             }
             catch (Exception ex)
             {
-               IsAliveLED = RedLED;
-               LogManager.SendLogMessage(logUrl, "Exception in IsAliveBlink: " + ex.Message);
+                IsAliveLED = RedLED;
+                LogManager.SendLogMessage(logUrl, "Exception in IsAliveBlink: " + ex.Message);
             }
         }
 
