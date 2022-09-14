@@ -4,8 +4,8 @@ using System.Threading;
 //using UnitsNet;
 using System.Collections;
 //using Iot.Device.Hcsr04.Esp32;
-using Windows.Devices.Adc;
 using System.Device.Gpio;
+using System.Device.Adc;
 
 namespace Hcsr04_Test
 {
@@ -56,11 +56,11 @@ namespace Hcsr04_Test
             //////////////////////////////////
             ////// ADC
 
-            string devs = AdcController.GetDeviceSelector();
+            //string devs = new AdcController()..GetDeviceSelector();
 
-            Debug.WriteLine("devs=" + devs);
+            //Debug.WriteLine("devs=" + devs);
 
-            AdcController adc1 = AdcController.GetDefault();
+            AdcController adc1 = new AdcController();
 
             int max1 = adc1.MaxValue;
             int min1 = adc1.MinValue;

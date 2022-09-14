@@ -14,13 +14,13 @@ namespace WifiLib
         {
             // As we are using TLS, we need a valid date & time
             // We will wait maximum 1 minute to get connected and have a valid date
-            var success = WiFiNetworkHelper.ConnectDhcp(ssid, password, requiresDateTime: true, token: new CancellationTokenSource(sleepTimeMinutes).Token);
+            var success = WifiNetworkHelper.ConnectDhcp(ssid, password, requiresDateTime: true, token: new CancellationTokenSource(sleepTimeMinutes).Token);
             if (!success)
             {
-                Debug.WriteLine($"Can't connect to wifi: {WiFiNetworkHelper.HelperException.Message}");
-                if (WiFiNetworkHelper.HelperException.InnerException != null)
+                Debug.WriteLine($"Can't connect to wifi: {WifiNetworkHelper.HelperException.Message}");
+                if (WifiNetworkHelper.HelperException.InnerException != null)
                 {
-                    Debug.WriteLine($"Inner Exception: {WiFiNetworkHelper.HelperException.InnerException.Message}");
+                    Debug.WriteLine($"Inner Exception: {WifiNetworkHelper.HelperException.InnerException.Message}");
                 }
             }
 
