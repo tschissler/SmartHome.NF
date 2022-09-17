@@ -14,7 +14,8 @@ namespace Smarthome.Web.Data
             powerDog.GridSupplyChanged += (sender, e) => GridSupply.CurrentValue = ((DataChangedEventArgs)e).Value;
             powerDog.GridConsumptionChanged += (sender, e) => GridDemand.CurrentValue = ((DataChangedEventArgs)e).Value;
 
-            //GridDemand.CurrentValueCorrection = (double value) => { return value*2; }; 
+            // As the second PV is not considered, this is corrected
+            PVProduction.CurrentValueCorrection = (double value) => { return value * (5.7 + 4.57)/5.7; }; 
         }
     }
 }
