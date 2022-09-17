@@ -366,3 +366,4 @@ FodyWeavers.xsd
 /AzureFunctions/Secrets.cs
 /SmartHome.Web/Client/Secrets.cs
 /SmartHome.Web/Server/Secrets.cs
+/Secrets/Secrets.cs
