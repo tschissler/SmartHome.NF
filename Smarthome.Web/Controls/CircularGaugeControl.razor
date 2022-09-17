@@ -1,0 +1,62 @@
+﻿@using Smarthome.Web.Data
+@using Syncfusion.Blazor.CircularGauge
+
+<style>
+    .annotationText {
+        font-size: 35px;
+        width: 220px;
+        text-align: center;
+        margin-top: -50px;
+        margin-left: -100px
+    }
+</style>
+
+<SfCircularGauge Background="transparent">
+    <CircularGaugeAxes>
+        <CircularGaugeAxis StartAngle="200" EndAngle="160" Minimum="0" Maximum="@DataPoint.MaxValue" Radius="100%">
+            <CircularGaugeAxisLineStyle Width="0" />
+
+            <CircularGaugeAxisLabelStyle>
+                <CircularGaugeAxisLabelFont Size="0px" FontFamily="inherit" />
+            </CircularGaugeAxisLabelStyle>
+            <CircularGaugeAxisMajorTicks Height="0" />
+            <CircularGaugeAxisMinorTicks Height="0" />
+
+            <CircularGaugeRanges>
+                <CircularGaugeRange Start="0" End="@DataPoint.MaxValue" Radius="90%" StartWidth="30" EndWidth="30" Color="#E0E0E0" RoundedCornerRadius="5" />
+            </CircularGaugeRanges>
+
+            <CircularGaugePointers>
+                <CircularGaugePointer Value="@DataPoint.CurrentValue" RoundedCornerRadius="5" Type="PointerType.RangeBar" Radius="90%" Color="@Color" PointerWidth="30">
+                    <CircularGaugePointerAnimation Enable="true" />
+                    <CircularGaugePointerBorder Width="0" />
+                </CircularGaugePointer>
+            </CircularGaugePointers>
+
+            <CircularGaugeAnnotations>
+                <CircularGaugeAnnotation Radius="0%" Angle="0" ZIndex="1">
+                    <ContentTemplate>
+                        <div class="col annotationText"><span style="font-size:0.6em">@Label</span><br />@DataPoint.CurrentValue @DataPoint.Unit</div>
+                    </ContentTemplate>
+                </CircularGaugeAnnotation>
+            </CircularGaugeAnnotations>
+
+        </CircularGaugeAxis>
+    </CircularGaugeAxes>
+</SfCircularGauge>
+
+@code {
+    [Parameter]
+    public DecimalDataPoint? DataPoint { get; set; }
+
+    public CircularGaugeControl()
+    {
+        Color = "#009900";
+    }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Color { get; set; }
+}

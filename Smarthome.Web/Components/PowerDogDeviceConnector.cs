@@ -4,11 +4,11 @@ namespace Smarthome.Web.Components
 {
     public class DataChangedEventArgs : EventArgs
     {
-        public DataChangedEventArgs(decimal value)
+        public DataChangedEventArgs(double value)
         {
             Value = value;
         }
-        public decimal Value { get; }
+        public double Value { get; }
     }
 
     public class PowerDogDeviceConnector
@@ -52,15 +52,15 @@ namespace Smarthome.Web.Components
             {
                 if (data["Erzeugung"] != null)
                 {
-                    PVProductionChanged?.Invoke(this, new DataChangedEventArgs((decimal)data["Erzeugung"]));
+                    PVProductionChanged?.Invoke(this, new DataChangedEventArgs((double)data["Erzeugung"]));
                 }
                 if (data["Bezug"] != null)
                 {
-                    GridConsumptionChanged?.Invoke(this, new DataChangedEventArgs((decimal)data["Bezug"]));
+                    GridConsumptionChanged?.Invoke(this, new DataChangedEventArgs((double)data["Bezug"]));
                 }
                 if (data["lieferung"] != null)
                 {
-                    GridSupplyChanged?.Invoke(this, new DataChangedEventArgs((decimal)data["lieferung"]));
+                    GridSupplyChanged?.Invoke(this, new DataChangedEventArgs((double)data["lieferung"]));
                 }
             }
         }

@@ -22,6 +22,17 @@
             <DataValueControl DataPoint="@dataPoints.GridDemand" Label="Bezug"></DataValueControl>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.PVProduction" Label="Produktion" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.GridSupply" Label="Lieferung" Color="#999900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.GridDemand" Label="Bezug" Color="#990000"></CircularGaugeControl>
+        </div>
+    </div>
 </div>
 
 
@@ -38,11 +49,6 @@
     public DataPoints dataPoints = new DataPoints();
 
     private Timer refreshTimer;
-
-    private void IncrementCount()
-    {
-        dataPoints.a++;
-    }
 
     protected override void OnInitialized()
     {

@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Secrets;
 using Smarthome.Web.Components;
 using Smarthome.Web.Data;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 //builder.Services.AddSingleton<PowerDogDeviceConnector>();
 //builder.Services.AddSingleton<DataPoints>();
 
