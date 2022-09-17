@@ -2,16 +2,33 @@
 @using Secrets
 @using Smarthome.Web.Components
 @using Smarthome.Web.Data
+@using Smarthome.Web.Controls
+
 @*@inject PowerDogDeviceConnector powerDogDeviceConnector;
 @inject DataPoints dataPoints;*@
 
 <PageTitle>Index</PageTitle>
 
 <h1>Photovoltaik</h1>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <DataValueControl DataPoint="@dataPoints.PVProduction" Label="Produktion"></DataValueControl>
+        </div>
+        <div class="col">
+            <DataValueControl DataPoint="@dataPoints.GridSupply" Label="Lieferung"></DataValueControl>
+        </div>
+        <div class="col">
+            <DataValueControl DataPoint="@dataPoints.GridDemand" Label="Bezug"></DataValueControl>
+        </div>
+    </div>
+</div>
 
-<p>Erzeugung: @dataPoints.PVProduction.CurrentValue W</p>
-<p>Einspeißung: @dataPoints.GridSupply.CurrentValue W</p>
-<p>Bezug: @dataPoints.GridDemand.CurrentValue W</p>
+
+
+@*<p>Erzeugung: @dataPoints.PVProduction.CurrentValue</p>
+<p>Einspeißung: @dataPoints.GridSupply.CurrentValue</p>
+<p>Bezug: @dataPoints.GridDemand.CurrentValue</p>*@
 
 <p>Zeit: @DateTime.Now</p>
 

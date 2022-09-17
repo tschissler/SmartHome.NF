@@ -1,0 +1,12 @@
+﻿@using Smarthome.Web.Data
+<p>@Label</p>
+<h3>@DataPoint.CurrentValue @DataPoint.Unit</h3>
+
+@code {
+    [Parameter]
+    public DecimalDataPoint? DataPoint { get; set; }
+    
+    [Parameter]
+    public string? Label { get; set; }
+
+}
