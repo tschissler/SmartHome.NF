@@ -361,9 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/SmartHome.NF/Secrets.cs
-/RemoteDisplay/Secrets.cs
-/AzureFunctions/Secrets.cs
-/SmartHome.Web/Client/Secrets.cs
-/SmartHome.Web/Server/Secrets.cs
-/Secrets/Secrets.cs
+
+# Secrets
+Secrets.cs
