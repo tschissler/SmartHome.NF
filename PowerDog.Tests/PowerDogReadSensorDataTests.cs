@@ -1,5 +1,6 @@
 
 using FluentAssertions;
+using Secrets;
 
 namespace PowerDog.Tests
 {
@@ -20,7 +21,7 @@ namespace PowerDog.Tests
 
             UriBuilder uri = new ("http", "192.168.178.150", 20000);
 
-            PowerDog target = new(sensorKeys, uri.Uri, "admin");
+            PowerDog target = new(sensorKeys, uri.Uri, PowerDogSecrets.Password);
             var actual = target.ReadSensorsData();
             actual.Count.Should().Be(sensorKeys.Count);
             actual["Verbrauchgesamt"].Should().NotBe(null).And.BeGreaterThan(0);

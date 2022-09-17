@@ -1,5 +1,6 @@
 ﻿using CookComputing.XmlRpc;
 using Shared.Contracts;
+using System.Globalization;
 
 namespace PowerDog
 {
@@ -32,7 +33,7 @@ namespace PowerDog
                 double value;
                 if (result.Reply.ContainsKey(sensorKey.Value) &&
                     ((bool)((XmlRpcStruct)result.Reply[sensorKey.Value])["Valid"]) &&
-                    double.TryParse(((XmlRpcStruct)result.Reply[sensorKey.Value])["Current_Value"].ToString(), out value))
+                    double.TryParse(((XmlRpcStruct)result.Reply[sensorKey.Value])["Current_Value"].ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out value))
                 {
                     data.Add(sensorKey.Key, value);
                 }

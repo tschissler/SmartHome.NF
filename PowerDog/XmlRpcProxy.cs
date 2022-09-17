@@ -13,7 +13,14 @@ namespace PowerDog
         [XmlRpcMethod("getAllCurrentLinearValues")]
         public Result getAllCurrentLinearValues(string password)
         {
-            return (Result)Invoke("getAllCurrentLinearValues", new object[] { password });
+            try
+            {
+                return (Result)Invoke("getAllCurrentLinearValues", new object[] { password });
+            }
+            catch
+            {
+                return new Result();
+            }
         }
     }
 }

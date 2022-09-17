@@ -1,0 +1,48 @@
+﻿@page "/"
+@using Secrets
+@using Smarthome.Web.Components
+@using Smarthome.Web.Data
+@*@inject PowerDogDeviceConnector powerDogDeviceConnector;
+@inject DataPoints dataPoints;*@
+
+<PageTitle>Index</PageTitle>
+
+<h1>Photovoltaik</h1>
+
+<p>Erzeugung: @dataPoints.PVProduction.CurrentValue W</p>
+<p>Einspeißung: @dataPoints.GridSupply.CurrentValue W</p>
+<p>Bezug: @dataPoints.GridDemand.CurrentValue W</p>
+
+<p>Zeit: @DateTime.Now</p>
+
+
+@code {
+    public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
+    public DataPoints dataPoints = new DataPoints();
+
+    private Timer refreshTimer;
+
+    private void IncrementCount()
+    {
+        dataPoints.a++;
+    }
+
+    protected override void OnInitialized()
+    {
+        powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
+        dataPoints.InitializeDataPoints(powerDogDeviceConnector);
+        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    private void Refresh(object? state)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}
+
+

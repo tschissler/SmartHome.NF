@@ -35,6 +35,9 @@ EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ExtensionMethods", "ExtensionMethods\ExtensionMethods.nfproj", "{35C817D7-CBEC-4336-B2AC-0614A195A649}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F9215E1E-48A8-4645-A386-353A485E6C36}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Contracts", "Shared.Contracts\Shared.Contracts.csproj", "{6116DC9B-B2C8-4B9B-A6C1-6B8FBF9665BE}"
 EndProject
@@ -42,7 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerDog", "PowerDog\PowerD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerDog.Tests", "PowerDog.Tests\PowerDog.Tests.csproj", "{05295B68-804C-427E-9AA3-B61A047F2542}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHome.Web", "SmartHome.Web\SmartHome.Web.csproj", "{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Web", "Smarthome.Web\Smarthome.Web.csproj", "{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj", "{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -156,15 +161,18 @@ Global
 		{05295B68-804C-427E-9AA3-B61A047F2542}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{05295B68-804C-427E-9AA3-B61A047F2542}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05295B68-804C-427E-9AA3-B61A047F2542}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Dev|Any CPU.Build.0 = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Dev|Any CPU.Deploy.0 = Debug|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E38CB29E-4833-4C8D-BEE3-195BB3E3B26F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
