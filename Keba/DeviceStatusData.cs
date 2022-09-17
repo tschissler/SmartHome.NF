@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Metrics;
 using System.Net.Sockets;
 using System.Reflection.Emit;
@@ -85,7 +87,7 @@ namespace Keba
         /// Current setting in mA defined via UDP current commands. (Default: 63000 mA)
         /// </summary>
         [JsonProperty("Curr user")]
-        public int DefinedCurrency { get; set; }
+        public int TargetCurrency { get; set; }
 
         /// <summary>
         /// Current setting in mA defined via fail-safe function.
@@ -93,23 +95,112 @@ namespace Keba
         [JsonProperty("Curr FS")]
         public int FailSaveCurrency { get; set; }
 
-        public int TmoFS { get; set; }
-        public int Currtimer { get; set; }
-        public int TmoCT { get; set; }
-        public int Setenergy { get; set; }
+        /// <summary>
+        /// Communication timeout in seconds before triggering the Failsafe function.
+        /// </summary>
+        [JsonProperty("Tmo FS")]
+        public int FailSaveTimeOut { get; set; }
+
+        /// <summary>
+        /// Current value in mA that will replace the setting in the “Curr user” field as soon as “TimerDuration” expires.
+        /// </summary>
+        [JsonProperty("Curr timer")]
+        public int TimerCurrency { get; set; }
+
+        /// <summary>
+        /// Timeout in seconds before the current setting defined by the last currtime command will be applied.
+        /// </summary>
+        [JsonProperty("Tmo CT")]
+        public int TimerDuration { get; set; }
+
+        /// <summary>
+        /// Energy value in 0.1 Wh defined by the last TargetEnergy command(TargetEnergy = 100000 specifies 10 kWh). Max.value is 99999999.9 Wh
+        /// </summary>
+        [JsonProperty("Setenergy")]
+        public int TargetEnergy { get; set; }
+
+        /// <summary>
+        /// State of the output X2 relay
+        /// 0 = Closed
+        /// 1 = Open
+        /// >= 10 = Pulse output with the specified number of pulses(pulses / kWh) and is stored in the EEPROM; reasonably usable up to 150.
+        /// </summary>
         public int Output { get; set; }
+
+        /// <summary>
+        /// State of the input X1.
+        /// </summary>
         public int Input { get; set; }
+
+        /// <summary>
+        /// Serial number of the device.
+        /// </summary>
         public string Serial { get; set; }
-        public int Sec { get; set; }
-        public int U1 { get; set; }
-        public int U2 { get; set; }
-        public int U3 { get; set; }
-        public int I1 { get; set; }
-        public int I2 { get; set; }
-        public int I3 { get; set; }
-        public int P { get; set; }
-        public int PF { get; set; }
-        public int Epres { get; set; }
+
+        /// <summary>
+        /// Current state of the system clock in seconds from the last startup of the device.
+        /// </summary>
+        [JsonProperty("Sec")]
+        public int SystemClock { get; set; }
+
+        /// <summary>
+        /// Measured voltage value on phase 1 in V
+        /// </summary>
+        [JsonProperty("U1")]
+        public int VoltagePhase1 { get; set; }
+
+        /// <summary>
+        /// Measured voltage value on phase 2 in V
+        /// </summary>
+        [JsonProperty("U2")]
+        public int VoltagePhase2 { get; set; }
+
+        /// <summary>
+        /// Measured voltage value on phase 3 in V
+        /// </summary>
+        [JsonProperty("U3")]
+        public int VoltagePhase3 { get; set; }
+
+        /// <summary>
+        /// Measured current value on phase 1 in mA
+        /// </summary>
+        [JsonProperty("I1")]
+        public int CurrentPhase1 { get; set; }
+
+        /// <summary>
+        /// Measured current value on phase 2 in mA
+        /// </summary>
+        [JsonProperty("I2")]
+        public int CurrentPhase2 { get; set; }
+
+        /// <summary>
+        /// Measured current value on phase 3 in mA
+        /// </summary>
+        [JsonProperty("I3")]
+        public int CurrentPhase3 { get; set; }
+
+        /// <summary>
+        /// Power in mW (effective power).
+        /// </summary>
+        [JsonProperty("P")]
+        public int Power { get; set; }
+
+        /// <summary>
+        /// Current power factor (cosphi). The unit displayed is not % but 0.1%
+        /// </summary>
+        [JsonProperty("PF")]
+        public int PowerFactor { get; set; }
+
+        /// <summary>
+        /// Energy transferred in the current charging session in 0.1 Wh.This value is reset at the beginning of a new charging session.
+        /// </summary>
+        [JsonProperty("E pres")]
+        public int EnergyCurrentChargingSession { get; set; }
+
+        /// <summary>
+        /// Total energy consumption (persistent, device related) in 0.1 Wh.
+        /// </summary>
+        [JsonProperty("E total")]
         public int Etotal { get; set; }
     }
 

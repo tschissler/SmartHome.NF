@@ -28,7 +28,7 @@ namespace Keba.Tests
             KebaConnector connector = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090);
             var actual = connector.GetDeviceStatus();
             actual.Serial.Should().NotBeEmpty();
-            actual.DefinedCurrency.Should().Be(63000);
+            actual.TargetCurrency.Should().Be(63000);
         }
     }
 }
