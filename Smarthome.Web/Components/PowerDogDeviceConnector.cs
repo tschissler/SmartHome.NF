@@ -43,8 +43,6 @@ namespace Smarthome.Web.Components
 
         private void RefreshData(object? state)
         {
-            //UriBuilder uri = new("http", "192.168.178.150", 20000);
-
             PowerDog.PowerDog target = new(sensorKeys, powerDogUri, powerDogPassword);
             var data = target.ReadSensorsData();
 

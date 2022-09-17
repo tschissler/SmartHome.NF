@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 namespace Keba
 {
 
-    public class DeviceStatusData
+    public class KebaDeviceStatusData
     {
         /// <summary>
         /// Device status
@@ -21,7 +21,7 @@ namespace Keba
         /// 4 = Error is present
         /// 5 = Charging process temporarily interrupted because temperature is too high or any other voter denies.
         /// </summary>
-        public int State { get; set; }
+        public int State { get; set; }  //
 
         public int Error1 { get; set; }
         public int Error2 { get; set; }
@@ -183,7 +183,7 @@ namespace Keba
         /// Power in mW (effective power).
         /// </summary>
         [JsonProperty("P")]
-        public int Power { get; set; }
+        public int Power { get; set; } 
 
         /// <summary>
         /// Current power factor (cosphi). The unit displayed is not % but 0.1%
@@ -201,7 +201,7 @@ namespace Keba
         /// Total energy consumption (persistent, device related) in 0.1 Wh.
         /// </summary>
         [JsonProperty("E total")]
-        public int Etotal { get; set; }
+        public int EnergyTotal { get; set; }
     }
 
 }

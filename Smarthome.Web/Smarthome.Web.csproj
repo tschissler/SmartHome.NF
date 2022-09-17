@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj" />
+    <ProjectReference Include="..\Keba\Keba.csproj" />
     <ProjectReference Include="..\PowerDog\PowerDog.csproj" />
   </ItemGroup>
 

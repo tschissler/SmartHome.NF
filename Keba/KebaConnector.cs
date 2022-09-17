@@ -6,16 +6,49 @@ using Newtonsoft.Json;
 
 namespace Keba
 {
-
-    public class KebaConnector
+    public class KebaDataChangedEventArgs : EventArgs
     {
-        private readonly IPAddress ipAddress;
-        private readonly int uDPPort;
+        public KebaDataChangedEventArgs(KebaDeviceStatusData data)
+        {
+            Data = data;
+        }
+        public KebaDeviceStatusData Data { get; }
+    }
 
-        public KebaConnector(IPAddress IpAddress, int UDPPort)
+    public class KebaDeviceConnector
+    {
+        private Timer refreshDataTimer;
+        private IPAddress ipAddress;
+        private int uDPPort;
+        
+        public delegate void KebaDeviceStatusChangedEventHandler(object sender, EventArgs e);
+        public event KebaDeviceStatusChangedEventHandler KebaDeviceStatusChanged;
+
+        public KebaDeviceConnector()
+        {
+        }
+        
+        public KebaDeviceConnector(IPAddress IpAddress, int UDPPort)
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
+        }
+
+        public void InitializeKebaDeviceConnector(IPAddress IpAddress, int UDPPort, TimeSpan readDeviceDataInterval)
+        {
+            this.ipAddress = IpAddress;
+            this.uDPPort = UDPPort;
+            refreshDataTimer = new Timer(new TimerCallback(RefreshData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
+        }
+
+        private void RefreshData(object? state)
+        {
+            var data = GetDeviceStatus();
+
+            if (data != null)
+            {
+                KebaDeviceStatusChanged?.Invoke(this, new KebaDataChangedEventArgs(data));
+            }
         }
 
         public string GetDeviceInformation()
@@ -28,7 +61,23 @@ namespace Keba
             return ExecuteUDPCommand("report 1");
         }
 
-        public DeviceStatusData GetDeviceStatus()
+        /// <summary>
+        /// Sets the loading current within 1 sec 
+        /// </summary>
+        /// <param name="current">Target current in mA, possible values 0; 6000 - 63000</param>
+        /// <returns></returns>
+        public KebaDeviceStatusData SetCurrent(int current)
+        {
+            var success = ExecuteUDPCommand($"currtime {current} 1");
+            if (success != "TCH-OK :done\n") 
+            {
+                throw new Exception("Setting currency failed");
+            }
+            Thread.Sleep(2000);
+            return GetDeviceStatus();
+        }
+
+        public KebaDeviceStatusData GetDeviceStatus()
         {
             var report2 = ExecuteUDPCommand("report 2");
             var report3 = ExecuteUDPCommand("report 3");
@@ -41,7 +90,7 @@ namespace Keba
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
-            var data = JsonConvert.DeserializeObject<DeviceStatusData>(report2Json.ToString());
+            var data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
             return data;
         }
 

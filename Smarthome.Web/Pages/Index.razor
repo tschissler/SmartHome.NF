@@ -4,8 +4,8 @@
 @using Smarthome.Web.Data
 @using Smarthome.Web.Controls
 
-@*@inject PowerDogDeviceConnector powerDogDeviceConnector;
-@inject DataPoints dataPoints;*@
+@inject PowerDogDeviceConnector powerDogDeviceConnector;
+@inject DataPoints dataPoints;
 
 <PageTitle>Index</PageTitle>
 
@@ -33,6 +33,17 @@
             <CircularGaugeControl DataPoint="@dataPoints.GridDemand" Label="Bezug" Color="#990000"></CircularGaugeControl>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.CarCurrentChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.CarCharingCurrentSession" Label="Ladung aktuelle Sitzung" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <DataValueControl DataPoint="@dataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
+        </div>
+    </div>
 </div>
 
 
@@ -45,15 +56,15 @@
 
 
 @code {
-    public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
-    public DataPoints dataPoints = new DataPoints();
+    //public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
+    //public DataPoints dataPoints = new DataPoints();
 
     private Timer refreshTimer;
 
     protected override void OnInitialized()
     {
-        powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
-        dataPoints.InitializeDataPoints(powerDogDeviceConnector);
+        //powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
+        //dataPoints.InitializeDataPoints(powerDogDeviceConnector);
         refreshTimer = new Timer(Refresh, null, 1000, 1000);
     }
 
