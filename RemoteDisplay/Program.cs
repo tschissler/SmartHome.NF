@@ -1,5 +1,6 @@
 using nanoFramework.Azure.Devices.Client;
 using NFLibs;
+using Secrets;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -42,7 +43,7 @@ namespace RemoteDisplay
             Debug.WriteLine("Done");
 
             Debug.Write("Connecting to Wifi ... ");
-            var isWifiConnected = WifiLib.WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
+            var isWifiConnected = WifiLib.WifiLib.ConnectToWifi(RemoteDisplaySecrets.Ssid, RemoteDisplaySecrets.Password);
             if (!isWifiConnected)
             {
                 Debug.WriteLine("");
@@ -55,7 +56,7 @@ namespace RemoteDisplay
                 Debug.WriteLine("Done");
 
                 Debug.Write("Connecting to Azure IoT Hub...");
-                azureIoT = new DeviceClient(Secrets.IotBrokerAddress, DeviceID, Secrets.SasKey, azureCert: new X509Certificate(RemoteDisplay.Resources.GetBytes(RemoteDisplay.Resources.BinaryResources.AzureRoot)));
+                azureIoT = new DeviceClient(RemoteDisplaySecrets.IotBrokerAddress, DeviceID, RemoteDisplaySecrets.SasKey, azureCert: new X509Certificate(RemoteDisplay.Resources.GetBytes(RemoteDisplay.Resources.BinaryResources.AzureRoot)));
                 var isOpen = azureIoT.Open();
                 if (isOpen)
                 {

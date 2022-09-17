@@ -14,6 +14,7 @@ using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
+using Secrets;
 using SmartHome.NF.Logging;
 using UnitsNet;
 using WifiLib;
@@ -97,13 +98,13 @@ namespace SmartHome.NF
             Debug.WriteLine($"Device: {DeviceID}");
             Debug.WriteLine("Initializing...");
             Debug.Write("   - Wifi...");
-            bool isConnected = WifiLib.WifiLib.ConnectToWifi(Secrets.Ssid, Secrets.Password);
+            bool isConnected = WifiLib.WifiLib.ConnectToWifi(KellerSecrets.Ssid, KellerSecrets.Password);
             if (isConnected)
             {
                 Debug.WriteLine("Done");
 
                 Debug.Write("   - Azure IoT Hub...");
-                azureIoT = new DeviceClient(Secrets.IotBrokerAddress, DeviceID, Secrets.SasKey, azureCert: new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot)));
+                azureIoT = new DeviceClient(KellerSecrets.IotBrokerAddress, DeviceID, KellerSecrets.SasKey, azureCert: new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot)));
                 var isOpen = azureIoT.Open();
                 Debug.WriteLine("Done");
 

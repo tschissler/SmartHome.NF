@@ -28,6 +28,9 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
+    <Compile Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.cs">
+      <Link>Secrets.cs</Link>
+    </Compile>
     <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -36,7 +39,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Hcsr04.Esp32">
