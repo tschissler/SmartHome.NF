@@ -108,10 +108,6 @@ namespace Keba
 
                 udpClient.Send(sendBytes, sendBytes.Length);
 
-                //// Sends a message to a different host using optional hostname and port parameters.
-                //UdpClient udpClientB = new UdpClient();
-                //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
-
                 //IPEndPoint object will allow us to read datagrams sent from any source.
                 IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
