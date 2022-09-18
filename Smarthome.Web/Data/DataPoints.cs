@@ -5,12 +5,12 @@ namespace Smarthome.Web.Data
 {
     public class DataPoints
     {
-        public DecimalDataPoint PVProduction = new() { Unit = "W", MaxValue = 12000 };
-        public DecimalDataPoint GridSupply = new () { Unit = "W", MaxValue = 12000 };
-        public DecimalDataPoint GridDemand = new () { Unit = "W", MaxValue = 8000 };
+        public DecimalDataPoint PVProduction = new() { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
+        public DecimalDataPoint GridSupply = new () { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
+        public DecimalDataPoint GridDemand = new () { Unit = "W", MaxValue = 8000, DecimalDigits=1 };
         public DecimalDataPoint CarCharingCurrentSession = new() { Unit = "Wh", MaxValue = 80000 };
-        public DecimalDataPoint CarCharingTotal = new() { Unit = "KWh" };
-        public DecimalDataPoint CarCurrentChargingPower = new() { Unit = "W", MaxValue = 12000 };
+        public DecimalDataPoint CarCharingTotal = new() { Unit = "KWh", DecimalDigits=1 };
+        public DecimalDataPoint CarCurrentChargingPower = new() { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
         public IntegerDataPoint KebaStatus = new();
 
         public void InitializeDataPoints(PowerDogDeviceConnector powerDog, KebaDeviceConnector keba)

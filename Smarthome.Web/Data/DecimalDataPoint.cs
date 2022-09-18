@@ -24,6 +24,7 @@
         }
         public double MaxValue { get; set; }
         public string Unit { get; set; }
+        public int DecimalDigits { get; set; }
 
         public Func<double, double> CurrentValueCorrection;
     }

@@ -36,7 +36,7 @@
             <CircularGaugeAnnotations>
                 <CircularGaugeAnnotation Radius="0%" Angle="0" ZIndex="1">
                     <ContentTemplate>
-                        <div class="col annotationText"><span style="font-size:0.6em">@Label</span><br />@DataPoint.CurrentValue @DataPoint.Unit</div>
+                        <div class="col annotationText"><span style="font-size:0.6em">@Label</span><br />@AssembleValueString(DataPoint)</div>
                     </ContentTemplate>
                 </CircularGaugeAnnotation>
             </CircularGaugeAnnotations>
@@ -52,6 +52,13 @@
     public CircularGaugeControl()
     {
         Color = "#009900";
+    }
+
+    public string AssembleValueString(DecimalDataPoint dataPoint)
+    {
+        string format = "0." + new String('0', dataPoint.DecimalDigits);
+
+        return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
     }
 
     [Parameter]
