@@ -49,9 +49,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Web", "Smarthome.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj", "{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keba", "Keba\Keba.csproj", "{6AD239E1-70A2-4E9D-A703-24C66EE00B33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keba", "Keba\Keba.csproj", "{6AD239E1-70A2-4E9D-A703-24C66EE00B33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keba.Tests", "Keba.Tests\Keba.Tests.csproj", "{70ED027E-E156-494D-A7BD-E6392FEF03E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keba.Tests", "Keba.Tests\Keba.Tests.csproj", "{70ED027E-E156-494D-A7BD-E6392FEF03E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,15 @@
+﻿@using Smarthome.Web.Data
+<p>@Label</p>
+<h3>@Status[DataPoint.CurrentValue] @DataPoint.Unit</h3>
+
+@code {
+    [Parameter]
+    public IntegerDataPoint? DataPoint { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public Dictionary<int, string> Status {get; set;}
+
+}

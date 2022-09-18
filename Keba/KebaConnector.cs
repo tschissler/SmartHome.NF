@@ -115,6 +115,7 @@ namespace Keba
                 Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
                 string returnData = Encoding.ASCII.GetString(receiveBytes);
 
+#if DEBUG
                 // Uses the IPEndPoint object to determine which of these two hosts responded.
                 Console.WriteLine("This is the message you received " +
                                              returnData.ToString());
@@ -122,6 +123,7 @@ namespace Keba
                                             RemoteIpEndPoint.Address.ToString() +
                                             " on their port number " +
                                             RemoteIpEndPoint.Port.ToString());
+#endif
                 result = returnData.ToString();
                 udpClient.Close();
             }

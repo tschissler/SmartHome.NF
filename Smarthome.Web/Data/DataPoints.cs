@@ -11,6 +11,7 @@ namespace Smarthome.Web.Data
         public DecimalDataPoint CarCharingCurrentSession = new() { Unit = "Wh", MaxValue = 80000 };
         public DecimalDataPoint CarCharingTotal = new() { Unit = "KWh" };
         public DecimalDataPoint CarCurrentChargingPower = new() { Unit = "W", MaxValue = 12000 };
+        public IntegerDataPoint KebaStatus = new();
 
         public void InitializeDataPoints(PowerDogDeviceConnector powerDog, KebaDeviceConnector keba)
         {
@@ -22,6 +23,7 @@ namespace Smarthome.Web.Data
                 CarCharingCurrentSession.CurrentValue = ((KebaDataChangedEventArgs)e).Data.EnergyCurrentChargingSession;
                 CarCharingTotal.CurrentValue = ((KebaDataChangedEventArgs)e).Data.EnergyTotal;
                 CarCurrentChargingPower.CurrentValue = ((KebaDataChangedEventArgs)e).Data.Power;
+                KebaStatus.CurrentValue = ((KebaDataChangedEventArgs)e).Data.State;
             };
 
             // As the second PV is not considered, this is corrected

@@ -9,19 +9,8 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Photovoltaik</h1>
+<h2>Photovoltaik</h2>
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <DataValueControl DataPoint="@dataPoints.PVProduction" Label="Produktion"></DataValueControl>
-        </div>
-        <div class="col">
-            <DataValueControl DataPoint="@dataPoints.GridSupply" Label="Lieferung"></DataValueControl>
-        </div>
-        <div class="col">
-            <DataValueControl DataPoint="@dataPoints.GridDemand" Label="Bezug"></DataValueControl>
-        </div>
-    </div>
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.PVProduction" Label="Produktion" Color="#009900"></CircularGaugeControl>
@@ -33,6 +22,7 @@
             <CircularGaugeControl DataPoint="@dataPoints.GridDemand" Label="Bezug" Color="#990000"></CircularGaugeControl>
         </div>
     </div>
+    <h2>Ladesäule</h2>
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.CarCurrentChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
@@ -41,8 +31,20 @@
             <CircularGaugeControl DataPoint="@dataPoints.CarCharingCurrentSession" Label="Ladung aktuelle Sitzung" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <DataValueControl DataPoint="@dataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <DataValueControl DataPoint="@dataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <StatusControl DataPoint="@dataPoints.KebaStatus" Label="Status" Status="@kebaStatus"></StatusControl>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 
@@ -56,6 +58,7 @@
 
 
 @code {
+    private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Überhitzt" } };
     //public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
     //public DataPoints dataPoints = new DataPoints();
 
