@@ -25,10 +25,13 @@
     <h2>Ladesäule</h2>
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.CarCurrentChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.CarLatestChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.CarCharingCurrentSession" Label="Ladung aktuelle Sitzung" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.CarCharingActiveSession" Label="Ladung aktuelle Sitzung" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.CarChargingCurrentTarget" Label="Verfügbarer Ladestrom" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
             <div class="container">

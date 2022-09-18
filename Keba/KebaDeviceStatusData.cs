@@ -183,7 +183,7 @@ namespace Keba
         /// Power in mW (effective power).
         /// </summary>
         [JsonProperty("P")]
-        public int Power { get; set; } 
+        public int CurrentChargingPower { get; set; } 
 
         /// <summary>
         /// Current power factor (cosphi). The unit displayed is not % but 0.1%

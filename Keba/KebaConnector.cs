@@ -20,21 +20,14 @@ namespace Keba
         private Timer refreshDataTimer;
         private IPAddress ipAddress;
         private int uDPPort;
-        
+        private readonly object uDPLock = new object();
+
+        public double CurrentChargingPower { get; internal set; }
+
         public delegate void KebaDeviceStatusChangedEventHandler(object sender, EventArgs e);
         public event KebaDeviceStatusChangedEventHandler KebaDeviceStatusChanged;
 
-        public KebaDeviceConnector()
-        {
-        }
-        
-        public KebaDeviceConnector(IPAddress IpAddress, int UDPPort)
-        {
-            ipAddress = IpAddress;
-            uDPPort = UDPPort;
-        }
-
-        public void InitializeKebaDeviceConnector(IPAddress IpAddress, int UDPPort, TimeSpan readDeviceDataInterval)
+        public KebaDeviceConnector(IPAddress IpAddress, int UDPPort, TimeSpan readDeviceDataInterval)
         {
             this.ipAddress = IpAddress;
             this.uDPPort = UDPPort;
@@ -47,6 +40,10 @@ namespace Keba
 
             if (data != null)
             {
+                if (data.CurrentChargingPower != null)
+                {
+                    CurrentChargingPower = (int)data.CurrentChargingPower;
+                }
                 KebaDeviceStatusChanged?.Invoke(this, new KebaDataChangedEventArgs(data));
             }
         }
@@ -62,7 +59,7 @@ namespace Keba
         }
 
         /// <summary>
-        /// Sets the loading current within 1 sec 
+        /// Sets the charging current within 1 sec 
         /// </summary>
         /// <param name="current">Target current in mA, possible values 0; 6000 - 63000</param>
         /// <returns></returns>
@@ -97,41 +94,43 @@ namespace Keba
         private string ExecuteUDPCommand(string command)
         {
             string result = "";
-
-            UdpClient udpClient = new UdpClient(uDPPort);
-            try
+            
+            lock (uDPLock)
             {
-                udpClient.Connect(ipAddress, uDPPort);
+                UdpClient udpClient = new UdpClient(uDPPort);
+                try
+                {
+                    udpClient.Connect(ipAddress, uDPPort);
 
-                // Sends a message to the host to which you have connected.
-                Byte[] sendBytes = Encoding.ASCII.GetBytes(command);
+                    // Sends a message to the host to which you have connected.
+                    Byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
-                udpClient.Send(sendBytes, sendBytes.Length);
+                    udpClient.Send(sendBytes, sendBytes.Length);
 
-                //IPEndPoint object will allow us to read datagrams sent from any source.
-                IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
+                    //IPEndPoint object will allow us to read datagrams sent from any source.
+                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
-                // Blocks until a message returns on this socket from a remote host.
-                Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                string returnData = Encoding.ASCII.GetString(receiveBytes);
+                    // Blocks until a message returns on this socket from a remote host.
+                    Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                    string returnData = Encoding.ASCII.GetString(receiveBytes);
 
 #if DEBUG
-                // Uses the IPEndPoint object to determine which of these two hosts responded.
-                Console.WriteLine("This is the message you received " +
-                                             returnData.ToString());
-                Console.WriteLine("This message was sent from " +
-                                            RemoteIpEndPoint.Address.ToString() +
-                                            " on their port number " +
-                                            RemoteIpEndPoint.Port.ToString());
+                    // Uses the IPEndPoint object to determine which of these two hosts responded.
+                    Console.WriteLine("This is the message you received " +
+                                                 returnData.ToString());
+                    Console.WriteLine("This message was sent from " +
+                                                RemoteIpEndPoint.Address.ToString() +
+                                                " on their port number " +
+                                                RemoteIpEndPoint.Port.ToString());
 #endif
-                result = returnData.ToString();
-                udpClient.Close();
+                    result = returnData.ToString();
+                    udpClient.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
             return result;
         }
     }

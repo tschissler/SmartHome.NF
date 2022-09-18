@@ -25,7 +25,11 @@ namespace Smarthome.Web.Components
         private Timer refreshDataTimer;
         private Uri powerDogUri;
         private string powerDogPassword;
-       
+
+        public double PVProduction { get; internal set; }
+        public double GridSupply { get; internal set; }
+        public double GridConsumption { get; internal set; }
+
         public delegate void PVProductionChangedEventHandler(object sender, EventArgs e);
         public delegate void GridConsumptionChangedEventHandler(object sender, EventArgs e);
         public delegate void GridSupplyChangedEventHandler(object sender, EventArgs e);
@@ -34,7 +38,7 @@ namespace Smarthome.Web.Components
         public event GridConsumptionChangedEventHandler GridConsumptionChanged;
         public event GridSupplyChangedEventHandler GridSupplyChanged;
 
-        public void InitializePowerDogDeviceConnector(Uri powerDogUri, string powerDogPassword, TimeSpan readDeviceDataInterval)
+        public PowerDogDeviceConnector(Uri powerDogUri, string powerDogPassword, TimeSpan readDeviceDataInterval)
         {
             this.powerDogUri = powerDogUri;
             this.powerDogPassword = powerDogPassword;
@@ -50,15 +54,18 @@ namespace Smarthome.Web.Components
             {
                 if (data["Erzeugung"] != null)
                 {
-                    PVProductionChanged?.Invoke(this, new DataChangedEventArgs((double)data["Erzeugung"]));
+                    PVProduction = (double)data["Erzeugung"];
+                    PVProductionChanged?.Invoke(this, new DataChangedEventArgs(PVProduction));
                 }
                 if (data["Bezug"] != null)
                 {
-                    GridConsumptionChanged?.Invoke(this, new DataChangedEventArgs((double)data["Bezug"]));
+                    GridConsumption = (double)data["Bezug"];
+                    GridConsumptionChanged?.Invoke(this, new DataChangedEventArgs(GridConsumption));
                 }
                 if (data["lieferung"] != null)
                 {
-                    GridSupplyChanged?.Invoke(this, new DataChangedEventArgs((double)data["lieferung"]));
+                    GridSupply = (double)data["lieferung"];
+                    GridSupplyChanged?.Invoke(this, new DataChangedEventArgs(GridSupply));
                 }
             }
         }
