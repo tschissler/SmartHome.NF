@@ -1,5 +1,6 @@
 ﻿using Keba;
 using Smarthome.Web.Components;
+using Smarthome.Web.Controllers;
 
 namespace Smarthome.Web.Data
 {
@@ -11,10 +12,13 @@ namespace Smarthome.Web.Data
         public DecimalDataPoint CarCharingActiveSession = new() { Unit = "Wh", MaxValue = 80000 };
         public DecimalDataPoint CarCharingTotal = new() { Unit = "KWh", DecimalDigits=1 };
         public DecimalDataPoint CarLatestChargingPower = new() { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
-        public DecimalDataPoint CarChargingCurrentTarget = new() { Unit = "A", MaxValue = 16000, DecimalDigits = 1 };
+        public DecimalDataPoint CarChargingCurrentTarget = new() { Unit = "A", MaxValue = 16, DecimalDigits = 1 };
+        public IntegerDataPoint CarChargingManualCurrency = new() { Unit = "mA", MaxValue = 16000 };
         public IntegerDataPoint KebaStatus = new();
+        public BooleanDataPoint PVCharging = new();
+        public BooleanDataPoint MinimumCharging = new();
 
-        public DataPoints(PowerDogDeviceConnector powerDog, KebaDeviceConnector keba)
+        public DataPoints(PowerDogDeviceConnector powerDog, KebaDeviceConnector keba, ChargingController chargingController)
         {
             powerDog.PVProductionChanged += (sender, e) => PVProduction.CurrentValue = ((DataChangedEventArgs)e).Value;
             powerDog.GridSupplyChanged += (sender, e) => GridSupply.CurrentValue = ((DataChangedEventArgs)e).Value;
@@ -24,8 +28,12 @@ namespace Smarthome.Web.Data
                 CarCharingActiveSession.CurrentValue = ((KebaDataChangedEventArgs)e).Data.EnergyCurrentChargingSession;
                 CarCharingTotal.CurrentValue = ((KebaDataChangedEventArgs)e).Data.EnergyTotal;
                 CarLatestChargingPower.CurrentValue = ((KebaDataChangedEventArgs)e).Data.CurrentChargingPower;
+                CarChargingCurrentTarget.CurrentValue = ((KebaDataChangedEventArgs)e).Data.TargetCurrency;
                 KebaStatus.CurrentValue = ((KebaDataChangedEventArgs)e).Data.State;
             };
+
+            PVCharging.CurrentValue = chargingController.AutoCharging;
+            CarChargingManualCurrency.CurrentValue = chargingController.ManualChargingCurrency;
 
             // As the second PV is not considered, this is corrected
             PVProduction.CurrentValueCorrection = (double value) => { return value * (5.7 + 4.57)/5.7; };

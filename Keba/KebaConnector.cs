@@ -63,12 +63,12 @@ namespace Keba
         /// </summary>
         /// <param name="current">Target current in mA, possible values 0; 6000 - 63000</param>
         /// <returns></returns>
-        public KebaDeviceStatusData SetCurrent(int current)
+        public KebaDeviceStatusData SetChargingCurrent(int current)
         {
             var success = ExecuteUDPCommand($"currtime {current} 1");
             if (success != "TCH-OK :done\n") 
             {
-                throw new Exception("Setting currency failed");
+                Console.WriteLine("Setting currency failed");
             }
             Thread.Sleep(2000);
             return GetDeviceStatus();
@@ -116,12 +116,12 @@ namespace Keba
 
 #if DEBUG
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
-                    Console.WriteLine("This is the message you received " +
-                                                 returnData.ToString());
-                    Console.WriteLine("This message was sent from " +
-                                                RemoteIpEndPoint.Address.ToString() +
-                                                " on their port number " +
-                                                RemoteIpEndPoint.Port.ToString());
+                    //Console.WriteLine("This is the message you received " +
+                    //                             returnData.ToString());
+                    //Console.WriteLine("This message was sent from " +
+                    //                            RemoteIpEndPoint.Address.ToString() +
+                    //                            " on their port number " +
+                    //                            RemoteIpEndPoint.Port.ToString());
 #endif
                     result = returnData.ToString();
                     udpClient.Close();

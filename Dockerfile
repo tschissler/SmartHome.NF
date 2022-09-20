@@ -7,7 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Smarthome.Web/Smarthome.Web.csproj", "Smarthome.Web/"]
+COPY ["/Smarthome.Web/Smarthome.Web.csproj", "Smarthome.Web/"]
+COPY ["/Keba/Keba.csproj", "Keba/"]
+COPY ["/PowerDog/PowerDog.csproj", "PowerDog/"]
+COPY ["/Shared.Contracts/Shared.Contracts.csproj", "Shared.Contracts/"]
 RUN dotnet restore "Smarthome.Web/Smarthome.Web.csproj"
 COPY . .
 WORKDIR "/src/Smarthome.Web"

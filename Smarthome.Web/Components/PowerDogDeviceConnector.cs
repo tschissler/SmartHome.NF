@@ -42,7 +42,7 @@ namespace Smarthome.Web.Components
         {
             this.powerDogUri = powerDogUri;
             this.powerDogPassword = powerDogPassword;
-            refreshDataTimer = new Timer(new TimerCallback(RefreshData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
+            refreshDataTimer = new Timer(new TimerCallback(RefreshData), null, (int)readDeviceDataInterval.TotalMilliseconds, (int)readDeviceDataInterval.TotalMilliseconds);
         }
 
         private void RefreshData(object? state)
@@ -52,20 +52,26 @@ namespace Smarthome.Web.Components
 
             if (data != null)
             {
-                if (data["Erzeugung"] != null)
+                if (data.ContainsKey("Erzeugung") && data["Erzeugung"] != null)
                 {
                     PVProduction = (double)data["Erzeugung"];
                     PVProductionChanged?.Invoke(this, new DataChangedEventArgs(PVProduction));
+                    Console.SetCursorPosition(0, 20);
+                    Console.WriteLine($"Erzeugung: {PVProduction}");
                 }
-                if (data["Bezug"] != null)
+                if (data.ContainsKey("Bezug") && data["Bezug"] != null)
                 {
                     GridConsumption = (double)data["Bezug"];
                     GridConsumptionChanged?.Invoke(this, new DataChangedEventArgs(GridConsumption));
+                    Console.SetCursorPosition(20, 20);
+                    Console.WriteLine($"Bezug: {GridConsumption}");
                 }
-                if (data["lieferung"] != null)
+                if (data.ContainsKey("lieferung") && data["lieferung"] != null)
                 {
                     GridSupply = (double)data["lieferung"];
                     GridSupplyChanged?.Invoke(this, new DataChangedEventArgs(GridSupply));
+                    Console.SetCursorPosition(40, 20);
+                    Console.WriteLine($"lieferung: {GridSupply}");
                 }
             }
         }

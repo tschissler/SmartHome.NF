@@ -1,10 +1,13 @@
 ﻿@page "/"
-@using Secrets
 @using Smarthome.Web.Components
+@using Smarthome.Web.Controllers
 @using Smarthome.Web.Data
 @using Smarthome.Web.Controls
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
 
 @inject PowerDogDeviceConnector powerDogDeviceConnector;
+@inject ChargingController chargingController;
 @inject DataPoints dataPoints;
 
 <PageTitle>Index</PageTitle>
@@ -23,6 +26,24 @@
         </div>
     </div>
     <h2>Ladesäule</h2>
+    <div class="roe">
+        <div class="col">
+            <label for="checked" style="padding: 10px 10px 10px 0">Überschuss-Laden</label>
+            <SfSwitch @bind-Checked="@dataPoints.PVCharging.CurrentValue"></SfSwitch>
+        </div>
+        <div class="col">
+            <label for="checked" style="padding: 10px 10px 10px 0">Mindest-Laden</label>
+            <SfSwitch @bind-Checked="@dataPoints.MinimumCharging.CurrentValue"></SfSwitch>
+        </div>
+        <div class="col">
+            <label for="checked" style="padding: 10px 10px 10px 0">Manuelle Ladekapazität</label>
+            <label>@dataPoints.CarChargingManualCurrency.CurrentValue</label>
+            <SfSlider TValue="double" ID="gradient_slider" Value="@dataPoints.CarChargingManualCurrency.CurrentValue" Type=SliderType.MinRange Min="0" Max="@dataPoints.CarChargingManualCurrency.MaxValue" Step="500" Width="250px">
+                <SliderEvents TValue="double" OnChange="RangeStartChange" />
+            </SfSlider>
+            <SfButton @onclick="UpdateManualChargingCurrency">Anwenden</SfButton>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.CarLatestChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
@@ -61,7 +82,7 @@
 
 
 @code {
-    private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Überhitzt" } };
+    private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Unterbrochen" } };
     //public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
     //public DataPoints dataPoints = new DataPoints();
 
@@ -72,6 +93,21 @@
         //powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
         //dataPoints.InitializeDataPoints(powerDogDeviceConnector);
         refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    private void UpdateManualChargingCurrency()
+    {
+        chargingController.MinCharging = dataPoints.MinimumCharging.CurrentValue;
+        chargingController.AutoCharging = dataPoints.PVCharging.CurrentValue;
+        chargingController.ManualChargingCurrency = dataPoints.CarChargingManualCurrency.CurrentValue;
+    }
+    
+    private void RangeStartChange(Syncfusion.Blazor.Inputs.SliderChangeEventArgs<double> args)
+    {
+        if (dataPoints.CarChargingManualCurrency.CurrentValue != (int)args.Value)
+        {
+            dataPoints.CarChargingManualCurrency.CurrentValue = (int)args.Value;
+        }
     }
 
     private void Refresh(object? state)

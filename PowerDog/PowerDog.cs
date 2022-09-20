@@ -24,13 +24,22 @@ namespace PowerDog
             var result = proxy.getAllCurrentLinearValues(password);
             if (result.ErrorCode != 0)
             {
-                throw new Exception(result.ErrorString);
+                Console.WriteLine($"Error reading data from PowerDog: {result.ErrorString}");
+                return null;
+                //throw new Exception(result.ErrorString);
             }
             Dictionary<string, double?> data = new();
 
+            if (result.Reply == null)
+            {
+                Console.WriteLine("Reply is empty, communication with PowerDog failed");
+                return data;
+            }
+            
             foreach (var sensorKey in sensorKeys)
             {
                 double value;
+
                 if (result.Reply.ContainsKey(sensorKey.Value) &&
                     ((bool)((XmlRpcStruct)result.Reply[sensorKey.Value])["Valid"]) &&
                     double.TryParse(((XmlRpcStruct)result.Reply[sensorKey.Value])["Current_Value"].ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out value))
