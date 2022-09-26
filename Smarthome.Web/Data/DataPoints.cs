@@ -35,8 +35,6 @@ namespace Smarthome.Web.Data
             PVCharging.CurrentValue = chargingController.AutoCharging;
             CarChargingManualCurrency.CurrentValue = chargingController.ManualChargingCurrency;
 
-            // As the second PV is not considered, this is corrected
-            PVProduction.CurrentValueCorrection = (double value) => { return value * (5.7 + 4.57)/5.7; };
             // Energy is in 0.1Wh, so we need to divide by 10
             CarCharingActiveSession.CurrentValueCorrection = (double value) => { return value / 10; };
             CarCharingTotal.CurrentValueCorrection = (double value) => { return value / 10000; };

@@ -3,6 +3,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using HelpersLib;
 
 namespace Keba
 {
@@ -68,7 +69,7 @@ namespace Keba
             var success = ExecuteUDPCommand($"currtime {current} 1");
             if (success != "TCH-OK :done\n") 
             {
-                Console.WriteLine("Setting currency failed");
+                ConsoleHelpers.PrintErrorMessage("Setting currency failed");
             }
             Thread.Sleep(2000);
             return GetDeviceStatus();
@@ -88,6 +89,7 @@ namespace Keba
             });
 
             var data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
+            ConsoleHelpers.PrintConsoleOutput(0, 4, $"CurrentChargingPower: {data.CurrentChargingPower}\t EnergyTotal: {data.EnergyTotal}\t State: {data.State}\t TargetCurrency: {data.TargetCurrency}");
             return data;
         }
 
@@ -97,6 +99,7 @@ namespace Keba
             
             lock (uDPLock)
             {
+                ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba Updated        ");
                 UdpClient udpClient = new UdpClient(uDPPort);
                 try
                 {
@@ -125,10 +128,13 @@ namespace Keba
 #endif
                     result = returnData.ToString();
                     udpClient.Close();
+                    Thread.Sleep(200);
+
+                    ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba                ");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConsoleHelpers.PrintErrorMessage("Fehler: " + e.Message);
                 }
             }
             return result;

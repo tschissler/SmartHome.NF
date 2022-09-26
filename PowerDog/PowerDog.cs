@@ -1,4 +1,5 @@
 ﻿using CookComputing.XmlRpc;
+using HelpersLib;
 using Shared.Contracts;
 using System.Globalization;
 
@@ -24,7 +25,7 @@ namespace PowerDog
             var result = proxy.getAllCurrentLinearValues(password);
             if (result.ErrorCode != 0)
             {
-                Console.WriteLine($"Error reading data from PowerDog: {result.ErrorString}");
+                ConsoleHelpers.PrintErrorMessage($"Error reading data from PowerDog: {result.ErrorString}");
                 return null;
                 //throw new Exception(result.ErrorString);
             }
@@ -32,7 +33,7 @@ namespace PowerDog
 
             if (result.Reply == null)
             {
-                Console.WriteLine("Reply is empty, communication with PowerDog failed");
+                ConsoleHelpers.PrintErrorMessage("Reply is empty, communication with PowerDog failed");
                 return data;
             }
             

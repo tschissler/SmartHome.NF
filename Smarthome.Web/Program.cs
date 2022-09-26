@@ -8,6 +8,8 @@ using Smarthome.Web.Data;
 using Syncfusion.Blazor;
 using System.Net;
 
+Console.Clear();
+
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 
@@ -16,8 +18,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 
-PowerDogDeviceConnector powerDogDeviceConnector = new(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(5));
-KebaDeviceConnector kebaDeviceConnector = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, TimeSpan.FromSeconds(5));
+PowerDogDeviceConnector powerDogDeviceConnector = new(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
+KebaDeviceConnector kebaDeviceConnector = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, TimeSpan.FromSeconds(1));
 ChargingController chargingController = new(powerDogDeviceConnector, kebaDeviceConnector);
 DataPoints DataPoints = new DataPoints(powerDogDeviceConnector, kebaDeviceConnector, chargingController);
 

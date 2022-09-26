@@ -1,5 +1,7 @@
-﻿using Keba;
+﻿using HelpersLib;
+using Keba;
 using Smarthome.Web.Components;
+using Smarthome.Web.Data;
 using static Smarthome.Web.Components.PowerDogDeviceConnector;
 
 namespace Smarthome.Web.Controllers
@@ -80,17 +82,28 @@ namespace Smarthome.Web.Controllers
 
         private void RecalculateChargingPower(object sender, EventArgs e)
         {
-            if (DateTime.Now.Subtract(latestUpdateTimeStamp).TotalMilliseconds > 1000)
+            if (DateTime.Now.Subtract(latestUpdateTimeStamp).TotalMilliseconds > 3000)
             {
                 latestUpdateTimeStamp = DateTime.Now;
                 // Lieferung + Auto - Bezug
                 double calculatedChargingPower = powerDog.GridSupply + keba.CurrentChargingPower / 1000 - powerDog.GridConsumption;
+                ConsoleHelpers.PrintConsoleOutput(0, 10, $"CalculatedChargingPower: {calculatedChargingPower} \t | PV-Production: {powerDog.PVProduction}");
+                if (calculatedChargingPower > powerDog.PVProduction)
+                {
+                    calculatedChargingPower = powerDog.PVProduction;
+                }
+                
                 double calculatedChargingCurrent = calculatedChargingPower / 230 * 1000 / 3;
                 if (calculatedChargingCurrent < 6000)
                 {
                     calculatedChargingCurrent = MinCharging ? 6000 : 0;
                 }
 
+                if (calculatedChargingCurrent > 16000)
+                {
+                    calculatedChargingCurrent = 16000;
+                }
+                
                 if ((int)calculatedChargingCurrent != previousChargingCurrency)
                 {
                     keba.SetChargingCurrent((int)calculatedChargingCurrent);
@@ -98,7 +111,9 @@ namespace Smarthome.Web.Controllers
                 }
                 CalculatedCharingPowerChange?.Invoke(this, new DataChangedEventArgs(calculatedChargingPower));
 
-                Console.WriteLine($"Grid Supply: {powerDog.GridSupply} \t| Charging: {(keba.CurrentChargingPower/1000).ToString("0.0")} \t| Consumption: {powerDog.GridConsumption} \t| Calculated Power: {calculatedChargingPower.ToString("0.0")} \t | Calculated Currency: {calculatedChargingCurrent.ToString("0.0")} \t| Previous: {previousChargingCurrency.ToString("0.0")}");
+                ConsoleHelpers.PrintConsoleOutput(0, 6, $"Grid Supply: {powerDog.GridSupply} \t| Charging: {(keba.CurrentChargingPower / 1000).ToString("0.0")} \t| Consumption: {powerDog.GridConsumption}");
+                ConsoleHelpers.PrintConsoleOutput(0, 7, $"Calculated Power: {calculatedChargingPower.ToString("0.0")} \t | Calculated Currency: {calculatedChargingCurrent.ToString("0.0")} \t| Previous: {previousChargingCurrency.ToString("0.0")}");
+                ConsoleHelpers.PrintConsoleOutput(0, 8, $"CalculatedChargingPower: {calculatedChargingPower} \t | PV-Production: {powerDog.PVProduction}                  ");
             }
         }
     }

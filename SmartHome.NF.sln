@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions", "AzureFunc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C8C28-CB59-4500-AFFC-B93CD82CE91F}"
 	ProjectSection(SolutionItems) = preProject
+		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
 	EndProjectSection
 EndProject
@@ -53,6 +54,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keba", "Keba\Keba.csproj", "{6AD239E1-70A2-4E9D-A703-24C66EE00B33}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keba.Tests", "Keba.Tests\Keba.Tests.csproj", "{70ED027E-E156-494D-A7BD-E6392FEF03E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpersLib", "HelpersLib\HelpersLib.csproj", "{5F2521E0-8952-452F-B615-61B72EE5FD02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,6 +193,12 @@ Global
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F2521E0-8952-452F-B615-61B72EE5FD02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,6 +212,7 @@ Global
 		{05295B68-804C-427E-9AA3-B61A047F2542} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{6AD239E1-70A2-4E9D-A703-24C66EE00B33} = {B50847A3-0558-4B37-B036-CD5F7DEF933E}
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5} = {65E26E51-1BD7-4AE3-B557-45892C739814}
+		{5F2521E0-8952-452F-B615-61B72EE5FD02} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}
