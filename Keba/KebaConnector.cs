@@ -100,41 +100,43 @@ namespace Keba
             lock (uDPLock)
             {
                 ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba Updated        ");
-                UdpClient udpClient = new UdpClient(uDPPort);
-                try
+                using (UdpClient udpClient = new UdpClient(uDPPort))
                 {
-                    udpClient.Connect(ipAddress, uDPPort);
+                    try
+                    {
+                        udpClient.Connect(ipAddress, uDPPort);
 
-                    // Sends a message to the host to which you have connected.
-                    Byte[] sendBytes = Encoding.ASCII.GetBytes(command);
+                        // Sends a message to the host to which you have connected.
+                        Byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
-                    udpClient.Send(sendBytes, sendBytes.Length);
+                        udpClient.Send(sendBytes, sendBytes.Length);
 
-                    //IPEndPoint object will allow us to read datagrams sent from any source.
-                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
+                        //IPEndPoint object will allow us to read datagrams sent from any source.
+                        IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
-                    // Blocks until a message returns on this socket from a remote host.
-                    Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                    string returnData = Encoding.ASCII.GetString(receiveBytes);
+                        // Blocks until a message returns on this socket from a remote host.
+                        Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                        string returnData = Encoding.ASCII.GetString(receiveBytes);
 
 #if DEBUG
-                    // Uses the IPEndPoint object to determine which of these two hosts responded.
-                    //Console.WriteLine("This is the message you received " +
-                    //                             returnData.ToString());
-                    //Console.WriteLine("This message was sent from " +
-                    //                            RemoteIpEndPoint.Address.ToString() +
-                    //                            " on their port number " +
-                    //                            RemoteIpEndPoint.Port.ToString());
+                        // Uses the IPEndPoint object to determine which of these two hosts responded.
+                        //Console.WriteLine("This is the message you received " +
+                        //                             returnData.ToString());
+                        //Console.WriteLine("This message was sent from " +
+                        //                            RemoteIpEndPoint.Address.ToString() +
+                        //                            " on their port number " +
+                        //                            RemoteIpEndPoint.Port.ToString());
 #endif
-                    result = returnData.ToString();
-                    udpClient.Close();
-                    Thread.Sleep(200);
+                        result = returnData.ToString();
+                        udpClient.Close();
+                        Thread.Sleep(200);
 
-                    ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba                ");
-                }
-                catch (Exception e)
-                {
-                    ConsoleHelpers.PrintErrorMessage("Fehler: " + e.Message);
+                        ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba                ");
+                    }
+                    catch (Exception e)
+                    {
+                        ConsoleHelpers.PrintErrorMessage("Fehler: " + e.Message);
+                    }
                 }
             }
             return result;

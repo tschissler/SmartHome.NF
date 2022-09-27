@@ -17,8 +17,12 @@ namespace Smarthome.Web.Data
         public IntegerDataPoint KebaStatus = new();
         public BooleanDataPoint PVCharging = new();
         public BooleanDataPoint MinimumCharging = new();
+        public DecimalDataPoint RoomTemperature = new() { Unit = "°C", MaxValue = 40, DecimalDigits = 1 };
 
-        public DataPoints(PowerDogDeviceConnector powerDog, KebaDeviceConnector keba, ChargingController chargingController)
+        public DataPoints(PowerDogDeviceConnector powerDog, 
+            KebaDeviceConnector keba, 
+            ChargingController chargingController,
+            SensorsConnector sensorConnector)
         {
             powerDog.PVProductionChanged += (sender, e) => PVProduction.CurrentValue = ((DataChangedEventArgs)e).Value;
             powerDog.GridSupplyChanged += (sender, e) => GridSupply.CurrentValue = ((DataChangedEventArgs)e).Value;
@@ -30,6 +34,10 @@ namespace Smarthome.Web.Data
                 CarLatestChargingPower.CurrentValue = ((KebaDataChangedEventArgs)e).Data.CurrentChargingPower;
                 CarChargingCurrentTarget.CurrentValue = ((KebaDataChangedEventArgs)e).Data.TargetCurrency;
                 KebaStatus.CurrentValue = ((KebaDataChangedEventArgs)e).Data.State;
+            };
+            sensorConnector.RemoteDisplaySensorDataChanged += (sender, e) =>
+            {
+                RoomTemperature.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.RoomTemperature;
             };
 
             PVCharging.CurrentValue = chargingController.AutoCharging;

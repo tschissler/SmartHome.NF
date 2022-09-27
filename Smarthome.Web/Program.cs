@@ -21,36 +21,32 @@ builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation 
 PowerDogDeviceConnector powerDogDeviceConnector = new(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
 KebaDeviceConnector kebaDeviceConnector = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, TimeSpan.FromSeconds(1));
 ChargingController chargingController = new(powerDogDeviceConnector, kebaDeviceConnector);
-DataPoints DataPoints = new DataPoints(powerDogDeviceConnector, kebaDeviceConnector, chargingController);
+SensorsConnector sensorsConnector = new();
+DataPoints dataPoints = new DataPoints(powerDogDeviceConnector, kebaDeviceConnector, chargingController, sensorsConnector);
 
 builder.Services.AddSingleton(powerDogDeviceConnector);
 builder.Services.AddSingleton(kebaDeviceConnector);
 builder.Services.AddSingleton(chargingController);
-builder.Services.AddSingleton(DataPoints);
+builder.Services.AddSingleton(sensorsConnector);
+builder.Services.AddSingleton(dataPoints);
 
 var app = builder.Build();
-
-//var powerDogDeviceConnector = app.Services.GetRequiredService<PowerDogDeviceConnector>();
-//powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
-//var kebaDeviceConnector = app.Services.GetRequiredService<KebaDeviceConnector>();
-//kebaDeviceConnector.InitializeKebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, TimeSpan.FromSeconds(1));
-//var dataPoints = app.Services.GetRequiredService<DataPoints>();
-//dataPoints.InitializeDataPoints(powerDogDeviceConnector, kebaDeviceConnector);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    //app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

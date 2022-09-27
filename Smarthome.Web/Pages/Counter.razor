@@ -1,18 +1,22 @@
 ﻿@page "/counter"
+@using Smarthome.Web.Controls
+@using Smarthome.Web.Components
+@using Smarthome.Web.Controllers
+@using Smarthome.Web.Data
+
+@inject DataPoints dataPoints;
 
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<h2>Remote Display</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.RoomTemperature" Label="Raumtemperatur" Color="#009900"></CircularGaugeControl>
+        </div>
+    </div>
+</div>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
 }
