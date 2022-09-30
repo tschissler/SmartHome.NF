@@ -36,7 +36,8 @@
             <CircularGaugeAnnotations>
                 <CircularGaugeAnnotation Radius="0%" Angle="0" ZIndex="1">
                     <ContentTemplate>
-                        <div class="col annotationText"><span style="font-size:0.6em">@Label</span><br />@AssembleValueString(DataPoint)</div>
+                        <div class="col annotationText"><span style="font-size:0.6em">@Label</span><br />@AssembleValueString(DataPoint)</div><br/>
+                        <div class="col annotationText"><span style="font-size:0.4em">@DataPoint.LastUpdate.ToLongTimeString()</span></div>
                     </ContentTemplate>
                 </CircularGaugeAnnotation>
             </CircularGaugeAnnotations>

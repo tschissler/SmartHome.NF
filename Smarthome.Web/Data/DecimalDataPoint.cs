@@ -20,12 +20,22 @@
             set
             {
                 currentValue = value;
+                LastUpdate = DateTime.Now;
+                History.AddHistoryDataPoint(value);
             }
         }
         public double MaxValue { get; set; }
         public string Unit { get; set; }
         public int DecimalDigits { get; set; }
+        public DateTime LastUpdate { get; private set; }
+
+        public HistoryDataRow History { get; set; }
 
         public Func<double, double> CurrentValueCorrection;
+
+        public DecimalDataPoint()
+        {
+            History = new HistoryDataRow();
+        }
     }
 }

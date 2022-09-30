@@ -12,11 +12,37 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.RoomTemperature" Label="Raumtemperatur" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.RoomTemperature" Label="Temperatur" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.RoomHumidity" Label="Luftfeuchte" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.RoomPressure" Label="Luftdruck" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.RoomIllumination" Label="Helligkeit" Color="#009900"></CircularGaugeControl>
         </div>
     </div>
 </div>
 
-@code {
+<p>Zeit: @DateTime.Now</p>
 
+@code {
+    private Timer refreshTimer;
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    private void Refresh(object? state)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
 }

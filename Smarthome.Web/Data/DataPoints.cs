@@ -6,9 +6,9 @@ namespace Smarthome.Web.Data
 {
     public class DataPoints
     {
-        public DecimalDataPoint PVProduction = new() { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
-        public DecimalDataPoint GridSupply = new () { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
-        public DecimalDataPoint GridDemand = new () { Unit = "W", MaxValue = 8000, DecimalDigits=1 };
+        public DecimalDataPoint PVProduction = new() { Unit = "W", MaxValue = 12000, DecimalDigits = 1, History = new() { DataHistoryLength = 100 } };
+        public DecimalDataPoint GridSupply = new () { Unit = "W", MaxValue = 12000, DecimalDigits=1, History = new() { DataHistoryLength = 100 } };
+        public DecimalDataPoint GridDemand = new () { Unit = "W", MaxValue = 8000, DecimalDigits=1, History = new() { DataHistoryLength = 100 } };
         public DecimalDataPoint CarCharingActiveSession = new() { Unit = "Wh", MaxValue = 80000 };
         public DecimalDataPoint CarCharingTotal = new() { Unit = "KWh", DecimalDigits=1 };
         public DecimalDataPoint CarLatestChargingPower = new() { Unit = "W", MaxValue = 12000, DecimalDigits=1 };
@@ -18,6 +18,9 @@ namespace Smarthome.Web.Data
         public BooleanDataPoint PVCharging = new();
         public BooleanDataPoint MinimumCharging = new();
         public DecimalDataPoint RoomTemperature = new() { Unit = "°C", MaxValue = 40, DecimalDigits = 1 };
+        public DecimalDataPoint RoomIllumination = new() { Unit = "Lux", MaxValue = 200, DecimalDigits = 0 };
+        public DecimalDataPoint RoomPressure = new() { Unit = "hPa", MaxValue = 2000, DecimalDigits = 0 };
+        public DecimalDataPoint RoomHumidity = new() { Unit = "%", MaxValue = 100, DecimalDigits = 1 };
 
         public DataPoints(PowerDogDeviceConnector powerDog, 
             KebaDeviceConnector keba, 
@@ -37,7 +40,10 @@ namespace Smarthome.Web.Data
             };
             sensorConnector.RemoteDisplaySensorDataChanged += (sender, e) =>
             {
-                RoomTemperature.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.RoomTemperature;
+                RoomTemperature.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.Temperature;
+                RoomIllumination.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.Illumination;
+                RoomPressure.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.Pressure;
+                RoomHumidity.CurrentValue = ((RemoteDisplaySensorDataChangedEventArgs)e).Data.Humidity;
             };
 
             PVCharging.CurrentValue = chargingController.AutoCharging;

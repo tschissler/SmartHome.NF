@@ -6,6 +6,7 @@
         
         public static void PrintConsoleOutput(int x, int y, string output)
         {
+            return;
             if (DateTime.Now - lastClearTimeStamp > TimeSpan.FromSeconds(10))
             {
                 Console.Clear();
@@ -19,6 +20,7 @@
 
         public static void PrintErrorMessage(string message)
         {
+            return;
             Console.SetCursorPosition(0, Console.WindowHeight-1);
             Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth)));
             Console.SetCursorPosition(0, Console.WindowHeight - 1);
@@ -29,6 +31,7 @@
         
         public static void PrintSuccessMessage(int x, int y, string message)
         {
+            return;
             Console.SetCursorPosition(x, y);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(message);

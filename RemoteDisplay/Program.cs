@@ -1,10 +1,14 @@
-using nanoFramework.Azure.Devices.Client;
+//using nanoFramework.Azure.Devices.Client;
+using nanoFramework.Json;
 using NFLibs;
 using Secrets;
 using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Http.Headers;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
+//using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using GC = nanoFramework.Runtime.Native.GC;
@@ -13,7 +17,7 @@ namespace RemoteDisplay
 {
     public class Program
     {
-        private static DeviceClient azureIoT;
+        //private static DeviceClient azureIoT;
         //private const string DeviceID = "DevBoardRemoteDisplay";
         private const string DeviceID = "M1_RemoteDisplay";
         private static int TransmitInterval = (int)new TimeSpan(0, 10, 0).TotalMilliseconds;
@@ -55,66 +59,81 @@ namespace RemoteDisplay
             {
                 Debug.WriteLine("Done");
 
-                Debug.Write("Connecting to Azure IoT Hub...");
-                azureIoT = new DeviceClient(RemoteDisplaySecrets.IotBrokerAddress, DeviceID, RemoteDisplaySecrets.SasKey, azureCert: new X509Certificate(RemoteDisplay.Resources.GetBytes(RemoteDisplay.Resources.BinaryResources.AzureRoot)));
-                var isOpen = azureIoT.Open();
-                if (isOpen)
-                {
-                    Debug.WriteLine("Done");
-                    Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 0, TransmitInterval);
-                }
-                else
-                {
-                    Debug.WriteLine("Failed Connecting to Azure IoT Hub");
-                }
+                //Debug.Write("Connecting to Azure IoT Hub...");
+                //azureIoT = new DeviceClient(RemoteDisplaySecrets.IotBrokerAddress, DeviceID, RemoteDisplaySecrets.SasKey, azureCert: new X509Certificate(RemoteDisplay.Resources.GetBytes(RemoteDisplay.Resources.BinaryResources.AzureRoot)));
+                //var isOpen = azureIoT.Open();
+                //if (isOpen)
+                //{
+                //    Debug.WriteLine("Done");
+                //    Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 0, TransmitInterval);
+                //}
+                //else
+                //{
+                //    Debug.WriteLine("Failed Connecting to Azure IoT Hub");
+                //}
             }
 
             var display = new LEDMatrix(8);
             int cycle = 0;
             string text;
             int brightness = 1;
+            double illumination = 0.0;
+            double temperature = 0.0;
+            double preassure = 0.0;
+            double humidity = 0.0;
 
             while (true)
             {
-                if (IsBH1750SensorPresent)
-                {
-                    double light = I2CSensors.ReadBH1750Illuminance();
-                    brightness = (int)(light / 700 * 15);
-                    if (brightness > 15)
-                        brightness = 15;
-                }
-                else
-                {
-                    brightness = 5;
-                }
-
-                if (cycle == 1)
+                // Try catch slows down execution, therefore removed
+                //try
                 {
                     if (IsBH1750SensorPresent)
                     {
-                        Debug.WriteLine($"Illumination: {I2CSensors.ReadBH1750Illuminance()} lux");
+                        illumination = I2CSensors.ReadBH1750Illuminance();
+                        brightness = (int)(illumination / 700 * 15);
+                        if (brightness > 15)
+                            brightness = 15;
                     }
+                    else
+                    {
+                        brightness = 5;
+                    }
+
                     if (IsBMP180SensorPresent)
                     {
-                        Debug.WriteLine($"BMP180 Temperature: {I2CSensors.ReadBMP180Temperature().ToString("F1")}°C - BMP180 Pressure: {I2CSensors.ReadBMP180Pressure().ToString("F1")}hPa");
+                        temperature = I2CSensors.ReadBMP180Temperature();
+                        preassure = I2CSensors.ReadBMP180Pressure();
                     }
                     if (IsSHT3xSensorPresent)
                     {
-                        Debug.WriteLine($"SHT31  Temperature: {I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C - SHT31 Humidity: {I2CSensors.ReadSHT3xHumitidy().ToString("F0")}%");
+                        temperature = I2CSensors.ReadSHT3xTemperature();
+                        humidity = I2CSensors.ReadSHT3xHumitidy();
                     }
                     if (IsSHTC3SensorPresent)
                     {
-                        Debug.WriteLine($"SHTC3  Temperature: {I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C - SHT31 Humidity: {I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%");
+                        temperature = I2CSensors.ReadSHTC3Temperature();
+                        humidity = I2CSensors.ReadSHTC3Humitidy();
                     }
                 }
+                //catch (Exception)
+                //{
+                //    Debug.WriteLine("Error reading sensors");
+                //}
 
-                if (cycle < 6)
+                if (cycle == 1)
+                {
+                    SendData(temperature, humidity, preassure, illumination);
+                    Debug.WriteLine($"Illumination: {illumination.ToString("F1")} lux");
+                    Debug.WriteLine($"Temperature: {temperature.ToString("F1")}°C - Pressure: {preassure.ToString("F1")}hPa - Humidity: {humidity.ToString("F0")}%");
+                }
+
+                if (cycle <= 6)
                 {
                     // Show clock
                     var hour = DateTime.UtcNow.Hour;
                     var minute = DateTime.UtcNow.Minute;
                     var second = DateTime.UtcNow.Second;
-                    
+
                     if (IsSummerTime(DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.DayOfWeek))
                     {
                         hour += 2;
@@ -125,7 +144,7 @@ namespace RemoteDisplay
                     }
                     if (hour >= 24)
                     {
-                        hour-=24;
+                        hour -= 24;
                     }
 
                     if (cycle % 2 == 0)
@@ -138,20 +157,22 @@ namespace RemoteDisplay
                     }
                     display.ShowText(text, brightness, characterSpace: 1);
                 }
-                else if (cycle < 12)
+                else if (cycle <= 12)
                 {
-                    if (IsSHT3xSensorPresent)
-                    {
-                        text = $"{I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C";
-                    }
-                    else if (IsSHTC3SensorPresent)
-                    {
-                        text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
-                    }
-                    else if (IsBMP180SensorPresent)
-                    {
-                        text = $"{I2CSensors.ReadBMP180Temperature().ToString("F1")}°C";
-                    }
+                    //if (IsSHT3xSensorPresent)
+                    //{
+                    //    text = $"{I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C";
+                    //}
+                    //else if (IsSHTC3SensorPresent)
+                    //{
+                    //    text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
+                    //}
+                    //else if (IsBMP180SensorPresent)
+                    //{
+                    //    text = $"{temperature.ToString("F1")}°C";
+                    //}
+
+                    text = $"{temperature.ToString("F1")}°C";
                     display.ShowText(text, brightness, characterSpace: 1);
                 }
                 else
@@ -163,6 +184,28 @@ namespace RemoteDisplay
                 cycle++;
             }
 
+        }
+
+        public static void SendData(double temperature = 0, double humidity = 0, double pressure = 0, double illumination = 0)
+        {
+            var data = new SensorData
+            {
+                Temperature = temperature,
+                Humidity = humidity,
+                Pressure = pressure,
+                Illumination = illumination
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+            Debug.WriteLine($"Sending sensor data to SmartHome: {json}");
+
+            HttpClient httpClient = new();
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            var responseMessage = httpClient.Post("http://smarthomepi:5000/api/Sensors/RemoteDisplaySensorData", content);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+            }
         }
 
         public static bool IsSummerTime(int day, int month, DayOfWeek dayOfWeek)
@@ -178,53 +221,61 @@ namespace RemoteDisplay
             return false; //this line never gonna happend
         }
 
-        private static void TransmitDataToIotHub(object state)
-        {
-            try
-            {
-                var message = new StringBuilder();
-                message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\"");
+        //private static void TransmitDataToIotHub(object state)
+        //{
+        //    try
+        //    {
+        //        var message = new StringBuilder();
+        //        message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\"");
 
-                double light = I2CSensors.ReadBH1750Illuminance();
+        //        double light = I2CSensors.ReadBH1750Illuminance();
 
-                if (IsBH1750SensorPresent)
-                {
-                    message.Append($",\"Illumination\":{I2CSensors.ReadBH1750Illuminance()}");
-                }
-                if (IsBMP180SensorPresent)
-                {
-                    message.Append($",\"Temp\":{I2CSensors.ReadBMP180Temperature()}");
-                    message.Append($",\"Pressure\":{I2CSensors.ReadBMP180Pressure()}");
-                }
-                if (IsSHT3xSensorPresent)
-                {
-                    message.Append($",\"Temp2\":{I2CSensors.ReadSHT3xTemperature()}");
-                    message.Append($",\"Humidity\":{I2CSensors.ReadSHT3xHumitidy()}");
-                }
-                if (IsSHTC3SensorPresent)
-                {
-                    message.Append($",\"Temp2\":{I2CSensors.ReadSHTC3Temperature()}");
-                    message.Append($",\"Humidity\":{I2CSensors.ReadSHTC3Humitidy()}");
-                }
+        //        if (IsBH1750SensorPresent)
+        //        {
+        //            message.Append($",\"Illumination\":{I2CSensors.ReadBH1750Illuminance()}");
+        //        }
+        //        if (IsBMP180SensorPresent)
+        //        {
+        //            message.Append($",\"Temp\":{I2CSensors.ReadBMP180Temperature()}");
+        //            message.Append($",\"Pressure\":{I2CSensors.ReadBMP180Pressure()}");
+        //        }
+        //        if (IsSHT3xSensorPresent)
+        //        {
+        //            message.Append($",\"Temp2\":{I2CSensors.ReadSHT3xTemperature()}");
+        //            message.Append($",\"Humidity\":{I2CSensors.ReadSHT3xHumitidy()}");
+        //        }
+        //        if (IsSHTC3SensorPresent)
+        //        {
+        //            message.Append($",\"Temp2\":{I2CSensors.ReadSHTC3Temperature()}");
+        //            message.Append($",\"Humidity\":{I2CSensors.ReadSHTC3Humitidy()}");
+        //        }
 
-                message.Append($",\"Memory\":{GC.Run(false)}");
-                message.Append("}");
+        //        message.Append($",\"Memory\":{GC.Run(false)}");
+        //        message.Append("}");
 
-                var t = message.ToString();
-                Debug.WriteLine($"Sending Message to Azure IoT Hub:\n {t}");
-                if (azureIoT.SendMessage(message.ToString()))
-                {
-                    Debug.Write("Data has been transmitted to Azure IoT Hub");
-                }
-                else
-                {
-                    Debug.WriteLine("Error transmitting data to Azure IoT Hub");
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
+        //        var t = message.ToString();
+        //        Debug.WriteLine($"Sending Message to Azure IoT Hub:\n {t}");
+        //        if (azureIoT.SendMessage(message.ToString()))
+        //        {
+        //            Debug.Write("Data has been transmitted to Azure IoT Hub");
+        //        }
+        //        else
+        //        {
+        //            Debug.WriteLine("Error transmitting data to Azure IoT Hub");
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //}
 
+    }
+
+    public class SensorData
+    {
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
+        public double Pressure { get; set; }
+        public double Illumination { get; set; }
     }
 }

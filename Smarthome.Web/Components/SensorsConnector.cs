@@ -11,7 +11,10 @@
 
     public class RemoteDisplayData
     {
-        public double RoomTemperature { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
+        public double Pressure { get; set; }
+        public double Illumination { get; set; }
     }
     
     public class SensorsConnector
