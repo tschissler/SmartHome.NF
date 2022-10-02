@@ -59,7 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PVController", "PowerDogService\PVController.csproj", "{FC7A5810-D983-47EA-AF08-9D9907E7B0FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingController", "ChargingController\ChargingController.csproj", "{8560D57C-4F3B-4863-9857-90F13BFF9139}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingController", "ChargingController\ChargingController.csproj", "{8560D57C-4F3B-4863-9857-90F13BFF9139}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,8 +11,8 @@
 
 <PageTitle>Index</PageTitle>
 
-<h2>Photovoltaik</h2>
 <div class="container">
+    <h2>Photovoltaik</h2>
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@PVDataPoints.PVProduction" Label="Produktion" Color="#009900"></CircularGaugeControl>
@@ -26,34 +26,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="control-section" align="center">
-                <SfChart Title="Photovoltaik">
-                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" LabelFormat="hh:mm:ss" Title="Time">
-                        <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
-                    </ChartPrimaryXAxis>
-                    <ChartArea>
-                        <ChartAreaBorder Width="0"></ChartAreaBorder>
-                    </ChartArea>
-                    <ChartPrimaryYAxis Title="Leistung" Minimum="0" LabelFormat="{value}W">
-                        <ChartAxisLineStyle Width="0" Color="transparent"></ChartAxisLineStyle>
-                    </ChartPrimaryYAxis>
-                    <ChartSeriesCollection>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Produktion" Width="2" DataSource="@PVDataPoints.PVProduction.History.DataHistory"
-                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
-                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
-                        </ChartSeries>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Lieferung" Width="2" DataSource="@PVDataPoints.GridSupply.History.DataHistory"
-                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
-                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
-                        </ChartSeries>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Bezug" Width="2" DataSource="@PVDataPoints.GridDemand.History.DataHistory"
-                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
-                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
-                        </ChartSeries>
-                    </ChartSeriesCollection>
-                    <ChartLegendSettings EnableHighlight="true"></ChartLegendSettings>
-                </SfChart>
-            </div>
+            <HistoryControl DataPoints="new List<DecimalDataPoint>{PVDataPoints.PVProduction, PVDataPoints.GridSupply, PVDataPoints.GridDemand}" Label="Photovoltaik"></HistoryControl>
         </div>
     </div>
     <h2>Ladesäule</h2>
