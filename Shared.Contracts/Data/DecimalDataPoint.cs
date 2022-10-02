@@ -1,20 +1,13 @@
-﻿namespace Smarthome.Web.Data
+﻿namespace SharedContracts.Data
 {
     public class DecimalDataPoint
     {
         private double currentValue;
 
-        public double CurrentValue { 
+        public double CurrentValue
+        {
             get
             {
-                if (CurrentValueCorrection != null)
-                {
-                    return CurrentValueCorrection(currentValue);
-                }
-                else
-                {
-                    return currentValue;
-                }
                 return currentValue;
             }
             set
@@ -28,14 +21,24 @@
         public string Unit { get; set; }
         public int DecimalDigits { get; set; }
         public DateTime LastUpdate { get; private set; }
-
         public HistoryDataRow History { get; set; }
-
-        public Func<double, double> CurrentValueCorrection;
+        public double? CurrentValueCorrection { get; set; }
 
         public DecimalDataPoint()
         {
             History = new HistoryDataRow();
+        }
+
+        public void SetCorrectedValue(double value)
+        {
+            if (CurrentValueCorrection != null)
+            {
+                CurrentValue = value * CurrentValueCorrection.Value;
+            }
+            else
+            {
+                CurrentValue = value;
+            }
         }
     }
 }

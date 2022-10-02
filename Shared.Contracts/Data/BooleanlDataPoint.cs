@@ -1,10 +1,11 @@
-﻿namespace Smarthome.Web.Data
+﻿namespace SharedContracts.Data
 {
     public class BooleanDataPoint
     {
         private bool currentValue;
 
-        public bool CurrentValue { 
+        public bool CurrentValue
+        {
             get
             {
                 if (CurrentValueCorrection != null)

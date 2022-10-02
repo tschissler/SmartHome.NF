@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Smarthome.Web.Data
+﻿namespace SharedContracts.Data
 {
     public class HistoryDataPoint
     {
@@ -12,13 +10,14 @@ namespace Smarthome.Web.Data
         public List<HistoryDataPoint> DataHistory { get; private set; }
         public int DataHistoryLength { get; set; }
 
-        public HistoryDataRow() {
+        public HistoryDataRow()
+        {
             DataHistory = new List<HistoryDataPoint>();
         }
 
         public void AddHistoryDataPoint(double dataPoint)
         {
-            if (DataHistory.Count > DataHistoryLength && DataHistoryLength > 0)
+            if (DataHistory.Count >= DataHistoryLength && DataHistoryLength > 0)
             {
                 DataHistory.RemoveAt(0);
             }

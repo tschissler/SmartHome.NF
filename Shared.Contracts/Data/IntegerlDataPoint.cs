@@ -1,15 +1,16 @@
-﻿namespace Smarthome.Web.Data
+﻿namespace SharedContracts.Data
 {
     public class IntegerDataPoint
     {
         private int currentValue;
 
-        public int CurrentValue { 
+        public int CurrentValue
+        {
             get
             {
                 if (CurrentValueCorrection != null)
                 {
-                    return CurrentValueCorrection(currentValue);
+                    return currentValue * CurrentValueCorrection.Value;
                 }
                 else
                 {
@@ -25,6 +26,6 @@
         public int MaxValue { get; set; }
         public string Unit { get; set; }
 
-        public Func<int, int> CurrentValueCorrection;
+        public int? CurrentValueCorrection { get; set; }
     }
 }

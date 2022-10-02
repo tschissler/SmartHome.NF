@@ -1,6 +1,6 @@
-﻿@using Smarthome.Web.Data
+﻿@using SharedContracts.Data
 <p>@Label</p>
-<h3>@DataPoint.CurrentValue @DataPoint.Unit</h3>
+<h3>@AssembleValueString(DataPoint)</h3>
 
 @code {
     [Parameter]
@@ -8,5 +8,12 @@
     
     [Parameter]
     public string? Label { get; set; }
+
+    public string AssembleValueString(DecimalDataPoint dataPoint)
+    {
+        string format = "0." + new String('0', dataPoint.DecimalDigits);
+
+        return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
+    }
 
 }

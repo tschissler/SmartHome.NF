@@ -1,15 +1,13 @@
 ﻿@page "/"
+@using Newtonsoft.Json
+@using SharedContracts.Data
 @using Smarthome.Web.Components
 @using Smarthome.Web.Controllers
-@using Smarthome.Web.Data
 @using Smarthome.Web.Controls
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Charts
-
-@inject PowerDogDeviceConnector powerDogDeviceConnector;
-@inject ChargingController chargingController;
-@inject DataPoints dataPoints;
+@using System.Diagnostics
 
 <PageTitle>Index</PageTitle>
 
@@ -17,13 +15,13 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.PVProduction" Label="Produktion" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@PVDataPoints.PVProduction" Label="Produktion" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.GridSupply" Label="Lieferung" Color="#999900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@PVDataPoints.GridSupply" Label="Lieferung" Color="#999900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.GridDemand" Label="Bezug" Color="#990000"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@PVDataPoints.GridDemand" Label="Bezug" Color="#990000"></CircularGaugeControl>
         </div>
     </div>
     <div class="row">
@@ -40,15 +38,15 @@
                         <ChartAxisLineStyle Width="0" Color="transparent"></ChartAxisLineStyle>
                     </ChartPrimaryYAxis>
                     <ChartSeriesCollection>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Produktion" Width="2" DataSource="@dataPoints.PVProduction.History.DataHistory"
+                        <ChartSeries Type="ChartSeriesType.Line" Name="Produktion" Width="2" DataSource="@PVDataPoints.PVProduction.History.DataHistory"
                                      XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
                             <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
                         </ChartSeries>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Lieferung" Width="2" DataSource="@dataPoints.GridSupply.History.DataHistory"
+                        <ChartSeries Type="ChartSeriesType.Line" Name="Lieferung" Width="2" DataSource="@PVDataPoints.GridSupply.History.DataHistory"
                                      XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
                             <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
                         </ChartSeries>
-                        <ChartSeries Type="ChartSeriesType.Line" Name="Bezug" Width="2" DataSource="@dataPoints.GridDemand.History.DataHistory"
+                        <ChartSeries Type="ChartSeriesType.Line" Name="Bezug" Width="2" DataSource="@PVDataPoints.GridDemand.History.DataHistory"
                                      XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
                             <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
                         </ChartSeries>
@@ -59,10 +57,10 @@
         </div>
     </div>
     <h2>Ladesäule</h2>
-    <div class="roe">
+@*    <div class="roe">
         <div class="col">
             <label for="checked" style="padding: 10px 10px 10px 0">Überschuss-Laden</label>
-            <SfSwitch @bind-Checked="@dataPoints.PVCharging.CurrentValue"></SfSwitch>
+            <SfSwitch @bind-Checked="@ChargingDataPoints.PVCharging.CurrentValue"></SfSwitch>
         </div>
         <div class="col">
             <label for="checked" style="padding: 10px 10px 10px 0">Mindest-Laden</label>
@@ -76,27 +74,27 @@
             </SfSlider>
             <SfButton @onclick="UpdateManualChargingCurrency">Anwenden</SfButton>
         </div>
-    </div>
+    </div>*@
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.CarLatestChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarLatestChargingPower" Label="Lade-Leistung" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.CarCharingActiveSession" Label="Ladung aktuelle Sitzung" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarCharingActiveSession" Label="Ladung Sitzung" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.CarChargingCurrentTarget" Label="Verfügbarer Ladestrom" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarChargingCurrentTarget" Label="Verfügbarer Ladestrom" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
             <div class="container">
                 <div class="row">
                     <div class="col">
-                        <DataValueControl DataPoint="@dataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
+                        <DataValueControl DataPoint="@ChargingDataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <StatusControl DataPoint="@dataPoints.KebaStatus" Label="Status" Status="@kebaStatus"></StatusControl>
+                        <StatusControl DataPoint="@ChargingDataPoints.KebaStatus" Label="Status" Status="@kebaStatus"></StatusControl>
                     </div>
                 </div>
             </div>
@@ -116,36 +114,52 @@
 
 @code {
     private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Unterbrochen" } };
-    //public PowerDogDeviceConnector powerDogDeviceConnector = new PowerDogDeviceConnector();
-    //public DataPoints dataPoints = new DataPoints();
+    public PVDataPoints PVDataPoints = new PVDataPoints();
+    public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
 
     private Timer refreshTimer;
 
     protected override void OnInitialized()
     {
-        //powerDogDeviceConnector.InitializePowerDogDeviceConnector(new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password, TimeSpan.FromSeconds(1));
-        //dataPoints.InitializeDataPoints(powerDogDeviceConnector);
         refreshTimer = new Timer(Refresh, null, 1000, 1000);
     }
 
-    private void UpdateManualChargingCurrency()
-    {
-        chargingController.MinCharging = dataPoints.MinimumCharging.CurrentValue;
-        chargingController.AutoCharging = dataPoints.PVCharging.CurrentValue;
-        chargingController.ManualChargingCurrency = dataPoints.CarChargingManualCurrency.CurrentValue;
-    }
+    //private void UpdateManualChargingCurrency()
+    //{
+    //    chargingController.MinCharging = dataPoints.MinimumCharging.CurrentValue;
+    //    chargingController.AutoCharging = dataPoints.PVCharging.CurrentValue;
+    //    chargingController.ManualChargingCurrency = dataPoints.CarChargingManualCurrency.CurrentValue;
+    //}
 
-    private void RangeStartChange(Syncfusion.Blazor.Inputs.SliderChangeEventArgs<double> args)
-    {
-        if (dataPoints.CarChargingManualCurrency.CurrentValue != (int)args.Value)
-        {
-            dataPoints.CarChargingManualCurrency.CurrentValue = (int)args.Value;
-        }
-    }
+    //private void RangeStartChange(Syncfusion.Blazor.Inputs.SliderChangeEventArgs<double> args)
+    //{
+    //    if (dataPoints.CarChargingManualCurrency.CurrentValue != (int)args.Value)
+    //    {
+    //        dataPoints.CarChargingManualCurrency.CurrentValue = (int)args.Value;
+    //    }
+    //}
 
     private void Refresh(object? state)
     {
-        InvokeAsync(StateHasChanged);
+        try
+        {
+            HttpClient Http = new HttpClient();
+            string baseUrl = "http://localhost:5003";
+            var jsonString = Http.GetStringAsync($"{baseUrl}/readSensorsdata").Result;
+            PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
+            PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
+            PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
+            PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+            baseUrl = "http://localhost:5004";
+            jsonString = Http.GetStringAsync($"{baseUrl}/readdata").Result;
+            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Failed to read data from service, Error: " + ex.Message);
+        }
+
     }
 
     public void Dispose()

@@ -2,14 +2,13 @@
 @using Smarthome.Web.Controls
 @using Smarthome.Web.Components
 @using Smarthome.Web.Controllers
-@using Smarthome.Web.Data
 
-@inject DataPoints dataPoints;
-
+@*@inject DataPoints dataPoints;
+*@
 <PageTitle>Counter</PageTitle>
 
 <h2>Remote Display</h2>
-<div class="container">
+@*<div class="container">
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.RoomTemperature" Label="Temperatur" Color="#009900"></CircularGaugeControl>
@@ -24,7 +23,7 @@
             <CircularGaugeControl DataPoint="@dataPoints.RoomIllumination" Label="Helligkeit" Color="#009900"></CircularGaugeControl>
         </div>
     </div>
-</div>
+</div>*@
 
 <p>Zeit: @DateTime.Now</p>
 
