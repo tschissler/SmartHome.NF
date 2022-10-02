@@ -20,7 +20,7 @@ namespace PVController
             proxy = new XmlRpcProxy();
             proxy.Url = deviceUri.ToString();
             DataPoints = new PVDataPoints();
-            
+            DataPoints.PVProduction.CurrentValueCorrection = (5.7 + 4.57) / 5.7;
         }
         
         public void ReadSensorsData(object? state)
@@ -38,9 +38,9 @@ namespace PVController
                 return;
             }
 
-            DataPoints.PVProduction.CurrentValue = ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]);
-            DataPoints.GridSupply.CurrentValue = ParseSensorValue(result.Reply, sensorKeys["lieferung"]);
-            DataPoints.GridDemand.CurrentValue = ParseSensorValue(result.Reply, sensorKeys["Bezug"]);
+            DataPoints.PVProduction.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]));
+            DataPoints.GridSupply.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["lieferung"]));
+            DataPoints.GridDemand.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Bezug"]));
         }
 
         private double ParseSensorValue(XmlRpcStruct reply, string sensorKey)
