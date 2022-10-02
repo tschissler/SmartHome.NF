@@ -23,6 +23,7 @@
         public DateTime LastUpdate { get; private set; }
         public HistoryDataRow History { get; set; }
         public double? CurrentValueCorrection { get; set; }
+        public string Label { get; set; }
 
         public DecimalDataPoint()
         {

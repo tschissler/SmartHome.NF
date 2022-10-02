@@ -16,7 +16,7 @@
             {
                 foreach (var dataPoint in DataPoints)
                 {
-                    <ChartSeries Type="ChartSeriesType.Line" Name="Produktion" Width="2" DataSource="@dataPoint.History.DataHistory"
+                    <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.DataHistory"
                          XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
                         <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
                     </ChartSeries>
