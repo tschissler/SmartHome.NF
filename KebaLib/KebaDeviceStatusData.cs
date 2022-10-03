@@ -6,7 +6,7 @@ using System.Diagnostics.Metrics;
 using System.Net.Sockets;
 using System.Reflection.Emit;
 
-namespace ChargingController
+namespace KebaLib
 {
 
     public class KebaDeviceStatusData

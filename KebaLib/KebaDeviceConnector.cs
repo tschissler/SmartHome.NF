@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using HelpersLib;
 using SharedContracts.DataPointCollections;
 
-namespace ChargingController
+namespace KebaLib
 {
     public class KebaDeviceConnector
     {
@@ -22,7 +22,7 @@ namespace ChargingController
             uDPPort = UDPPort;
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
-            DataPoints.CarCharingActiveSession.CurrentValueCorrection = 0.1;;
+            DataPoints.CarCharingActiveSession.CurrentValueCorrection = 0.1; ;
             DataPoints.CarCharingTotal.CurrentValueCorrection = 0.0001;
             DataPoints.CarLatestChargingPower.CurrentValueCorrection = 0.001;
             DataPoints.CarChargingCurrentTarget.CurrentValueCorrection = 0.001;
