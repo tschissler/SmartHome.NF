@@ -38,6 +38,7 @@ namespace KebaLib
                 DataPoints.CarCharingTotal.SetCorrectedValue(data.EnergyTotal);
                 DataPoints.CarLatestChargingPower.SetCorrectedValue(data.CurrentChargingPower);
                 DataPoints.CarChargingCurrentTarget.SetCorrectedValue(data.TargetCurrency);
+                DataPoints.CurrentVoltage.SetCorrectedValue((data.VoltagePhase1 + data.VoltagePhase2 + data.VoltagePhase3)/3);
                 DataPoints.KebaStatus.CurrentValue = data.State;
             }
         }
@@ -70,19 +71,27 @@ namespace KebaLib
 
         public KebaDeviceStatusData GetDeviceStatus()
         {
-            var report2 = ExecuteUDPCommand("report 2");
-            var report3 = ExecuteUDPCommand("report 3");
-
-            JObject report2Json = JObject.Parse(report2);
-            JObject report3Json = JObject.Parse(report3);
-
-            report2Json.Merge(report3Json, new JsonMergeSettings
+            var data = new KebaDeviceStatusData();
+            try
             {
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
+                var report2 = ExecuteUDPCommand("report 2");
+                var report3 = ExecuteUDPCommand("report 3");
 
-            var data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
-            ConsoleHelpers.PrintConsoleOutput(0, 4, $"CurrentChargingPower: {data.CurrentChargingPower}\t EnergyTotal: {data.EnergyTotal}\t State: {data.State}\t TargetCurrency: {data.TargetCurrency}");
+                JObject report2Json = JObject.Parse(report2);
+                JObject report3Json = JObject.Parse(report3);
+
+                report2Json.Merge(report3Json, new JsonMergeSettings
+                {
+                    MergeArrayHandling = MergeArrayHandling.Union
+                });
+
+                data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
+                ConsoleHelpers.PrintConsoleOutput(0, 4, $"CurrentChargingPower: {data.CurrentChargingPower}\t EnergyTotal: {data.EnergyTotal}\t State: {data.State}\t TargetCurrency: {data.TargetCurrency}");
+            }
+            catch (Exception ex) 
+            {
+                ConsoleHelpers.PrintErrorMessage($"Error while reading device status: {ex.Message}");
+            }
             return data;
         }
 
@@ -97,6 +106,7 @@ namespace KebaLib
                 {
                     try
                     {
+                        udpClient.ExclusiveAddressUse = false;
                         udpClient.Connect(ipAddress, uDPPort);
 
                         // Sends a message to the host to which you have connected.
