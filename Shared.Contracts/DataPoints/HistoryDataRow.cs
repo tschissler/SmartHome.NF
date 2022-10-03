@@ -1,4 +1,4 @@
-﻿namespace SharedContracts.Data
+﻿namespace SharedContracts.DataPoints
 {
     public class HistoryDataPoint
     {

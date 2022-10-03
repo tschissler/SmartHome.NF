@@ -6,8 +6,6 @@ using Smarthome.Web.Controllers;
 using Syncfusion.Blazor;
 using System.Net;
 
-Console.Clear();
-
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 

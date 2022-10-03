@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Keba\Keba.csproj" />
+    <ProjectReference Include="..\ChargingController\ChargingController.csproj" />
   </ItemGroup>
 
 </Project>

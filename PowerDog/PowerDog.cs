@@ -3,14 +3,14 @@ using HelpersLib;
 using SharedContracts.DataPointCollections;
 using System.Globalization;
 
-namespace PVController
+namespace PowerDog
 {
     public class PowerDog
     {
         private readonly Dictionary<string, string> sensorKeys;
         private readonly string password;
         private readonly XmlRpcProxy proxy;
-        
+
         public PVDataPoints DataPoints { get; private set; }
 
         public PowerDog(Dictionary<string, string> sensorKeys, Uri deviceUri, string password)
@@ -21,7 +21,7 @@ namespace PVController
             proxy.Url = deviceUri.ToString();
             DataPoints = new PVDataPoints();
         }
-        
+
         public void ReadSensorsData(object? state)
         {
             var result = proxy.getAllCurrentLinearValues(password);

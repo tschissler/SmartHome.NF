@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using HelpersLib;
-using SharedContracts.Data;
+using SharedContracts.DataPointCollections;
 
 namespace ChargingController
 {

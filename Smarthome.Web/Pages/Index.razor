@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Newtonsoft.Json
-@using SharedContracts.Data
+@using SharedContracts.DataPointCollections
+@using SharedContracts.DataPoints
 @using Smarthome.Web.Components
 @using Smarthome.Web.Controllers
 @using Smarthome.Web.Controls
@@ -30,24 +31,6 @@
         </div>
     </div>
     <h2>Ladesäule</h2>
-@*    <div class="roe">
-        <div class="col">
-            <label for="checked" style="padding: 10px 10px 10px 0">Überschuss-Laden</label>
-            <SfSwitch @bind-Checked="@ChargingDataPoints.PVCharging.CurrentValue"></SfSwitch>
-        </div>
-        <div class="col">
-            <label for="checked" style="padding: 10px 10px 10px 0">Mindest-Laden</label>
-            <SfSwitch @bind-Checked="@dataPoints.MinimumCharging.CurrentValue"></SfSwitch>
-        </div>
-        <div class="col">
-            <label for="checked" style="padding: 10px 10px 10px 0">Manuelle Ladekapazität</label>
-            <label>@dataPoints.CarChargingManualCurrency.CurrentValue</label>
-            <SfSlider TValue="double" ID="gradient_slider" Value="@dataPoints.CarChargingManualCurrency.CurrentValue" Type=SliderType.MinRange Min="0" Max="@dataPoints.CarChargingManualCurrency.MaxValue" Step="500" Width="250px">
-                <SliderEvents TValue="double" OnChange="RangeStartChange" />
-            </SfSlider>
-            <SfButton @onclick="UpdateManualChargingCurrency">Anwenden</SfButton>
-        </div>
-    </div>*@
     <div class="row">
         <div class="col">
             <CircularGaugeControl DataPoint="@ChargingDataPoints.CarLatestChargingPower" Color="#009900"></CircularGaugeControl>

@@ -1,0 +1,141 @@
+﻿@page "/charge"
+
+@using Newtonsoft.Json
+@using SharedContracts.DataPointCollections
+@using SharedContracts.DataPoints
+@using Smarthome.Web.Controls
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using System.Diagnostics
+<h3>Lade-Einstellungen</h3>
+<div class="container-fluid">
+    <div class="row p-2" style="font-size: 1.4em">
+        <div class="col-xl-4">
+            <div class="container-flex">
+                <div class="row">
+                    <label class="col-xs-2" for="checked">Bevorzugt mit PV-Strom laden</label>
+                    <div class="col-xs-10">
+                        <SfSwitch id="checked" @bind-Checked="@ChargingControlDataPoints.AutomaticCharging.CurrentValue"></SfSwitch>
+                    </div>
+                </div>
+                <div class="row @(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"":"disabled")">
+                    <label class="col-xs-2" for="MinPV">Mindestanteil PV-Strom</label>
+                    <div class="col-xs-10">
+                        <SfSlider ID="MinPV"
+                                  TValue="double"
+                                  @bind-Value="@ChargingControlDataPoints.MinimumPVShare.CurrentValue"
+                                  Type=SliderType.MinRange
+                                  Min="0"
+                                  Max="100"
+                                  Step="10"
+                                  Width="70%">
+                        </SfSlider>
+                        <div class="dataViz">@ChargingControlDataPoints.MinimumPVShare.CurrentValue @ChargingControlDataPoints.MinimumPVShare.Unit</div>
+                    </div>
+                </div>
+                <div class="row @(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"disabled":"")">
+                    <label class="col-xs-2" for="ManCurrency">Manueller Lade-Strom</label>
+                    <div class="col-xs-10">
+                        <SfSlider ID="ManCurrency"
+                                  TValue="double"
+                                  @bind-Value="@ChargingControlDataPoints.ManualChargingCurrency.CurrentValue"
+                                  Type=SliderType.MinRange
+                                  Min="0"
+                                  Max="16"
+                                  Step="0.5"
+                                  Width="70%">
+                        </SfSlider>
+                        <div class="dataViz">@ChargingControlDataPoints.ManualChargingCurrency.CurrentValue @ChargingControlDataPoints.ManualChargingCurrency.Unit</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <Button class="btn-primary" @onclick="ApplySettings">Einstellungen aktivieren</Button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-1">
+        </div>
+        <div class="col-xl-3">
+            Berechnung
+            <div class="container" style="font-size:1rem">
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridSupply"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridDemand"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridSaldo" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingPower" CssClass="gap"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingPower"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingCurrency"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.ManualChargingCurrency" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingDesiredCurrency"></DataValueGridRowControl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public ChargingControlDataPoints ChargingControlDataPoints = new ();
+
+    private Timer refreshTimer;
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    public void ApplySettings()
+    {
+        int i = 0;
+    }
+
+    private void Refresh(object? state)
+    {
+        try
+        {
+            HttpClient Http = new HttpClient();
+            string baseUrl = "http://localhost:5005";
+            var jsonString = Http.GetStringAsync($"{baseUrl}/readchargingdata").Result;
+            ChargingControlDataPoints = JsonConvert.DeserializeObject<ChargingControlDataPoints>(jsonString);
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Failed to read data from service, Error: " + ex.Message);
+        }
+
+    }
+
+    public string AssembleValueString(DecimalDataPoint dataPoint)
+    {
+        string format = "0." + new String('0', dataPoint.DecimalDigits);
+
+        return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
+    }
+}
+
+<style>
+    .dataViz {
+        font-size: 14px;
+        height: 24px;
+        width: 70px;
+        text-align: center;
+        line-height: 24px;
+        float: right;
+        color: #FFFFFF;
+        font-weight: 500;
+        border-radius: 18px;
+        background-color: #0d6efd;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 30%;
+    }
+
+    .sum {
+        border-top: 1px solid #000000;
+        border-bottom: 1px solid #000000;
+    }
+
+    .gap {
+        margin-top: 15px;
+    }
+</style>
