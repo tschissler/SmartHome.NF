@@ -3,7 +3,7 @@ using HelpersLib;
 using SharedContracts.DataPointCollections;
 using System.Globalization;
 
-namespace PowerDog
+namespace PowerDogLib
 {
     public class PowerDog
     {

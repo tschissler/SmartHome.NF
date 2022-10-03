@@ -1,11 +1,12 @@
-﻿using Secrets;
+﻿using PowerDogLib;
+using Secrets;
 using SharedContracts.DataPointCollections;
 
 namespace ChargingControlController
 {
     public class ChargingController
     {
-        private PowerDog.PowerDog powerDog;
+        private PowerDog powerDog;
         public ChargingControlDataPoints DataPoints;
 
         public ChargingController()
@@ -18,7 +19,7 @@ namespace ChargingControlController
                 { "Verbrauchgesamt", "arithmetic_1457432629" },
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
-            powerDog = new PowerDog.PowerDog(sensorKeys, new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password);
+            powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password);
             DataPoints = new ChargingControlDataPoints();
 
         }

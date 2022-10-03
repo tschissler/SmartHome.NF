@@ -61,7 +61,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingController", "Charg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingControlController", "ChargingControlController\ChargingControlController.csproj", "{141D7018-2AB3-4E55-AAD7-2F7A0603BF85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerDog", "PowerDog\PowerDog.csproj", "{92EC2B06-8607-4E97-B110-253F271371DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerDogLib", "PowerDog\PowerDogLib.csproj", "{92EC2B06-8607-4E97-B110-253F271371DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

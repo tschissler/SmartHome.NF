@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using PVController;
+using PowerDogLib;
 using Secrets;
 
 var builder = WebApplication.CreateBuilder(args);

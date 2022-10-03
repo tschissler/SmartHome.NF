@@ -1,6 +1,6 @@
 ﻿using CookComputing.XmlRpc;
 
-namespace PowerDog
+namespace PowerDogLib
 {
     public class XmlRpcProxy : XmlRpcClientProtocol
     {
