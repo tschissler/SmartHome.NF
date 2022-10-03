@@ -15,7 +15,7 @@
                 <div class="row">
                     <label class="col-xs-2" for="checked">Bevorzugt mit PV-Strom laden</label>
                     <div class="col-xs-10">
-                        <SfSwitch id="checked" @bind-Checked="@ChargingControlDataPoints.AutomaticCharging.CurrentValue"></SfSwitch>
+                        <SfSwitch id="checked" @bind-Checked="@ChargingControlDataPoints.AutomaticCharging.CurrentValue" @onclick="ApplySettings"></SfSwitch>
                     </div>
                 </div>
                 <div class="row @(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"":"disabled")">
@@ -63,8 +63,9 @@
                 <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridSaldo" CssClass="sum"></DataValueGridRowControl>
                 <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingPower" CssClass="gap"></DataValueGridRowControl>
                 <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingPower"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingCurrency"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.ManualChargingCurrency" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentVoltage"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingCurrency" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.ManualChargingCurrency" CssClass="@(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"disabled":"")"></DataValueGridRowControl>
                 <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingDesiredCurrency"></DataValueGridRowControl>
             </div>
         </div>
@@ -83,7 +84,12 @@
 
     public void ApplySettings()
     {
-        int i = 0;
+        //HttpClient Http = new HttpClient();
+        //string baseUrl = "http://localhost:5005";
+        //var content = new HttpContent
+        //var jsonString = Http.PostAsync($"{baseUrl}/applychargingsettings", content).Result;
+        //ChargingControlDataPoints = JsonConvert.DeserializeObject<ChargingControlDataPoints>(jsonString);
+        //InvokeAsync(StateHasChanged);
     }
 
     private void Refresh(object? state)
@@ -92,7 +98,7 @@
         {
             HttpClient Http = new HttpClient();
             string baseUrl = "http://localhost:5005";
-            var jsonString = Http.GetStringAsync($"{baseUrl}/readchargingdata").Result;
+            var jsonString = Http.GetStringAsync("http://localhost:5005/readchargingdata").Result;
             ChargingControlDataPoints = JsonConvert.DeserializeObject<ChargingControlDataPoints>(jsonString);
             InvokeAsync(StateHasChanged);
         }

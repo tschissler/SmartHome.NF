@@ -12,14 +12,16 @@ namespace KebaLib
     {
         private IPAddress ipAddress;
         private int uDPPort;
+        private readonly object lockObject;
         private readonly object uDPLock = new object();
 
         public ChargingDataPoints DataPoints { get; private set; }
 
-        public KebaDeviceConnector(IPAddress IpAddress, int UDPPort)
+        public KebaDeviceConnector(IPAddress IpAddress, int UDPPort, object lockObject = null)
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
+            this.lockObject = lockObject!=null?lockObject:new object();
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
             DataPoints.CarCharingActiveSession.CurrentValueCorrection = 0.1; ;
@@ -86,7 +88,6 @@ namespace KebaLib
                 });
 
                 data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
-                ConsoleHelpers.PrintConsoleOutput(0, 4, $"CurrentChargingPower: {data.CurrentChargingPower}\t EnergyTotal: {data.EnergyTotal}\t State: {data.State}\t TargetCurrency: {data.TargetCurrency}");
             }
             catch (Exception ex) 
             {
@@ -99,14 +100,12 @@ namespace KebaLib
         {
             string result = "";
 
-            lock (uDPLock)
+            lock (lockObject)
             {
-                ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba Updated        ");
                 using (UdpClient udpClient = new UdpClient(uDPPort))
                 {
                     try
                     {
-                        udpClient.ExclusiveAddressUse = false;
                         udpClient.Connect(ipAddress, uDPPort);
 
                         // Sends a message to the host to which you have connected.
@@ -133,12 +132,10 @@ namespace KebaLib
                         result = returnData.ToString();
                         udpClient.Close();
                         Thread.Sleep(200);
-
-                        ConsoleHelpers.PrintSuccessMessage(0, 22, "Keba                ");
                     }
                     catch (Exception e)
                     {
-                        ConsoleHelpers.PrintErrorMessage("Fehler: " + e.Message);
+                        ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
                     }
                 }
             }

@@ -18,7 +18,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090);
+var kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, 1002);
 TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(1);
 
 var refreshDataTimer = new Timer(new TimerCallback(kebaConnector.RefreshData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
@@ -26,13 +26,11 @@ var refreshDataTimer = new Timer(new TimerCallback(kebaConnector.RefreshData), n
 
 app.MapGet("/readdata", string () =>
 {
-    return JsonConvert.SerializeObject(kebaConnector.DataPoints);
+    lock (kebaConnector.DataPoints)
+    {
+        return JsonConvert.SerializeObject(kebaConnector.DataPoints);
+    }
 })
 .WithName("ReadData");
 
 app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -14,7 +14,10 @@
             {
                 currentValue = value;
                 LastUpdate = DateTime.Now;
-                History.AddHistoryDataPoint(value);
+                if (History.DataHistoryLength > 0)
+                {
+                    History.AddHistoryDataPoint(value);
+                }
             }
         }
         public double MaxValue { get; set; }

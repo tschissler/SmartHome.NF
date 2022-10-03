@@ -8,13 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Kveer.XmlRPC" Version="1.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
+    <ProjectReference Include="..\KebaLib\KebaLib.csproj" />
     <ProjectReference Include="..\PowerDog\PowerDogLib.csproj" />
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
   </ItemGroup>

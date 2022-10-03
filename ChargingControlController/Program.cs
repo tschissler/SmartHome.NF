@@ -1,4 +1,5 @@
 using ChargingControlController;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SharedContracts.DataPointCollections;
 
@@ -25,10 +26,21 @@ var refreshDataTimer = new Timer(new TimerCallback(chargingController.CalculateD
 
 app.MapGet("/readchargingdata", string () =>
 {
-    return JsonConvert.SerializeObject(chargingController.DataPoints);
+    lock (chargingController)
+    {
+        return JsonConvert.SerializeObject(chargingController.DataPoints);
+    }
 })
 .WithName("ReadChargingData");
 
+app.MapPost("/applychargingsettings", bool ([FromBody] bool automaticCharging, double minimumPVShare, double manualCurrency) =>
+{
+    chargingController.DataPoints.AutomaticCharging.CurrentValue = automaticCharging;
+    chargingController.DataPoints.MinimumPVShare.CurrentValue = minimumPVShare;
+    chargingController.DataPoints.ManualChargingCurrency.CurrentValue = manualCurrency;
+    return true;
+})
+.WithName("ApplyChargingSettings");
 
 app.Run();
 

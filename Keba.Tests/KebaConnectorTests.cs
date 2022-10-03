@@ -43,5 +43,20 @@ namespace Keba.Tests
             actual.Serial.Should().NotBeEmpty();
             actual.TargetCurrency.Should().Be(63000);
         }
+
+        [TestMethod]
+        public void TestMultipleClientsActive()
+        {
+            object lockObject = new object();
+            KebaDeviceConnector connector1 = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, lockObject);
+            KebaDeviceConnector connector2 = new(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, lockObject);
+
+            var actual1 = Task.Run(() => connector1.GetDeviceStatus());
+            var actual2 = Task.Run(() => connector2.GetDeviceStatus());
+            actual1.Wait();
+            actual2.Wait();
+            actual1.Result.EnergyTotal.Should().BeGreaterThan(0);
+            actual2.Result.EnergyTotal.Should().BeGreaterThan(0);
+        }
     }
 }

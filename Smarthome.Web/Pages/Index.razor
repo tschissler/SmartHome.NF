@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using HelpersLib
 @using Newtonsoft.Json
 @using SharedContracts.DataPointCollections
 @using SharedContracts.DataPoints
@@ -100,22 +101,19 @@
         try
         {
             HttpClient Http = new HttpClient();
-            string baseUrl = "http://localhost:5003";
-            var jsonString = Http.GetStringAsync($"{baseUrl}/readSensorsdata").Result;
+            var jsonString = Http.GetStringAsync($"http://localhost:5003/readSensorsdata").Result;
             PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
             PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
-            baseUrl = "http://localhost:5004";
-            jsonString = Http.GetStringAsync($"{baseUrl}/readdata").Result;
+            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
             ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Failed to read data from service, Error: " + ex.Message);
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
         }
-
     }
 
     public void Dispose()
