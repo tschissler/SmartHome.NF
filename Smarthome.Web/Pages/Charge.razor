@@ -1,12 +1,15 @@
 ﻿@page "/charge"
 
+@using HelpersLib
 @using Newtonsoft.Json
+@using SharedContracts
 @using SharedContracts.DataPointCollections
 @using SharedContracts.DataPoints
 @using Smarthome.Web.Controls
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
 @using System.Diagnostics
+
 <h3>Lade-Einstellungen</h3>
 <div class="container-fluid">
     <div class="row p-2" style="font-size: 1.4em">
@@ -15,37 +18,39 @@
                 <div class="row">
                     <label class="col-xs-2" for="checked">Bevorzugt mit PV-Strom laden</label>
                     <div class="col-xs-10">
-                        <SfSwitch id="checked" @bind-Checked="@ChargingControlDataPoints.AutomaticCharging.CurrentValue" @onclick="ApplySettings"></SfSwitch>
+@*                        <SfSwitch id="checked" @bind-Checked="@ChargingControlDataPoints.AutomaticCharging.CurrentValue" @oncuechange="(e => { settings.automaticCharging = !settings.automaticCharging; ApplySettings(); })"></SfSwitch>*@ 
+                          <SfSwitch id="checked" @bind-Checked="@settings.automaticCharging" ></SfSwitch>
                     </div>
                 </div>
-                <div class="row @(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"":"disabled")">
+                <div class="row @(settings.automaticCharging?"":"disabled")">
                     <label class="col-xs-2" for="MinPV">Mindestanteil PV-Strom</label>
                     <div class="col-xs-10">
                         <SfSlider ID="MinPV"
                                   TValue="double"
-                                  @bind-Value="@ChargingControlDataPoints.MinimumPVShare.CurrentValue"
+                                  @bind-Value="@settings.minimumPVShare"
                                   Type=SliderType.MinRange
                                   Min="0"
                                   Max="100"
                                   Step="10"
                                   Width="70%">
+                            @*<SliderEvents TValue="double" OnChange="@(e => { settings.minimumPVShare = e.Value; })" />*@
                         </SfSlider>
-                        <div class="dataViz">@ChargingControlDataPoints.MinimumPVShare.CurrentValue @ChargingControlDataPoints.MinimumPVShare.Unit</div>
+                        <div class="dataViz">@settings.minimumPVShare %</div>
                     </div>
                 </div>
-                <div class="row @(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"disabled":"")">
+                <div class="row @(settings.automaticCharging?"disabled":"")">
                     <label class="col-xs-2" for="ManCurrency">Manueller Lade-Strom</label>
                     <div class="col-xs-10">
                         <SfSlider ID="ManCurrency"
                                   TValue="double"
-                                  @bind-Value="@ChargingControlDataPoints.ManualChargingCurrency.CurrentValue"
+                                  @bind-Value="@settings.manualCurrency"
                                   Type=SliderType.MinRange
                                   Min="0"
                                   Max="16"
-                                  Step="0.5"
+                                  Step="1"
                                   Width="70%">
                         </SfSlider>
-                        <div class="dataViz">@ChargingControlDataPoints.ManualChargingCurrency.CurrentValue @ChargingControlDataPoints.ManualChargingCurrency.Unit</div>
+                        <div class="dataViz">@settings.manualCurrency A</div>
                     </div>
                 </div>
                 <div class="row">
@@ -55,27 +60,60 @@
         </div>
         <div class="col-xl-1">
         </div>
-        <div class="col-xl-3">
+        <div class="col-xl-4">
             Berechnung
             <div class="container" style="font-size:1rem">
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridSupply"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridDemand"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.GridSaldo" CssClass="sum"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingPower" CssClass="gap"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingPower"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentVoltage"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CalculatedChargingCurrency" CssClass="sum"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.ManualChargingCurrency" CssClass="@(ChargingControlDataPoints.AutomaticCharging.CurrentValue?"disabled":"")"></DataValueGridRowControl>
-                <DataValueGridRowControl DataPoint="@ChargingControlDataPoints.CurrentChargingDesiredCurrency"></DataValueGridRowControl>
-            </div>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.GridSupply"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.GridDemand"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.GridSaldo" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.CurrentChargingPower" CssClass="gap"></DataValueGridRowControl>
+@*                <DataValueGridRowControl DataPoint="@ChargingDataPoints..CalculatedChargingPower"></DataValueGridRowControl>
+*@                <DataValueGridRowControl DataPoint="@ChargingDataPoints.CurrentVoltage"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.AdjustedCharingCurrency" CssClass="sum"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.ManualChargingCurrency" CssClass="@(settings.automaticCharging?"disabled":"")"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.MinimumActivationPVCurrency" CssClass="@(settings.automaticCharging?"":"disabled")"></DataValueGridRowControl>
+                <DataValueGridRowControl DataPoint="@ChargingDataPoints.EffectiveMaximumChargingCurrency" CssClass="sum"></DataValueGridRowControl>
+@*                <DataValueGridRowControl DataPoint="@ChargingDataPoints.Cur"></DataValueGridRowControl>
+*@            </div>
         </div>
     </div>
 </div>
+<h2>Ladesäule</h2>
+<div class="row">
+    <div class="col">
+        <CircularGaugeControl DataPoint="@ChargingDataPoints.CurrentChargingPower" Color="#009900"></CircularGaugeControl>
+    </div>
+    <div class="col">
+        <CircularGaugeControl DataPoint="@ChargingDataPoints.ConsumptionActiveSession" Color="#009900"></CircularGaugeControl>
+    </div>
+    <div class="col">
+        <CircularGaugeControl DataPoint="@ChargingDataPoints.EffectiveMaximumChargingCurrency" Color="#009900"></CircularGaugeControl>
+    </div>
+    <div class="col">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <DataValueControl DataPoint="@ChargingDataPoints.CharingOverallTotal" Label="Ladung Gesamt"></DataValueControl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <StatusControl DataPoint="@ChargingDataPoints.KebaStatus" Label="Status" Status="@kebaStatus"></StatusControl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 @code {
-    public ChargingControlDataPoints ChargingControlDataPoints = new ();
+    private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Unterbrochen" } };
+
+    public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
+
 
     private Timer refreshTimer;
+    private ChargingSettingsData settings = new();
 
     protected override void OnInitialized()
     {
@@ -84,29 +122,51 @@
 
     public void ApplySettings()
     {
-        //HttpClient Http = new HttpClient();
+        HttpClient Http = new HttpClient();
         //string baseUrl = "http://localhost:5005";
         //var content = new HttpContent
         //var jsonString = Http.PostAsync($"{baseUrl}/applychargingsettings", content).Result;
         //ChargingControlDataPoints = JsonConvert.DeserializeObject<ChargingControlDataPoints>(jsonString);
         //InvokeAsync(StateHasChanged);
+
+        //var settings = new ChargingSettingsData
+        //    {
+        //        automaticCharging = ChargingControlDataPoints.AutomaticCharging.CurrentValue,
+        //        minimumPVShare = ChargingControlDataPoints.MinimumPVShare.CurrentValue,
+        //        manualCurrency = ChargingControlDataPoints.ManualChargingCurrency.CurrentValue
+        //    };
+        Http.PostAsJsonAsync("http://localhost:5004/applychargingsettings", settings);
     }
 
     private void Refresh(object? state)
     {
+        if (!settings.isInitialized)
+        {
+            try
+            {
+                HttpClient Http = new HttpClient();
+                var jsonString = Http.GetStringAsync("http://localhost:5004/readchargingsettings").Result;
+                settings = JsonConvert.DeserializeObject<ChargingSettingsData>(jsonString);
+                settings.isInitialized = true;
+                int i = 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to read charging settings from service, Error: " + ex.Message);
+            }
+        }
+
         try
         {
             HttpClient Http = new HttpClient();
-            string baseUrl = "http://localhost:5005";
-            var jsonString = Http.GetStringAsync("http://localhost:5005/readchargingdata").Result;
-            ChargingControlDataPoints = JsonConvert.DeserializeObject<ChargingControlDataPoints>(jsonString);
+            var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Failed to read data from service, Error: " + ex.Message);
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
         }
-
     }
 
     public string AssembleValueString(DecimalDataPoint dataPoint)

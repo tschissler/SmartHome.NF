@@ -13,6 +13,7 @@ builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

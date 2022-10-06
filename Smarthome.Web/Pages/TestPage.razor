@@ -1,0 +1,18 @@
+﻿@page "/testpage"
+
+@using Syncfusion.Blazor.Inputs
+
+<h3>Test</h3>
+
+<SfSlider ID="ManCurrency"
+          TValue="double"
+          @bind-Value="@testvalue"
+          Type=SliderType.MinRange
+          Min="0"
+          Max="16"
+          Step="0.5"
+          Width="70%">
+</SfSlider>
+@code {
+    private double testvalue = 0;
+}

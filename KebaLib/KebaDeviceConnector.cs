@@ -5,15 +5,19 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using HelpersLib;
 using SharedContracts.DataPointCollections;
+using SharedContracts.DataPoints;
 
 namespace KebaLib
 {
-    public class KebaDeviceConnector
+    public class KebaDeviceConnector : IDisposable
     {
         private IPAddress ipAddress;
         private int uDPPort;
         private readonly object lockObject;
-        private readonly object uDPLock = new object();
+        //private UdpClient udpClient;
+        private double previousChargingCurrencyWrittenToDevice = -99;
+        private Timer updateTimer;
+        private TimeSpan updateTimeSpan = TimeSpan.FromSeconds(2);
 
         public ChargingDataPoints DataPoints { get; private set; }
 
@@ -21,64 +25,125 @@ namespace KebaLib
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
-            this.lockObject = lockObject!=null?lockObject:new object();
+            //udpClient = new UdpClient(uDPPort);
+            //udpClient.Connect(ipAddress, uDPPort);
+            this.lockObject = lockObject != null ? lockObject : new object();
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
-            DataPoints.CarCharingActiveSession.CurrentValueCorrection = 0.1; ;
-            DataPoints.CarCharingTotal.CurrentValueCorrection = 0.0001;
-            DataPoints.CarLatestChargingPower.CurrentValueCorrection = 0.001;
-            DataPoints.CarChargingCurrentTarget.CurrentValueCorrection = 0.001;
+            DataPoints.ConsumptionActiveSession.CurrentValueCorrection = 0.1; ;
+            DataPoints.CharingOverallTotal.CurrentValueCorrection = 0.0001;
+            DataPoints.CurrentChargingPower.CurrentValueCorrection = 0.001;
+            DataPoints.EffectiveMaximumChargingCurrency.CurrentValueCorrection = 0.001;
+
+            updateTimer = new Timer(RefreshData, null, 0, (int)updateTimeSpan.TotalMilliseconds);
         }
 
-        public void RefreshData(object? state)
+        public void SetChargingCurrent(double current)
         {
-            var data = GetDeviceStatus();
+            DataPoints.AdjustedCharingCurrency.CurrentValue = current;
+        }
+
+        /// <summary>
+        /// Reads data from the Keba device and updates the DataPoints and writes target current to the device.
+        /// </summary>
+        /// <remarks>
+        /// As the Keba documentation states there should be a 2 second delay between sending commands to the device, this method should not be called more frequently.
+        /// </remarks>
+        /// <param name="state"></param>
+        internal void RefreshData(object? state)
+        {
+            KebaDeviceStatusData data = null;
+            try
+            {
+                data = GetDeviceStatus();
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelpers.PrintErrorMessage($"Failed to read data from Keba device, Error: {ex.Message}");
+            }
 
             if (data != null)
             {
-                DataPoints.CarCharingActiveSession.SetCorrectedValue(data.EnergyCurrentChargingSession);
-                DataPoints.CarCharingTotal.SetCorrectedValue(data.EnergyTotal);
-                DataPoints.CarLatestChargingPower.SetCorrectedValue(data.CurrentChargingPower);
-                DataPoints.CarChargingCurrentTarget.SetCorrectedValue(data.TargetCurrency);
-                DataPoints.CurrentVoltage.SetCorrectedValue((data.VoltagePhase1 + data.VoltagePhase2 + data.VoltagePhase3)/3);
+                DataPoints.CurrentChargingPower.SetCorrectedValue(data.CurrentChargingPower);
+                DataPoints.EffectiveMaximumChargingCurrency.SetCorrectedValue(data.MaxCurrency);
+                DataPoints.CurrentVoltage.SetCorrectedValue((data.VoltagePhase1 + data.VoltagePhase2 + data.VoltagePhase3) / 3);
+                DataPoints.ConsumptionActiveSession.SetCorrectedValue(data.EnergyCurrentChargingSession);
+                DataPoints.CharingOverallTotal.SetCorrectedValue(data.EnergyTotal);
                 DataPoints.KebaStatus.CurrentValue = data.State;
+
+
+                //DataPoints.CurrentChargingPower = data.CurrentChargingPower;
+                //DataPoints.EffectiveMaximumChargingCurrency = new() { Label = "Aktuell eingestellter Strom", Unit = "A", MaxValue = 16, DecimalDigits = 1 };
+                //DataPoints.CarChargingManualCurrency = new() { Unit = "mA", MaxValue = 16000 };
+
+                ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.CurrentValue}Wh, " +
+                    $"Total: {DataPoints.CharingOverallTotal.CurrentValue}kWh, "+
+                    $"Power: {DataPoints.CurrentChargingPower.CurrentValue}kW, " +
+                    $"Max: {DataPoints.EffectiveMaximumChargingCurrency.CurrentValue}kW, " +
+                    $"State: {DataPoints.KebaStatus.CurrentValue}");
+            }
+
+            if (previousChargingCurrencyWrittenToDevice != DataPoints.AdjustedCharingCurrency.CurrentValue)
+            {
+                try
+                {
+                    previousChargingCurrencyWrittenToDevice = DataPoints.AdjustedCharingCurrency.CurrentValue;
+                    WriteChargingCurrentToDevice((int)(DataPoints.AdjustedCharingCurrency.CurrentValue * 1000));
+                    ConsoleHelpers.PrintMessage($"Wrote {DataPoints.AdjustedCharingCurrency.CurrentValue} to device as new target charging currency (currtime)");
+                }
+                catch (Exception ex)
+                {
+                    ConsoleHelpers.PrintErrorMessage($"Failed to write {DataPoints.AdjustedCharingCurrency.CurrentValue} to device as new target charging currency (currtime). {ex.Message}");
+                }
+                Thread.Sleep(2000);
             }
         }
 
-        public string GetDeviceInformation()
+        internal string GetDeviceInformation()
         {
             return ExecuteUDPCommand("i");
         }
 
-        public string GetDeviceReport()
+        internal string GetDeviceReport1()
         {
             return ExecuteUDPCommand("report 1");
         }
-
+        
+        internal string GetDeviceReport2()
+        {
+            return ExecuteUDPCommand("report 2");
+        }
+           
         /// <summary>
-        /// Sets the charging current within 1 sec 
+        /// Writes the charging current to the device
         /// </summary>
         /// <param name="current">Target current in mA, possible values 0; 6000 - 63000</param>
         /// <returns></returns>
-        public KebaDeviceStatusData SetChargingCurrent(int current)
+        internal void WriteChargingCurrentToDevice(int current)
         {
+            ConsoleHelpers.PrintMessage("Updating charging currency to " + current);
             var success = ExecuteUDPCommand($"currtime {current} 1");
+            ConsoleHelpers.PrintMessage("Result: " + success);
             if (success != "TCH-OK :done\n")
             {
-                ConsoleHelpers.PrintErrorMessage("Setting currency failed");
+                ConsoleHelpers.PrintErrorMessage($"Setting currency failed - {success}");
+                throw new Exception($"Setting currency failed");
             }
-            Thread.Sleep(2000);
-            return GetDeviceStatus();
+            else
+            {
+                ConsoleHelpers.PrintMessage("Updated charging currency to " + current);
+            }
         }
 
-        public KebaDeviceStatusData GetDeviceStatus()
+        internal KebaDeviceStatusData GetDeviceStatus()
         {
+            var dataString = "";
             var data = new KebaDeviceStatusData();
             try
             {
                 var report2 = ExecuteUDPCommand("report 2");
                 var report3 = ExecuteUDPCommand("report 3");
-
+                dataString = report2 + report3;
                 JObject report2Json = JObject.Parse(report2);
                 JObject report3Json = JObject.Parse(report3);
 
@@ -89,28 +154,32 @@ namespace KebaLib
 
                 data = JsonConvert.DeserializeObject<KebaDeviceStatusData>(report2Json.ToString());
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                ConsoleHelpers.PrintErrorMessage($"Error while reading device status: {ex.Message}");
+                ConsoleHelpers.PrintErrorMessage($"Error while reading device status: {ex.Message}\n {dataString}");
             }
             return data;
         }
 
-        private string ExecuteUDPCommand(string command)
+        internal string ExecuteUDPCommand(string command)
         {
             string result = "";
 
-            lock (lockObject)
+            //Console.WriteLine($"Before Lock {command}");
+            //lock (lockObject)
             {
+                //Console.WriteLine($"After Lock {command}");
                 using (UdpClient udpClient = new UdpClient(uDPPort))
                 {
+                    //Console.WriteLine($"Inside Using {command}");
+
                     try
                     {
                         udpClient.Connect(ipAddress, uDPPort);
 
                         // Sends a message to the host to which you have connected.
                         byte[] sendBytes = Encoding.ASCII.GetBytes(command);
-
+                        
                         udpClient.Send(sendBytes, sendBytes.Length);
 
                         //IPEndPoint object will allow us to read datagrams sent from any source.
@@ -120,26 +189,26 @@ namespace KebaLib
                         byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
                         string returnData = Encoding.ASCII.GetString(receiveBytes);
 
-#if DEBUG
-                        // Uses the IPEndPoint object to determine which of these two hosts responded.
-                        //Console.WriteLine("This is the message you received " +
-                        //                             returnData.ToString());
-                        //Console.WriteLine("This message was sent from " +
-                        //                            RemoteIpEndPoint.Address.ToString() +
-                        //                            " on their port number " +
-                        //                            RemoteIpEndPoint.Port.ToString());
-#endif
                         result = returnData.ToString();
-                        udpClient.Close();
-                        Thread.Sleep(200);
+                        //Thread.Sleep(500);
                     }
                     catch (Exception e)
                     {
                         ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
                     }
+                    finally
+                    {
+                        udpClient.Close();
+                    }
                 }
             }
             return result;
+        }
+
+        public void Dispose()
+        {
+            //udpClient.Close();
+            //udpClient.Dispose();
         }
     }
 }

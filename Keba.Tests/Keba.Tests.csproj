@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChargingController\ChargingController.csproj" />
+    <ProjectReference Include="..\ChargingController\ChargingService.csproj" />
   </ItemGroup>
 
 </Project>

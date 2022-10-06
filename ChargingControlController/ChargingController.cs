@@ -5,13 +5,15 @@ using PowerDogLib;
 using Secrets;
 using SharedContracts.DataPointCollections;
 using System.Net;
+using static System.Net.WebRequestMethods;
 
 namespace ChargingControlController
 {
     public class ChargingController
     {
         private PowerDog powerDog;
-        private KebaDeviceConnector kebaConnector;
+        private double lastSetChargingCurrency;
+        
         public ChargingControlDataPoints DataPoints;
 
         public ChargingController()
@@ -31,6 +33,7 @@ namespace ChargingControlController
 
         public void CalculateData(object? state)
         {
+            HttpClient Http = new HttpClient();
             ChargingDataPoints kebaDataPoints = new();
             
             powerDog.ReadSensorsData(state);
@@ -41,13 +44,12 @@ namespace ChargingControlController
 
             try
             {
-                HttpClient Http = new HttpClient();
                 var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
                 kebaDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             }
             catch (Exception ex)
             {
-                ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
+                ConsoleHelpers.PrintErrorMessage("Failed to read data from ChargingController, Error: " + ex.Message);
             }
 
             DataPoints.CurrentChargingPower.CurrentValue = kebaDataPoints.CarLatestChargingPower.CurrentValue;
@@ -55,7 +57,42 @@ namespace ChargingControlController
             
             // Calculation
             DataPoints.CalculatedChargingPower.CurrentValue = DataPoints.GridSaldo.CurrentValue + DataPoints.CurrentChargingPower.CurrentValue;
-            DataPoints.CalculatedChargingCurrency.CurrentValue = DataPoints.CalculatedChargingPower.CurrentValue > 0 ? DataPoints.CalculatedChargingPower.CurrentValue / 230 : 0;
+            DataPoints.CalculatedChargingCurrency.CurrentValue = DataPoints.CalculatedChargingPower.CurrentValue > 0 ? DataPoints.CalculatedChargingPower.CurrentValue / 230 / 3 : 0;
+            DataPoints.MinimumActivationPVCurrency.CurrentValue = DataPoints.MinimumChargingCurrency.CurrentValue * DataPoints.MinimumPVShare.CurrentValue / 100;
+            if (DataPoints.CalculatedChargingCurrency.CurrentValue >= DataPoints.MinimumChargingCurrency.CurrentValue)
+            {
+                DataPoints.EffectiveCharingCurrency.CurrentValue = DataPoints.CalculatedChargingCurrency.CurrentValue;
+            }
+            else if (!DataPoints.AutomaticCharging.CurrentValue && DataPoints.ManualChargingCurrency.CurrentValue >= DataPoints.MinimumChargingCurrency.CurrentValue)
+            {
+                DataPoints.EffectiveCharingCurrency.CurrentValue = DataPoints.ManualChargingCurrency.CurrentValue;
+            }
+            else if (DataPoints.AutomaticCharging.CurrentValue && DataPoints.CalculatedChargingCurrency.CurrentValue >= DataPoints.MinimumActivationPVCurrency.CurrentValue)
+            {
+                DataPoints.EffectiveCharingCurrency.CurrentValue = DataPoints.MinimumChargingCurrency.CurrentValue;
+            }
+            else
+            {
+                DataPoints.EffectiveCharingCurrency.CurrentValue = 0;
+            }
+        }
+
+        public void SetChargingCurrency(object? state)
+        {
+            if (DataPoints.EffectiveCharingCurrency.CurrentValue != lastSetChargingCurrency)
+            {
+                lastSetChargingCurrency = DataPoints.EffectiveCharingCurrency.CurrentValue;
+                HttpClient Http = new HttpClient();
+                try
+                {
+                    ConsoleHelpers.PrintMessage($"Calling service, updating value");
+                    //Http.PostAsJsonAsync<double>("http://localhost:5004/setchargingcurrency", DataPoints.EffectiveCharingCurrency.CurrentValue).Wait();
+                }
+                catch (Exception ex)
+                {
+                    ConsoleHelpers.PrintErrorMessage("Failed to set charging currency, Error: " + ex.Message);
+                }
+            }
         }
     }
 }

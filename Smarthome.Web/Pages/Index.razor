@@ -12,17 +12,17 @@
 @using System.Diagnostics
 
 <PageTitle>Index</PageTitle>
+<h2>Photovoltaik</h2>
 
 <div class="container">
-    <h2>Photovoltaik</h2>
     <div class="row">
-        <div class="col">
+        <div class="col-4">
             <CircularGaugeControl DataPoint="@PVDataPoints.PVProduction" Color="#009900"></CircularGaugeControl>
         </div>
-        <div class="col">
+        <div class="col-4">
             <CircularGaugeControl DataPoint="@PVDataPoints.GridSupply" Color="#999900"></CircularGaugeControl>
         </div>
-        <div class="col">
+        <div class="col-4">
             <CircularGaugeControl DataPoint="@PVDataPoints.GridDemand" Color="#990000"></CircularGaugeControl>
         </div>
     </div>
@@ -34,19 +34,19 @@
     <h2>Ladesäule</h2>
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarLatestChargingPower" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.CurrentChargingPower" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarCharingActiveSession" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.ConsumptionActiveSession" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@ChargingDataPoints.CarChargingCurrentTarget" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@ChargingDataPoints.EffectiveMaximumChargingCurrency" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
             <div class="container">
                 <div class="row">
                     <div class="col">
-                        <DataValueControl DataPoint="@ChargingDataPoints.CarCharingTotal" Label="Ladung Gesamt"></DataValueControl>
+                        <DataValueControl DataPoint="@ChargingDataPoints.CharingOverallTotal" Label="Ladung Gesamt"></DataValueControl>
                     </div>
                 </div>
                 <div class="row">

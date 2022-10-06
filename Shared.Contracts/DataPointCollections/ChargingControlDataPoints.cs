@@ -10,8 +10,8 @@ namespace SharedContracts.DataPointCollections
     public class ChargingControlDataPoints
     {
         // UI
-        public BooleanDataPoint AutomaticCharging = new ();
-        public DecimalDataPoint MinimumPVShare = new () { Label = "Mindestanteil PV-Strom", MaxValue=100, Unit="%"};
+        public BooleanDataPoint AutomaticCharging = new () { CurrentValue = true};
+        public DecimalDataPoint MinimumPVShare = new () { Label = "Mindestanteil PV-Strom", MaxValue=100, Unit="%", CurrentValue=100};
         public DecimalDataPoint ManualChargingCurrency = new() { Label = "Manueller Lade-Strom", MaxValue = 16, Unit = "A", DecimalDigits=1 };
 
         // PowerDog
@@ -27,5 +27,8 @@ namespace SharedContracts.DataPointCollections
         public DecimalDataPoint GridSaldo = new() { Label = "Netz Saldo", Unit = "W", DecimalDigits = 1 };
         public DecimalDataPoint CalculatedChargingPower = new() { Label = "Ladeleistung Berechnet", Unit = "W", DecimalDigits = 1 };
         public DecimalDataPoint CalculatedChargingCurrency = new() { Label = "Ladestrom Berechnet", Unit = "A", DecimalDigits = 1 };
+        public DecimalDataPoint MinimumChargingCurrency = new() { Label = "Mindestladestrom", Unit = "A", DecimalDigits = 1, CurrentValue = 6 };
+        public DecimalDataPoint MinimumActivationPVCurrency = new() { Label = "Aktivierung ab PV-Strom", Unit = "A", DecimalDigits = 1 };
+        public DecimalDataPoint EffectiveCharingCurrency = new() { Label = "Effektiv eingestellter Ladestrom", Unit = "A", DecimalDigits = 1 };
     }
 }
