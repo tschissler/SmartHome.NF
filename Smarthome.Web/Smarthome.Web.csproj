@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
+    <ProjectReference Include="..\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
   </ItemGroup>
 

@@ -47,8 +47,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerDog.Tests", "PowerDog.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Web", "Smarthome.Web\Smarthome.Web.csproj", "{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj", "{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keba.Tests", "Keba.Tests\Keba.Tests.csproj", "{70ED027E-E156-494D-A7BD-E6392FEF03E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpersLib", "HelpersLib\HelpersLib.csproj", "{5F2521E0-8952-452F-B615-61B72EE5FD02}"
@@ -64,6 +62,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PVService", "PVService\PVService.csproj", "{B5B7C3B3-C94D-4EBA-9151-AFB3CBA57701}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingService", "ChargingService\ChargingService.csproj", "{C7158F1F-1A7C-4246-ABC7-E55F433DAD69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Secrets", "Secrets\Secrets.csproj", "{BFF64806-F021-4EA5-9B5B-E5A77471012E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -177,12 +177,6 @@ Global
 		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B2CAF29-EC71-4552-9D1F-AC7C04214D7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Dev|Any CPU.Build.0 = Debug|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{455E54BE-1DC0-42EB-B29A-07DD8506FE6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70ED027E-E156-494D-A7BD-E6392FEF03E5}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
@@ -225,6 +219,12 @@ Global
 		{C7158F1F-1A7C-4246-ABC7-E55F433DAD69}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{C7158F1F-1A7C-4246-ABC7-E55F433DAD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7158F1F-1A7C-4246-ABC7-E55F433DAD69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
