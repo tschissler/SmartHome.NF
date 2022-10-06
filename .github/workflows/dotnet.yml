@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -17,6 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+    - name: Install build components for nanoFramework
+      uses: nanoframework/nanobuild@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
