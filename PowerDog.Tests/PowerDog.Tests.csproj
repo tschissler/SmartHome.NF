@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PowerDogService\PVService.csproj" />
+    <ProjectReference Include="..\PVService\PVService.csproj" />
   </ItemGroup>
 
 </Project>
