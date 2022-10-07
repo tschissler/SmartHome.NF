@@ -26,3 +26,11 @@ jobs:
       run: dotnet build ${{ env.solution }} --no-restore
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
+    
+    - uses: actions/upload-artifact@master
+      with:
+        name: SmartHome.Web.artifacts
+        path: |
+          PVService/bin/Debug/net6.0
+          ChargingService/bin/Debug/net6.0
+          Smarthome.Web/bin/Debug/net6.0
