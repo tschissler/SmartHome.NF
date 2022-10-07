@@ -34,6 +34,7 @@ jobs:
         path: |
           PVService/bin/Debug/net6.0/linux-arm/publish
           ChargingService/bin/Debug/net6.0/linux-arm/publish
+          SensorDataController/bin/Debug/linux-arm/public
           Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
   
   deploy:
@@ -41,11 +42,19 @@ jobs:
     needs: build
     
     steps:
+    - name: Stopping Services
+      run: |
+        pkill PVService
+        pkill ChargingService
+        pkill SensorDataService
+        pkill Smarthome.Web
+        
     - name: Removing old content
       run: |
         rm -rf ~/SmartHome/Smarthome.Web
         rm -rf ~/SmartHome/PVService
-        rm -rf ~/SmartHome/ChargingController
+        rm -rf ~/SmartHome/ChargingService
+        rm -rf ~/SmartHome/SensorDataService
         
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
@@ -61,6 +70,10 @@ jobs:
       run: |
         chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
         lxterminal -e 'cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/; ./ChargingService'
+    - name: Start SensorDataController Service
+      run: |
+        chmod +x ~/SmartHome/SensorDataController/bin/Debug/net6.0/linux-arm/publish/SensorDataController
+        lxterminal -e 'cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/; ./SensorDataService'
     - name: Start Webapp
       run: |
         chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
