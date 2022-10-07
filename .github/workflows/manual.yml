@@ -6,15 +6,6 @@ name: Manual workflow
 # or API.
 on:
   workflow_dispatch:
-    # Inputs the workflow accepts.
-    inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
-        # Default value if no value is explicitly provided
-        default: 'World'
-        # Input has to be provided for the workflow to run
-        required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,6 +16,23 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ github.event.inputs.name }}"
+    - name: Start PV Service
+      run: |
+        chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
+        cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
+        gnome-terminal --tab -- ./PVService
+    - name: Start Charging Service
+      run: |
+        chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
+        cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/
+        gnome-terminal --tab -- ./ChargingService
+    - name: Start SensorDataController Service
+      run: |
+        chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
+        cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/
+        gnome-terminal --tab -- ./SensorDataService
+    - name: Start Webapp
+      run: |
+        chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
+        cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/
+        gnome-terminal --tab -- ./Smarthome.Web
