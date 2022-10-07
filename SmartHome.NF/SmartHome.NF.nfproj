@@ -28,7 +28,7 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.cs">
+    <Compile Include="..\Secrets\Secrets.cs">
       <Link>Secrets.cs</Link>
     </Compile>
     <Compile Include="Logging\LogManager.cs" />
