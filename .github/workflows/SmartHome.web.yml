@@ -22,7 +22,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ${{ env.solution }}
     - name: Build
-      run: dotnet publish ${{ env.solution }} --no-restore
+      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm 
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
     
