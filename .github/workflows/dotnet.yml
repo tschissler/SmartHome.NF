@@ -21,8 +21,17 @@ jobs:
       uses: nanoframework/nanobuild@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Setup MSBuild Path
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        msbuild-architecture: x64
+
+    - name: Setup nuget
+      uses: nuget/setup-nuget@v1
+    
+    - name: Restore nuget packages
+      run: nuget restore ${{ env.solution }} -ConfigFile NuGet.Config
+
     - name: Build
       run: msbuild .\SmartHome.NF.sln
     #- name: Test
