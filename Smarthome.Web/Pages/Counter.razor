@@ -1,24 +1,23 @@
 ﻿@page "/counter"
+@using SharedContracts.DataPointCollections
 @using Smarthome.Web.Controls
-@using Smarthome.Web.Components
-@using Smarthome.Web.Controllers
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Esszimmer</PageTitle>
 
 <h2>Remote Display</h2>
 <div class="container">
     <div class="row">
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.RoomTemperature" Label="Temperatur" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.Temperature" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.RoomHumidity" Label="Luftfeuchte" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.Humidity" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.RoomPressure" Label="Luftdruck" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.Pressure" Color="#009900"></CircularGaugeControl>
         </div>
         <div class="col">
-            <CircularGaugeControl DataPoint="@dataPoints.RoomIllumination" Label="Helligkeit" Color="#009900"></CircularGaugeControl>
+            <CircularGaugeControl DataPoint="@dataPoints.Illumination" Color="#009900"></CircularGaugeControl>
         </div>
     </div>
 </div>
@@ -27,7 +26,7 @@
 
 @code {
     private Timer refreshTimer;
-    private DataPoints dataPoints;
+    private RemoteDisplayDataPoints dataPoints;
 
     protected override void OnInitialized()
     {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SensorDataService;
 using SharedContracts;
+using SharedContracts.DataPointCollections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +19,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/setremotedisplaydatw", bool ([FromBody] setremotedisplaydata setremotedisplaydat) =>
+SensorsController controller = new ();
+
+app.MapPost("/setremotedisplaydata", bool ([FromBody] RemoteDisplayData remotedisplaydata) =>
 {
-    chargingController.ApplyChargingSettings(chargingSettingsData);
+    controller.RemoteDisplayChanged(remotedisplaydata);
     return true;
 })
-.WithName("ApplyChargingSettings");
+.WithName("SetRemotedisplayData");
+
+app.MapGet("/gettremotedisplaydata", RemoteDisplayDataPoints () =>
+{
+    return controller.remoteDisplayDataPoints;
+})
+.WithName("SetRemotedisplayData");
 
 app.Run();

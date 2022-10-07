@@ -3,7 +3,7 @@
 namespace SensorDataService
 {
 
-    public class setremotedisplaydata
+    public class RemoteDisplayData
     {
         public double Temperature { get; set; }
         public double Humidity { get; set; }
