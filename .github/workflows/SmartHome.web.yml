@@ -55,13 +55,13 @@ jobs:
         
     - name: Start PV Service
       run: |
-        chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/publish/linux-arm/PVService
-        ~/SmartHome/PVService/bin/Debug/net6.0/publish/linux-arm/PVService
+        chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
+        ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
     - name: Start Charging Service
       run: |
-        chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/publish/linux-arm/ChargingService
-        ~/SmartHome/ChargingService/bin/Debug/net6.0/publish/linux-arm/ChargingService
+        chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
+        ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
     - name: Start Webapp
       run: |
-        chmod +x ~/SmartHome/SmartHome.Web/bin/Debug/net6.0/publish/linux-arm/Smarthome.Web
-        ~/SmartHome/SmartHome.Web/bin/Debug/net6.0/publish/linux-arm/Smarthome.Web 
+        chmod +x ~/SmartHome/SmartHome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
+        ~/SmartHome/SmartHome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web 
