@@ -67,16 +67,20 @@ jobs:
     - name: Start PV Service
       run: |
         chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
-        lxterminal -e 'cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/; ./PVService'
+        cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
+        ./PVService &
     - name: Start Charging Service
       run: |
         chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
-        lxterminal -e 'cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/; ./ChargingService'
+        cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/
+        ./ChargingService &
     - name: Start SensorDataController Service
       run: |
         chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
-        lxterminal -e 'cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/; ./SensorDataService'
+        cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/
+        ./SensorDataService &
     - name: Start Webapp
       run: |
         chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
-        lxterminal -e 'cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/; ./Smarthome.Web'
+        cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/
+        ./Smarthome.Web &
