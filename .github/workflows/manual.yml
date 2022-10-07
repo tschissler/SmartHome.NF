@@ -1,32 +1,25 @@
 # This is a basic workflow that is manually triggered
 
 name: Manual workflow
-
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
   greet:
-    # The type of runner that the job will run on
     runs-on: [self-hosted]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Start PV Service
       run: |
         chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
         cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
-        gnome-terminal --tab -- ./PVService
+        gnome-terminal --tab -- ./PVService &
     - name: Start Charging Service
       run: |
         chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
         cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/
         gnome-terminal --tab -- ./ChargingService
-    - name: Start SensorDataController Service
+    - name: Start SensorDataController Service &
       run: |
         chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
         cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/
