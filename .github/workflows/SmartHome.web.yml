@@ -11,6 +11,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      solution: 'SmartHome.Web.sln'
+    
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -18,8 +21,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.solution }}
     - name: Build
-      run: dotnet build SmartHome.Web.sln --no-restore
+      run: dotnet build ${{ env.solution }} --no-restore
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
