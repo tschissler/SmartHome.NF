@@ -22,7 +22,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ${{ env.solution }} -r linux-arm
     - name: Build
-      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm 
+      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm --self-contained false
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
     
@@ -34,7 +34,7 @@ jobs:
         path: |
           PVService/bin/Debug/net6.0/linux-arm/publish
           ChargingService/bin/Debug/net6.0/linux-arm/publish
-          SensorDataController/bin/Debug/net6.0/linux-arm/public
+          SensorDataService/bin/Debug/net6.0/linux-arm/public
           Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
   
   deploy:
