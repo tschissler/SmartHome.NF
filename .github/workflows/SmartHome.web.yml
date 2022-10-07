@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     env:
@@ -34,3 +33,14 @@ jobs:
           PVService/bin/Debug/net6.0
           ChargingService/bin/Debug/net6.0
           Smarthome.Web/bin/Debug/net6.0
+  
+  deploy:
+    runs-on: [self-hosted]
+    
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: SmartHome.Web.artifacts
+        path: ~/SmartHome
+    
