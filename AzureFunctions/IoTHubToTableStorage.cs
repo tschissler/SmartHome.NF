@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System;
 using Azure.Messaging.EventHubs;
 using Microsoft.Azure.Cosmos.Table;
+using Secrets;
 
 namespace AzureFunctions
 {
     public static class IoTHubToTableStorage
     {
-        private static CloudTable _outputTable = CloudTableHelper.GetCloudTable("IoTDataM1", Secrets.AzureStorageConnectionString);
+        private static CloudTable _outputTable = CloudTableHelper.GetCloudTable("IoTDataM1", AzureSecrets.AzureStorageConnectionString);
 
         [FunctionName("IoTHubToTableStorage")]
         public static void Run([IoTHubTrigger("messages/events", Connection = "IotHubEndpoint")]EventData message, ILogger log)

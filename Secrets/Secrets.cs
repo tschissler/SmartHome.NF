@@ -2,7 +2,7 @@
 
 namespace Secrets
 {
-    public class Secrets
+    public class AzureSecrets
     {
         public static string AzureStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=iotdatastorage;AccountKey=;EndpointSuffix=core.windows.net";
     }
