@@ -22,25 +22,39 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ${{ env.solution }}
     - name: Build
-      run: dotnet build ${{ env.solution }} --no-restore
+      run: dotnet publish ${{ env.solution }} --no-restore
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
+    
+    
     
     - uses: actions/upload-artifact@master
       with:
         name: SmartHome.Web.artifacts
         path: |
-          PVService/bin/Debug/net6.0
-          ChargingService/bin/Debug/net6.0
-          Smarthome.Web/bin/Debug/net6.0
+          PVService/bin/Debug/net6.0/publish
+          ChargingService/bin/Debug/net6.0/publish
+          Smarthome.Web/bin/Debug/net6.0/publish
   
   deploy:
     runs-on: [self-hosted]
     
     steps:
+    - name: Removing old content
+      run: |
+        rm -r ~/SmartHome/Smarthome.Web
+        rm -r ~/SmartHome/PVService
+        rm -r ~/SmartHome/ChargingController
+        
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
       with:
         name: SmartHome.Web.artifacts
         path: ~/SmartHome
-    
+        
+    - name: Start PV Service
+      run: ~/SmartHome/PVService/bin/Debug/net6.0/publish/PVService.exe 
+    - name: Start Charging Service
+      run: ~/SmartHome/ChargingService/bin/Debug/net6.0/publish/PVService.exe 
+    - name: Start Webapp
+      run: ~/SmartHome/SmartHome.Web/bin/Debug/net6.0/publish/PVService.exe 
