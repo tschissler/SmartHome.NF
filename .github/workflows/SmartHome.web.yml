@@ -74,7 +74,7 @@ jobs:
         lxterminal -e 'cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/; ./ChargingService'
     - name: Start SensorDataController Service
       run: |
-        chmod +x ~/SmartHome/SensorDataController/bin/Debug/net6.0/linux-arm/publish/SensorDataController
+        chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
         lxterminal -e 'cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/; ./SensorDataService'
     - name: Start Webapp
       run: |
