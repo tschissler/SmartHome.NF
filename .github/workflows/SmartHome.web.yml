@@ -38,13 +38,14 @@ jobs:
   
   deploy:
     runs-on: [self-hosted]
+    needs: build
     
     steps:
     - name: Removing old content
       run: |
-        rm -r ~/SmartHome/Smarthome.Web
-        rm -r ~/SmartHome/PVService
-        rm -r ~/SmartHome/ChargingController
+        rm -rf ~/SmartHome/Smarthome.Web
+        rm -rf ~/SmartHome/PVService
+        rm -rf ~/SmartHome/ChargingController
         
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
