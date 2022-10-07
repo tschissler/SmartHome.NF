@@ -13,7 +13,7 @@ jobs:
       run: |
         chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
         cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
-        gnome-terminal --tab -- ./PVService &
+        RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./PVService &
     - name: Start Charging Service
       run: |
         chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
