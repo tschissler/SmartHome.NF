@@ -55,14 +55,14 @@ namespace Secrets
     {
         public static string Password
         {
-            get { return _data.Password; }
+            get { return "admin"; }
         }
-        private static PowerDogSecretsData _data;
+        //private static PowerDogSecretsData _data;
 
-        static PowerDogSecrets()
-        {
-            var jsonString = File.ReadAllText("PowerDog.Secrets.json");
-            _data = JsonConvert.DeserializeObject<PowerDogSecretsData>(jsonString);
-        }
+        //static PowerDogSecrets()
+        //{
+        //    var jsonString = File.ReadAllText("PowerDog.Secrets.json");
+        //    _data = JsonConvert.DeserializeObject<PowerDogSecretsData>(jsonString);
+        //}
     }
 }
