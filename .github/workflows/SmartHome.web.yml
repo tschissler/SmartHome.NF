@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     env:
@@ -21,8 +20,63 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ${{ env.solution }}
+      run: dotnet restore ${{ env.solution }} -r linux-arm
     - name: Build
-      run: dotnet build ${{ env.solution }} --no-restore
+      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm 
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
+    
+    
+    
+    - uses: actions/upload-artifact@master
+      with:
+        name: SmartHome.Web.artifacts
+        path: |
+          PVService/bin/Debug/net6.0/linux-arm/publish
+          ChargingService/bin/Debug/net6.0/linux-arm/publish
+          SensorDataController/bin/Debug/linux-arm/public
+          Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
+  
+  deploy:
+    runs-on: [self-hosted]
+    needs: build
+    
+    steps:
+    - name: Stopping Services
+      continue-on-error: true
+      run: |
+        pkill PVService
+        pkill ChargingService
+        pkill SensorDataService
+        pkill Smarthome.Web
+        
+    - name: Removing old content
+      continue-on-error: true
+      run: |
+        rm -rf ~/SmartHome/Smarthome.Web
+        rm -rf ~/SmartHome/PVService
+        rm -rf ~/SmartHome/ChargingService
+        rm -rf ~/SmartHome/SensorDataService
+        
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: SmartHome.Web.artifacts
+        path: ~/SmartHome
+        
+    - name: Start PV Service
+      run: |
+        chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
+        lxterminal -e 'cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/; ./PVService'
+    - name: Start Charging Service
+      run: |
+        chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
+        lxterminal -e 'cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/; ./ChargingService'
+    - name: Start SensorDataController Service
+      run: |
+        chmod +x ~/SmartHome/SensorDataController/bin/Debug/net6.0/linux-arm/publish/SensorDataController
+        lxterminal -e 'cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/; ./SensorDataService'
+    - name: Start Webapp
+      run: |
+        chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
+        lxterminal -e 'cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/; ./Smarthome.Web'
