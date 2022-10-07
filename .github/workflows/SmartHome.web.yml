@@ -34,7 +34,7 @@ jobs:
         path: |
           PVService/bin/Debug/net6.0/linux-arm/publish
           ChargingService/bin/Debug/net6.0/linux-arm/publish
-          SensorDataService/bin/Debug/net6.0/linux-arm/public
+          SensorDataService/bin/Debug/net6.0/linux-arm/publish
           Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
   
   deploy:
