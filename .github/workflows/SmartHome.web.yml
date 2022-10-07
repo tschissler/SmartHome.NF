@@ -43,6 +43,7 @@ jobs:
     
     steps:
     - name: Stopping Services
+      continue-on-error: true
       run: |
         pkill PVService
         pkill ChargingService
@@ -50,6 +51,7 @@ jobs:
         pkill Smarthome.Web
         
     - name: Removing old content
+      continue-on-error: true
       run: |
         rm -rf ~/SmartHome/Smarthome.Web
         rm -rf ~/SmartHome/PVService
