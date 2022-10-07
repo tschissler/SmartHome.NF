@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingService", "Charging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "Secrets\Secrets.csproj", "{BFF64806-F021-4EA5-9B5B-E5A77471012E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorDataService", "SensorDataService\SensorDataService.csproj", "{8D8864DE-AADC-468A-9132-DC9FE433F9DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,12 @@ Global
 		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFF64806-F021-4EA5-9B5B-E5A77471012E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +128,7 @@ Global
 		{E2346F99-AD19-4A6D-B131-39B4B311D28C} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
 		{B5B7C3B3-C94D-4EBA-9151-AFB3CBA57701} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 		{C7158F1F-1A7C-4246-ABC7-E55F433DAD69} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
+		{8D8864DE-AADC-468A-9132-DC9FE433F9DE} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}
