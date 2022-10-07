@@ -28,10 +28,10 @@ app.MapPost("/setremotedisplaydata", bool ([FromBody] RemoteDisplayData remotedi
 })
 .WithName("SetRemotedisplayData");
 
-app.MapGet("/gettremotedisplaydata", RemoteDisplayDataPoints () =>
+app.MapGet("/readremotedisplaydata", RemoteDisplayDataPoints () =>
 {
     return controller.remoteDisplayDataPoints;
 })
-.WithName("SetRemotedisplayData");
+.WithName("ReadRemotedisplayData");
 
 app.Run();

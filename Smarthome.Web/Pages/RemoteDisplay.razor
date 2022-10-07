@@ -1,0 +1,57 @@
+﻿@page "/remotedisplay"
+@using HelpersLib
+@using Newtonsoft.Json
+@using SharedContracts.DataPointCollections
+@using Smarthome.Web.Controls
+
+<PageTitle>Esszimmer</PageTitle>
+
+<h2>Remote Display</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Temperature" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Humidity" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Pressure" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Illumination" Color="#009900"></CircularGaugeControl>
+        </div>
+    </div>
+</div>
+
+<p>Zeit: @DateTime.Now</p>
+
+@code {
+    private Timer refreshTimer;
+    private RemoteDisplayDataPoints dataPoints = new();
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    private void Refresh(object? state)
+    {
+        try
+        {
+            HttpClient Http = new HttpClient();
+            var jsonString = Http.GetStringAsync($"http://localhost:5005/readremotedisplaydata").Result;
+            dataPoints = JsonConvert.DeserializeObject<RemoteDisplayDataPoints>(jsonString);
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from SensorDataService, Error: " + ex.Message);
+        }
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}
