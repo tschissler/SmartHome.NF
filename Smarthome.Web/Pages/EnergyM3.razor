@@ -4,6 +4,8 @@
 @using SharedContracts.DataPointCollections
 @using SharedContracts.DataPoints
 @using Smarthome.Web.Controls
+@using Smarthome.Web.Data
+@using Syncfusion.Blazor.Charts
 
 <h3>Energieübersicht M3</h3>
 <div class="container">
@@ -14,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataPoints="new List<DecimalDataPoint>{SelfProduction, SelfConsumption}" Label="Verbrauch M3"></HistoryControl>
+            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{SelfProductionSeries, SelfConsumptionSeries}" Label="Verbrauch M3"></HistoryControl>
         </div>
     </div>
 </div>
@@ -24,13 +26,18 @@
 @code {
     public PVDataPoints PVDataPoints = new PVDataPoints();
     public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
-    public DecimalDataPoint SelfConsumption = new() { Label = "Eigenverbrauch", Unit = "W", MaxValue = 6000, DecimalDigits=1, History = new() { DataHistoryLength = 500 } };
-    public DecimalDataPoint SelfProduction = new() { Label = "Eigenproduktion", Unit = "W", MaxValue = 6000, DecimalDigits = 1, History = new() { DataHistoryLength = 500 } };
+    public DecimalDataPoint SelfConsumption = new() { Label = "Verbrauch", Unit = "W", MaxValue = 6000, DecimalDigits=1, History = new() { DataHistoryLength = 500 } };
+    public DecimalDataPoint SelfProduction = new() { Label = "PV-Strom", Unit = "W", MaxValue = 6000, DecimalDigits = 1, History = new() { DataHistoryLength = 500 } };
+
+    public HistoryChartDataSeries SelfConsumptionSeries;
+    public HistoryChartDataSeries SelfProductionSeries;
 
     private Timer refreshTimer;
 
     protected override void OnInitialized()
     {
+        SelfConsumptionSeries = new() { DataPoint = SelfConsumption, Type = ChartSeriesType.Area, Color="#999900", Opacity=0.4 };
+        SelfProductionSeries = new() { DataPoint = SelfProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity=1 };
         refreshTimer = new Timer(Refresh, null, 2000, 2000);
     }
 

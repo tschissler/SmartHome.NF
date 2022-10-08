@@ -1,4 +1,5 @@
 ﻿@using SharedContracts.DataPoints
+@using Smarthome.Web.Data
 @using Syncfusion.Blazor.Charts
 <div class="control-section" align="center">
     <SfChart Title="@Label">
@@ -22,6 +23,16 @@
                     </ChartSeries>
                 }
             }
+            @if (DataSeries != null)
+            {
+                foreach (var dataSerie in DataSeries)
+                {
+                    <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.DataHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="@dataSerie.Color" Opacity="@dataSerie.Opacity">
+                        <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                    </ChartSeries>
+                }
+            }
         </ChartSeriesCollection>
         <ChartLegendSettings EnableHighlight="true"></ChartLegendSettings>
     </SfChart>
@@ -34,4 +45,6 @@
     [Parameter]
     public string? Label { get; set; }
 
+    [Parameter]
+    public List<HistoryChartDataSeries>? DataSeries { get; set; }
 }
