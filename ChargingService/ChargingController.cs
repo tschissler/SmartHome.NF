@@ -16,6 +16,8 @@ namespace ChargingService
         private double lastSetChargingCurrency;
         private Timer recalculationTimer;
         private TimeSpan recalculationFrequency = TimeSpan.FromSeconds(2);
+        private DateTime chargingSessionStartTime;
+        private int previousChargingState;
 
         public ChargingController()
         {
@@ -77,6 +79,12 @@ namespace ChargingService
             dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
             dataPoints.MinimumActivationPVCurrency.CurrentValue = minimumChargingCurrency * dataPoints.MinimumPVShare.CurrentValue / 100;
 
+            if (dataPoints.KebaStatus.CurrentValue == 3 && previousChargingState != 3)
+            {
+                chargingSessionStartTime = DateTime.Now;
+            }
+            previousChargingState = dataPoints.KebaStatus.CurrentValue;
+
             if (dataPoints.AvailableChargingCurrency.CurrentValue >= minimumChargingCurrency)
             {
                 ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is high enough to start charging");
@@ -98,7 +106,7 @@ namespace ChargingService
                 {
                     // Problem mit Wechselrichter, schaltet ab , wenn Ladesitzung startet.
                     // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
-                    if ((DateTime.Now - dataPoints.KebaStatus.LastChanged).TotalSeconds < 60)
+                    if ((DateTime.Now - chargingSessionStartTime).TotalSeconds < 60)
                     {
                         ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorte than 60sec, so continuing");
                     }
