@@ -13,14 +13,18 @@ namespace SensorDataService
 
     public class SensorsController
     {
+        public object LockObject = new object();
         public RemoteDisplayDataPoints remoteDisplayDataPoints = new();
         
         public void RemoteDisplayChanged(RemoteDisplayData sensorData)
         {
-            remoteDisplayDataPoints.Temperature.SetCorrectedValue(sensorData.Temperature);
-            remoteDisplayDataPoints.Humidity.SetCorrectedValue(sensorData.Humidity);
-            remoteDisplayDataPoints.Pressure.SetCorrectedValue(sensorData.Pressure);
-            remoteDisplayDataPoints.Illumination.SetCorrectedValue(sensorData.Illumination);
+            lock (LockObject)
+            {
+                remoteDisplayDataPoints.Temperature.SetCorrectedValue(sensorData.Temperature);
+                remoteDisplayDataPoints.Humidity.SetCorrectedValue(sensorData.Humidity);
+                remoteDisplayDataPoints.Pressure.SetCorrectedValue(sensorData.Pressure);
+                remoteDisplayDataPoints.Illumination.SetCorrectedValue(sensorData.Illumination);
+            }
         }
     }
 }

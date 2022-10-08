@@ -31,7 +31,10 @@ app.MapPost("/setremotedisplaydata", bool ([FromBody] RemoteDisplayData remotedi
 
 app.MapGet("/readremotedisplaydata", string () =>
 {
-    return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
+    lock (controller.LockObject)
+    {
+        return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
+    }
 })
 .WithName("ReadRemotedisplayData");
 
