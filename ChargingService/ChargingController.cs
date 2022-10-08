@@ -119,13 +119,13 @@ namespace ChargingService
                         }
                         else
                         {
-                            ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is not high enough to start charging");
+                            ConsoleHelpers.PrintMessage($"----> Available charging currency ({AssembleValueString(dataPoints.AvailableChargingCurrency)}) is not high enough to start charging");
                             dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
                         }
                     }
                     else
                     {
-                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.CurrentValue}) is not greater than 0 so don't start charging");
+                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({AssembleValueString(dataPoints.ManualChargingCurrency)}) is not greater than 0 so don't start charging");
                         dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
                     }
                 }
