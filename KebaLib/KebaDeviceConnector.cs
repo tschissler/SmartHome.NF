@@ -76,10 +76,10 @@ namespace KebaLib
                 //DataPoints.EffectiveMaximumChargingCurrency = new() { Label = "Aktuell eingestellter Strom", Unit = "A", MaxValue = 16, DecimalDigits = 1 };
                 //DataPoints.CarChargingManualCurrency = new() { Unit = "mA", MaxValue = 16000 };
 
-                ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.CurrentValue}Wh, " +
-                    $"Total: {DataPoints.CharingOverallTotal.CurrentValue}kWh, "+
-                    $"Power: {DataPoints.CurrentChargingPower.CurrentValue}kW, " +
-                    $"Max: {DataPoints.EffectiveMaximumChargingCurrency.CurrentValue}kW, " +
+                ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.AssembleValueString()}, " +
+                    $"Total: {DataPoints.CharingOverallTotal.AssembleValueString()}, "+
+                    $"Power: {DataPoints.CurrentChargingPower.AssembleValueString()}, " +
+                    $"Max: {DataPoints.EffectiveMaximumChargingCurrency.AssembleValueString()}, " +
                     $"State: {DataPoints.KebaStatus.CurrentValue}");
             }
 
