@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Secrets;
-using Smarthome.Web.Components;
-using Smarthome.Web.Controllers;
 using Syncfusion.Blazor;
 using System.Net;
 
