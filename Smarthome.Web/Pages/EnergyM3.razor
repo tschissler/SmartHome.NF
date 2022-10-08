@@ -1,0 +1,63 @@
+﻿@page "/EnergyM3"
+@using HelpersLib
+@using Newtonsoft.Json
+@using SharedContracts.DataPointCollections
+@using SharedContracts.DataPoints
+@using Smarthome.Web.Controls
+
+<h3>Energieübersicht M3</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <CircularGaugeControl DataPoint="@SelfConsumption" ValueFactor=0.001 CustomUnit="KW" Color="#999900"></CircularGaugeControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataPoints="new List<DecimalDataPoint>{SelfProduction, SelfConsumption}" Label="Verbrauch M3"></HistoryControl>
+        </div>
+    </div>
+</div>
+
+<p>Zeit: @DateTime.Now</p>
+
+@code {
+    public PVDataPoints PVDataPoints = new PVDataPoints();
+    public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
+    public DecimalDataPoint SelfConsumption = new() { Label = "Eigenverbrauch", Unit = "W", MaxValue = 6000, DecimalDigits=1, History = new() { DataHistoryLength = 500 } };
+    public DecimalDataPoint SelfProduction = new() { Label = "Eigenproduktion", Unit = "W", MaxValue = 6000, DecimalDigits = 1, History = new() { DataHistoryLength = 500 } };
+
+    private Timer refreshTimer;
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 2000, 2000);
+    }
+
+    private void Refresh(object? state)
+    {
+        try
+        {
+            HttpClient Http = new HttpClient();
+            var jsonString = Http.GetStringAsync($"http://localhost:5003/readSensorsdata").Result;
+            PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
+            PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
+            PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
+            PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+            SelfConsumption.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue - PVDataPoints.GridSupply.CurrentValue + PVDataPoints.GridDemand.CurrentValue - ChargingDataPoints.CurrentChargingPower.CurrentValue);
+            SelfProduction.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue > SelfConsumption.CurrentValue ? SelfConsumption.CurrentValue : PVDataPoints.PVProduction.CurrentValue);
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
+        }
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}

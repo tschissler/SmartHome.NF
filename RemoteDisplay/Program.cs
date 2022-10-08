@@ -188,23 +188,30 @@ namespace RemoteDisplay
 
         public static void SendData(double temperature = 0, double humidity = 0, double pressure = 0, double illumination = 0)
         {
-            var data = new SensorData
+            try
             {
-                Temperature = temperature,
-                Humidity = humidity,
-                Pressure = pressure,
-                Illumination = illumination
-            };
+                var data = new SensorData
+                {
+                    Temperature = temperature,
+                    Humidity = humidity,
+                    Pressure = pressure,
+                    Illumination = illumination
+                };
 
-            var json = JsonConvert.SerializeObject(data);
-            Debug.WriteLine($"Sending sensor data to SmartHome: {json}");
+                var json = JsonConvert.SerializeObject(data);
+                Debug.WriteLine($"Sending sensor data to SmartHome: {json}");
 
-            HttpClient httpClient = new();
-            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            var responseMessage = httpClient.Post("http://smarthomepi:5000/api/Sensors/RemoteDisplaySensorData", content);
-            if (!responseMessage.IsSuccessStatusCode)
+                HttpClient httpClient = new();
+                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                var responseMessage = httpClient.Post("http://smarthomepi:5000/api/Sensors/RemoteDisplaySensorData", content);
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
             {
-                Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+                Debug.WriteLine("Error posting sensor data: " + ex.Message);
             }
         }
 

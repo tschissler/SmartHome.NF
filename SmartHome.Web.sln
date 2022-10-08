@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingService", "Charging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "Secrets\Secrets.csproj", "{BFF64806-F021-4EA5-9B5B-E5A77471012E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorDataService", "SensorDataService\SensorDataService.csproj", "{8D8864DE-AADC-468A-9132-DC9FE433F9DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorDataService", "SensorDataService\SensorDataService.csproj", "{8D8864DE-AADC-468A-9132-DC9FE433F9DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -50,6 +50,12 @@
     [Parameter]
     public DecimalDataPoint? DataPoint { get; set; }
 
+    [Parameter]
+    public double ValueFactor { get; set; }
+
+    [Parameter]
+    public string CustomUnit { get; set; }
+
     public CircularGaugeControl()
     {
         Color = "#009900";
@@ -58,8 +64,13 @@
     public string AssembleValueString(DecimalDataPoint dataPoint)
     {
         string format = "0." + new String('0', dataPoint.DecimalDigits);
+        string unit = String.IsNullOrEmpty(CustomUnit) ? dataPoint.Unit : CustomUnit;
 
-        return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
+        if (ValueFactor != 0)
+        {
+            return $"{(dataPoint.CurrentValue * ValueFactor).ToString(format)} {unit}";
+        }
+        return $"{dataPoint.CurrentValue.ToString(format)} {unit}";
     }
 
     [Parameter]
