@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Secrets;
 
 namespace PowerDog.Tests
 {
@@ -20,7 +19,7 @@ namespace PowerDog.Tests
 
             UriBuilder uri = new ("http", "192.168.178.150", 20000);
 
-            PowerDogLib.PowerDog target = new(sensorKeys, uri.Uri, PowerDogSecrets.Password);
+            PowerDogLib.PowerDog target = new(sensorKeys, uri.Uri, "admin");
             target.ReadSensorsData(null);
             (target.DataPoints.PVProduction.CurrentValue + target.DataPoints.GridDemand.CurrentValue).Should().BeGreaterThan(0);
         }

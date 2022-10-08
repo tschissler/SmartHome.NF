@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
-    <PackageReference Include="Syncfusion.Blazor" Version="20.2.0.50" />
+    <PackageReference Include="Syncfusion.Blazor" Version="20.3.0.48" />
   </ItemGroup>
 
   <ItemGroup>
