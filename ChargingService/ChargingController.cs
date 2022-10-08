@@ -5,6 +5,7 @@ using PowerDogLib;
 using Secrets;
 using SharedContracts;
 using SharedContracts.DataPointCollections;
+using SharedContracts.DataPoints;
 using System.Net;
 
 namespace ChargingService
@@ -93,17 +94,17 @@ namespace ChargingService
 
                 if (dataPoints.AvailableChargingCurrency.CurrentValue >= minimumChargingCurrency)
                 {
-                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is high enough to start charging");
+                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({AssembleValueString(dataPoints.AvailableChargingCurrency)}) is high enough to start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.AvailableChargingCurrency.CurrentValue;
                 }
                 else if (!dataPoints.AutomaticCharging.CurrentValue && dataPoints.ManualChargingCurrency.CurrentValue >= 6)
                 {
-                    ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.CurrentValue}) is greater than 0 so start charging");
+                    ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({AssembleValueString(dataPoints.ManualChargingCurrency)}) is greater than 0 so start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.ManualChargingCurrency.CurrentValue;
                 }
                 else if (dataPoints.AutomaticCharging.CurrentValue && dataPoints.AvailableChargingCurrency.CurrentValue >= dataPoints.MinimumActivationPVCurrency.CurrentValue)
                 {
-                    ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
+                    ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({AssembleValueString(dataPoints.AvailableChargingCurrency)}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
                 }
                 else
@@ -129,6 +130,12 @@ namespace ChargingService
                     }
                 }
             }
+        }
+
+        public string AssembleValueString(DecimalDataPoint dataPoint)
+        {
+            string format = "0." + new String('0', dataPoint.DecimalDigits);
+            return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
         }
     }
 }
