@@ -16,7 +16,7 @@ namespace AzureFunctions
 {
     public static class IoTHubToTableStorage
     {
-        private static CloudTable _outputTable = CloudTableHelper.GetCloudTable("IoTDataM1", AzureSecrets.AzureStorageConnectionString);
+        private static CloudTable _outputTable = CloudTableHelper.GetCloudTable("IoTDataM1",AzureSecrets.AzureStorageConnectionString);
 
         [FunctionName("IoTHubToTableStorage")]
         public static void Run([IoTHubTrigger("messages/events", Connection = "IotHubEndpoint")]EventData message, ILogger log)

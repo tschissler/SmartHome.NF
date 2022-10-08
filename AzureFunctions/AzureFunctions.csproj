@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Secrets\Secrets.csproj" />
+    <ProjectReference Include="..\..\..\..\..\OneDrive - agilemax\Makers\SmartHome\Secrets\Secrets.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

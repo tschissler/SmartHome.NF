@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SensorDataService;
 using SharedContracts;
 using SharedContracts.DataPointCollections;
@@ -28,9 +29,9 @@ app.MapPost("/setremotedisplaydata", bool ([FromBody] RemoteDisplayData remotedi
 })
 .WithName("SetRemotedisplayData");
 
-app.MapGet("/readremotedisplaydata", RemoteDisplayDataPoints () =>
+app.MapGet("/readremotedisplaydata", string () =>
 {
-    return controller.remoteDisplayDataPoints;
+    return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
 })
 .WithName("ReadRemotedisplayData");
 

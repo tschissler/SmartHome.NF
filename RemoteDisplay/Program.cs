@@ -203,7 +203,7 @@ namespace RemoteDisplay
 
                 HttpClient httpClient = new();
                 HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                var responseMessage = httpClient.Post("http://smarthomepi:5000/api/Sensors/RemoteDisplaySensorData", content);
+                var responseMessage = httpClient.Post("http://smarthomepi:5005/setremotedisplaydata", content);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
                     Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
