@@ -35,7 +35,7 @@ var refreshDataTimer = new Timer(new TimerCallback(powerDog.ReadSensorsData), nu
 
 app.MapGet("/readSensorsdata", string () =>
 {
-    lock (powerDog)
+    lock (powerDog.Lockobject)
     {
         return JsonConvert.SerializeObject(powerDog.DataPoints);
     }

@@ -11,6 +11,8 @@ namespace PowerDogLib
         private readonly string password;
         private readonly XmlRpcProxy proxy;
 
+        public object Lockobject = new object();
+
         public PVDataPoints DataPoints { get; private set; }
 
         public PowerDog(Dictionary<string, string> sensorKeys, Uri deviceUri, string password)
@@ -24,22 +26,25 @@ namespace PowerDogLib
 
         public void ReadSensorsData(object? state)
         {
-            var result = proxy.getAllCurrentLinearValues(password);
-            if (result.ErrorCode != 0)
+            lock (Lockobject)
             {
-                ConsoleHelpers.PrintErrorMessage($"Error reading data from PowerDog: {result.ErrorString}");
-                return;
-            }
+                var result = proxy.getAllCurrentLinearValues(password);
+                if (result.ErrorCode != 0)
+                {
+                    ConsoleHelpers.PrintErrorMessage($"Error reading data from PowerDog: {result.ErrorString}");
+                    return;
+                }
 
-            if (result.Reply == null)
-            {
-                ConsoleHelpers.PrintErrorMessage("Reply is empty, communication with PowerDog failed");
-                return;
-            }
+                if (result.Reply == null)
+                {
+                    ConsoleHelpers.PrintErrorMessage("Reply is empty, communication with PowerDog failed");
+                    return;
+                }
 
-            DataPoints.PVProduction.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]));
-            DataPoints.GridSupply.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["lieferung"]));
-            DataPoints.GridDemand.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Bezug"]));
+                DataPoints.PVProduction.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]));
+                DataPoints.GridSupply.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["lieferung"]));
+                DataPoints.GridDemand.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Bezug"]));
+            }
         }
 
         private double ParseSensorValue(XmlRpcStruct reply, string sensorKey)
