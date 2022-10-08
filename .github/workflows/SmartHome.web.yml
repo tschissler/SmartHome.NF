@@ -29,8 +29,6 @@ jobs:
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
     
-    
-    
     - uses: actions/upload-artifact@master
       with:
         name: SmartHome.Web.artifacts
@@ -48,10 +46,10 @@ jobs:
     - name: Stopping Services
       continue-on-error: true
       run: |
+        pkill Smarthome.Web
         pkill PVService
         pkill ChargingService
         pkill SensorDataService
-        pkill Smarthome.Web
         
     - name: Removing old content
       continue-on-error: true
