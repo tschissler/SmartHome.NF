@@ -94,15 +94,24 @@ namespace ChargingService
             }
             else
             {
-                if (dataPoints.AutomaticCharging.CurrentValue)
+                // Problem mit Wechselrichter, schaltet ab , wenn Ladesitzung startet.
+                // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
+                if ((DateTime.Now - dataPoints.KebaStatus.LastUpdate).TotalSeconds < 60)
                 {
-                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is not high enough to start charging");
+                    ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorte than 60sec, so continuing");
                 }
                 else
                 {
-                    ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.CurrentValue}) is not greater than 0 so don't start charging");
+                    if (dataPoints.AutomaticCharging.CurrentValue)
+                    {
+                        ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.CurrentValue}) is not high enough to start charging");
+                    }
+                    else
+                    {
+                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.CurrentValue}) is not greater than 0 so don't start charging");
+                    }
+                    dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
                 }
-                dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
             }
         }
     }
