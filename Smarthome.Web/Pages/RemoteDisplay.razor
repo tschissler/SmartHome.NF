@@ -2,6 +2,7 @@
 @using HelpersLib
 @using Newtonsoft.Json
 @using SharedContracts.DataPointCollections
+@using SharedContracts.DataPoints
 @using Smarthome.Web.Controls
 
 <PageTitle>Esszimmer</PageTitle>
@@ -20,6 +21,11 @@
         </div>
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.Illumination" Color="#009900"></CircularGaugeControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataPoints="new List<DecimalDataPoint>{dataPoints.Temperature}" Label="Temperatur"></HistoryControl>
         </div>
     </div>
 </div>
