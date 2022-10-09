@@ -35,6 +35,11 @@ namespace KebaLib
             DataPoints.CurrentChargingPower.CurrentValueCorrection = 0.001;
             DataPoints.EffectiveMaximumChargingCurrency.CurrentValueCorrection = 0.001;
 
+            if (Environment.GetEnvironmentVariable("KEBA_WRITE_TO_DEVICE").ToLower() == "false")
+            {
+                ConsoleHelpers.PrintInformation("KEBA_WRITE_TO_DEVICE is set to false, so we will not write to the device");
+            }
+
             updateTimer = new Timer(RefreshData, null, 0, (int)updateTimeSpan.TotalMilliseconds);
         }
 
@@ -83,7 +88,8 @@ namespace KebaLib
                     $"State: {DataPoints.KebaStatus.CurrentValue}");
             }
 
-            if (previousChargingCurrencyWrittenToDevice != DataPoints.AdjustedCharingCurrency.CurrentValue)
+            if (previousChargingCurrencyWrittenToDevice != DataPoints.AdjustedCharingCurrency.CurrentValue &&
+                Environment.GetEnvironmentVariable("KEBA_WRITE_TO_DEVICE").ToLower() != "false")
             {
                 try
                 {

@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
-    <ProjectReference Include="..\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
   </ItemGroup>
 

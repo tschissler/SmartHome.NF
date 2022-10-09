@@ -1,9 +1,9 @@
 ﻿@page "/"
+
 @using HelpersLib
 @using Newtonsoft.Json
-@using SharedContracts.DataPointCollections
-@using SharedContracts.DataPoints
 @using Smarthome.Web.Controls
+@using Smarthome.Web.Data
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Charts
@@ -26,7 +26,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataPoints="new List<DecimalDataPoint>{PVDataPoints.PVProduction, PVDataPoints.GridSupply, PVDataPoints.GridDemand, ChargingDataPoints.CurrentChargingPower}" Label="Photovoltaik"></HistoryControl>
+            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PVProduction, GridSupply, GridDemand, CurrentCharging}" Label="Photovoltaik"></HistoryControl>
         </div>
     </div>
     <h2>Ladesäule</h2>
@@ -58,12 +58,6 @@
     </div>
 </div>
 
-
-
-@*<p>Erzeugung: @dataPoints.PVProduction.CurrentValue</p>
-<p>Einspeißung: @dataPoints.GridSupply.CurrentValue</p>
-<p>Bezug: @dataPoints.GridDemand.CurrentValue</p>*@
-
 <p>Zeit: @DateTime.Now</p>
 
 
@@ -71,28 +65,18 @@
     private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Unterbrochen" } };
     public PVDataPoints PVDataPoints = new PVDataPoints();
     public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
-
+    
     private Timer refreshTimer;
+
+    public HistoryChartDataSeries PVProduction;
+    public HistoryChartDataSeries GridSupply;
+    public HistoryChartDataSeries GridDemand;
+    public HistoryChartDataSeries CurrentCharging;
 
     protected override void OnInitialized()
     {
         refreshTimer = new Timer(Refresh, null, 1000, 1000);
     }
-
-    //private void UpdateManualChargingCurrency()
-    //{
-    //    chargingController.MinCharging = dataPoints.MinimumCharging.CurrentValue;
-    //    chargingController.AutoCharging = dataPoints.PVCharging.CurrentValue;
-    //    chargingController.ManualChargingCurrency = dataPoints.CarChargingManualCurrency.CurrentValue;
-    //}
-
-    //private void RangeStartChange(Syncfusion.Blazor.Inputs.SliderChangeEventArgs<double> args)
-    //{
-    //    if (dataPoints.CarChargingManualCurrency.CurrentValue != (int)args.Value)
-    //    {
-    //        dataPoints.CarChargingManualCurrency.CurrentValue = (int)args.Value;
-    //    }
-    //}
 
     private void Refresh(object? state)
     {
@@ -106,6 +90,11 @@
             PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
             jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
             ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+            PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+            GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+            GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
+            CurrentCharging = new() { DataPoint = ChargingDataPoints.CurrentChargingPower, Type = ChartSeriesType.Line, Color = "#000099", Opacity = 1 };
+
             InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
