@@ -122,7 +122,7 @@ namespace RemoteDisplay
 
                 if (cycle == 1)
                 {
-                    SendData(temperature, humidity, preassure, illumination);
+                    new Thread(() => SendData(temperature, humidity, preassure, illumination)).Start();
                     Debug.WriteLine($"Illumination: {illumination.ToString("F1")} lux");
                     Debug.WriteLine($"Temperature: {temperature.ToString("F1")}°C - Pressure: {preassure.ToString("F1")}hPa - Humidity: {humidity.ToString("F0")}%");
                 }
