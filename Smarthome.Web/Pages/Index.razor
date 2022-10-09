@@ -88,6 +88,7 @@
             PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+            ChargingDataPoints.CurrentChargingPower.History.DataHistory.RemoveAt(0);
             jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
             ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
