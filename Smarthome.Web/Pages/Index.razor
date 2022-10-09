@@ -29,6 +29,11 @@
             <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PVProduction, GridSupply, GridDemand, CurrentCharging}" Label="Photovoltaik"></HistoryControl>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PVProduction, GridSupply, GridDemand, CurrentCharging}" Label="Photovoltaik" UseAggregated="true"></HistoryControl>
+        </div>
+    </div>
     <h2>Ladesäule</h2>
     <div class="row">
         <div class="col">
@@ -85,15 +90,14 @@
             HttpClient Http = new HttpClient();
             var jsonString = Http.GetStringAsync($"http://localhost:5003/readSensorsdata").Result;
             PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
-            PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
-            PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
-            PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+            Cleanup(PVDataPoints.PVProduction);
+            Cleanup(PVDataPoints.GridDemand);
+            Cleanup(PVDataPoints.GridSupply);
+            
             jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
             ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
-            if (ChargingDataPoints.CurrentChargingPower.History.DataHistory.Count > 1)
-            {
-                ChargingDataPoints.CurrentChargingPower.History.DataHistory.RemoveAt(0);
-            }
+            Cleanup(ChargingDataPoints.CurrentChargingPower);
+            
             PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
             GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
             GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
@@ -104,6 +108,18 @@
         catch (Exception ex)
         {
             ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
+        }
+    }
+
+    private void Cleanup (DecimalDataPoint dataPoint)
+    {
+        if (dataPoint.History.DataHistory.Count > 1)
+        {
+            dataPoint.History.DataHistory.RemoveAt(0);
+        }
+        if (dataPoint.History.AggregatedHistory.Count > 1)
+        {
+            dataPoint.History.AggregatedHistory.RemoveAt(0);
         }
     }
 

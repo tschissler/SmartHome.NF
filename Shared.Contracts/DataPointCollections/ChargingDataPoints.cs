@@ -29,7 +29,7 @@ namespace SharedContracts.DataPointCollections
         /// <summary>
         /// The current charging power the car consumes in W
         /// </summary>
-        public DecimalDataPoint CurrentChargingPower = new() { Label = "Aktuelle Lade-Leistung", Unit = "W", MaxValue = 12000, DecimalDigits = 1, History = new() { DataHistoryLength = 100} };
+        public DecimalDataPoint CurrentChargingPower = new() { Label = "Aktuelle Lade-Leistung", Unit = "W", MaxValue = 12000, DecimalDigits = 1, History = new() { DataHistoryLength = 100, AggregationTimeSpan=TimeSpan.FromMinutes(1), AggregationHistoryLength = 144, AggregationType = AggregationType.Average} };
         /// <summary>
         /// The maximum charging currency set on the device in A
         /// </summary>

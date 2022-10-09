@@ -16,10 +16,20 @@
             {
                 foreach (var dataPoint in DataPoints)
                 {
-                    <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.DataHistory"
+                    if (UseAggregated)
+                    {
+                        <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.AggregatedHistory"
                          XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
-                        <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
-                    </ChartSeries>
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    }
+                    else
+                    {
+                        <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.DataHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    }
                 }
             }
             @if (DataSeries != null)
@@ -28,10 +38,22 @@
                 {
                     if (dataSerie != null && dataSerie.DataPoint != null)
                     {
-                        <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.DataHistory"
+                        if (UseAggregated)
+                        {
+                            int i = 0;
+                            <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.AggregatedHistory"
                          XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="@dataSerie.Color" Opacity="@dataSerie.Opacity">
-                        <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
-                    </ChartSeries>
+                                <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                            </ChartSeries>
+                        }
+                        else
+                        {
+                            <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.DataHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="@dataSerie.Color" Opacity="@dataSerie.Opacity">
+                                <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                            </ChartSeries>
+                        }
+
                     }
                 }
             }
@@ -49,4 +71,7 @@
 
     [Parameter]
     public List<HistoryChartDataSeries>? DataSeries { get; set; }
+
+    [Parameter]
+    public bool UseAggregated { get; set; } = false;
 }
