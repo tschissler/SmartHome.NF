@@ -88,12 +88,12 @@
             PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             if (ChargingDataPoints.CurrentChargingPower.History.DataHistory.Count > 1)
             {
                 ChargingDataPoints.CurrentChargingPower.History.DataHistory.RemoveAt(0);
             }
-            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
-            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
             GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
             GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
