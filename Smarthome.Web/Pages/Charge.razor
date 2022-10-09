@@ -152,7 +152,7 @@
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to read charging settings from service, Error: " + ex.Message);
+                Debug.WriteLine("Failed to read charging settings from charging service, Error: " + ex.Message);
             }
         }
 
@@ -165,7 +165,7 @@
         }
         catch (Exception ex)
         {
-            ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from charging service, Error: " + ex.Message);
         }
     }
 

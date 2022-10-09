@@ -93,25 +93,33 @@
             Cleanup(PVDataPoints.PVProduction);
             Cleanup(PVDataPoints.GridDemand);
             Cleanup(PVDataPoints.GridSupply);
-            
-            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
-            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
-            Cleanup(ChargingDataPoints.CurrentChargingPower);
-            
-            PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
-            GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
-            GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
-            CurrentCharging = new() { DataPoint = ChargingDataPoints.CurrentChargingPower, Type = ChartSeriesType.Line, Color = "#000099", Opacity = 1 };
-
-            InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
         {
-            ConsoleHelpers.PrintErrorMessage("Failed to read data from service, Error: " + ex.Message);
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from PVService, Error: " + ex.Message);
         }
+        try
+        {
+            HttpClient Http = new HttpClient();
+            var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+            Cleanup(ChargingDataPoints.CurrentChargingPower);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from ChargingService, Error: " + ex.Message);
+        }
+
+        PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+        GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+        GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
+        CurrentCharging = new() { DataPoint = ChargingDataPoints.CurrentChargingPower, Type = ChartSeriesType.Line, Color = "#000099", Opacity = 1 };
+
+        InvokeAsync(StateHasChanged);
+
     }
 
-    private void Cleanup (DecimalDataPoint dataPoint)
+    private void Cleanup(DecimalDataPoint dataPoint)
     {
         if (dataPoint.History.DataHistory.Count > 1)
         {
