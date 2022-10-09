@@ -65,7 +65,7 @@
     private Dictionary<int, string> kebaStatus = new() { { 0, "Warten" }, { 1, "Nicht bereit" }, { 2, "Bereit" }, { 3, "Laden" }, { 4, "Fehler" }, { 5, "Unterbrochen" } };
     public PVDataPoints PVDataPoints = new PVDataPoints();
     public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
-    
+
     private Timer refreshTimer;
 
     public HistoryChartDataSeries PVProduction;
@@ -88,7 +88,10 @@
             PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
             PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
-            ChargingDataPoints.CurrentChargingPower.History.DataHistory.RemoveAt(0);
+            if (ChargingDataPoints.CurrentChargingPower.History.DataHistory.Count > 1)
+            {
+                ChargingDataPoints.CurrentChargingPower.History.DataHistory.RemoveAt(0);
+            }
             jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
             ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
             PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
