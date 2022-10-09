@@ -74,6 +74,8 @@ namespace ChargingService
             {
                 // The minimum currency the charging station needs to start charging, which is 6A
                 var minimumChargingCurrency = 6;
+                var chargingStartOffset = 0.1;
+                var previousChargingCurrency = kebaConnector.DataPoints.AvailableChargingCurrency.CurrentValue;
 
                 powerDog.ReadSensorsData(state);
 
@@ -84,6 +86,11 @@ namespace ChargingService
                 dataPoints.GridSaldo.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue - powerDog.DataPoints.GridDemand.CurrentValue;
                 dataPoints.AvailableChargingPower.CurrentValue = dataPoints.GridSaldo.CurrentValue + dataPoints.CurrentChargingPower.CurrentValue;
                 dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
+                // Limit increasing of charging to 10% per cycle
+                if (previousChargingCurrency > 0 && dataPoints.AvailableChargingCurrency.CurrentValue > previousChargingCurrency*1.1)
+                {
+                    dataPoints.AvailableChargingCurrency.CurrentValue = previousChargingCurrency * 1.1;
+                }
                 dataPoints.MinimumActivationPVCurrency.CurrentValue = minimumChargingCurrency * dataPoints.MinimumPVShare.CurrentValue / 100;
 
                 if (dataPoints.KebaStatus.CurrentValue == 3 && previousChargingState != 3)
