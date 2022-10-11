@@ -43,10 +43,12 @@
     {
         try
         {
-            HttpClient Http = new HttpClient();
-            var jsonString = Http.GetStringAsync($"http://localhost:5005/readremotedisplaydata").Result;
-            dataPoints = JsonConvert.DeserializeObject<RemoteDisplayDataPoints>(jsonString);
-            InvokeAsync(StateHasChanged);
+            using (HttpClient Http = new HttpClient())
+            {
+                var jsonString = Http.GetStringAsync($"http://localhost:5005/readremotedisplaydata").Result;
+                dataPoints = JsonConvert.DeserializeObject<RemoteDisplayDataPoints>(jsonString);
+                InvokeAsync(StateHasChanged);
+            }
         }
         catch (Exception ex)
         {

@@ -43,17 +43,19 @@
     {
         try
         {
-            HttpClient Http = new HttpClient();
-            var jsonString = Http.GetStringAsync($"http://localhost:5003/readSensorsdata").Result;
-            PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
-            PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
-            PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
-            PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
-            jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
-            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
-            SelfConsumption.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue - PVDataPoints.GridSupply.CurrentValue + PVDataPoints.GridDemand.CurrentValue - ChargingDataPoints.CurrentChargingPower.CurrentValue);
-            SelfProduction.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue > SelfConsumption.CurrentValue ? SelfConsumption.CurrentValue : PVDataPoints.PVProduction.CurrentValue);
-            InvokeAsync(StateHasChanged);
+            using (HttpClient Http = new HttpClient())
+            {
+                var jsonString = Http.GetStringAsync($"http://localhost:5003/readSensorsdata").Result;
+                PVDataPoints = JsonConvert.DeserializeObject<PVDataPoints>(jsonString);
+                PVDataPoints.PVProduction.History.DataHistory.RemoveAt(0);
+                PVDataPoints.GridDemand.History.DataHistory.RemoveAt(0);
+                PVDataPoints.GridSupply.History.DataHistory.RemoveAt(0);
+                jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+                ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+                SelfConsumption.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue - PVDataPoints.GridSupply.CurrentValue + PVDataPoints.GridDemand.CurrentValue - ChargingDataPoints.CurrentChargingPower.CurrentValue);
+                SelfProduction.SetCorrectedValue(PVDataPoints.PVProduction.CurrentValue > SelfConsumption.CurrentValue ? SelfConsumption.CurrentValue : PVDataPoints.PVProduction.CurrentValue);
+                InvokeAsync(StateHasChanged);
+            }
         }
         catch (Exception ex)
         {

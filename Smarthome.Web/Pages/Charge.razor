@@ -144,11 +144,12 @@
         {
             try
             {
-                HttpClient Http = new HttpClient();
-                var jsonString = Http.GetStringAsync("http://localhost:5004/readchargingsettings").Result;
-                settings = JsonConvert.DeserializeObject<ChargingSettingsData>(jsonString);
-                settings.isInitialized = true;
-                int i = 0;
+                using (HttpClient Http = new HttpClient())
+                {
+                    var jsonString = Http.GetStringAsync("http://localhost:5004/readchargingsettings").Result;
+                    settings = JsonConvert.DeserializeObject<ChargingSettingsData>(jsonString);
+                    settings.isInitialized = true;
+                }
             }
             catch (Exception ex)
             {
@@ -158,10 +159,12 @@
 
         try
         {
-            HttpClient Http = new HttpClient();
-            var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
-            ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
-            InvokeAsync(StateHasChanged);
+            using (HttpClient Http = new HttpClient())
+            {
+                var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+                ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
+                InvokeAsync(StateHasChanged);
+            }
         }
         catch (Exception ex)
         {
