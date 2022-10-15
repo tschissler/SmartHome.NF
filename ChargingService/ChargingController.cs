@@ -19,7 +19,7 @@ namespace ChargingService
         private TimeSpan recalculationFrequency = TimeSpan.FromSeconds(2);
         private DateTime chargingSessionStartTime;
         private int previousChargingState;
-        private object lockobject = new object();
+        public object lockobject = new object();
 
         public ChargingController()
         {

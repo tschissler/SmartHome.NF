@@ -25,7 +25,10 @@ var chargingController = new ChargingController();
 
 app.MapGet("/readdata", string () =>
 {
-    return JsonConvert.SerializeObject(chargingController.GetDataPoints());
+    lock (chargingController.lockobject)
+    {
+        return JsonConvert.SerializeObject(chargingController.GetDataPoints());
+    }
 })
 .WithName("ReadData");
 
