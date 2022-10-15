@@ -4,6 +4,7 @@ using System.Device.Gpio;
 using System.Device.I2c;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -12,6 +13,7 @@ using Iot.Device.Hcsr04.Esp32;
 using Iot.Device.Shtc3;
 using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Hardware.Esp32;
+using nanoFramework.Json;
 using nanoFramework.Networking;
 using nanoFramework.Runtime.Native;
 using Secrets;
@@ -31,9 +33,13 @@ namespace SmartHome.NF
         private static Shtc3 TempHumiditySensor;
         private static DeviceClient azureIoT;
         private static int connectedCount = 0;
-        private static int gasCounter = 0;
+        private static ArrayList gasTriggerTimestamps1 = new();
+        private static ArrayList gasTriggerTimestamps2 = new();
+        private static ArrayList gasTriggerTimestamps = gasTriggerTimestamps1;
         private static GpioPin gasContact;
-        private static int stromCounter = 0;
+        private static ArrayList stromTriggerTimestamps1 = new();
+        private static ArrayList stromTriggerTimestamps2 = new();
+        private static ArrayList stromTriggerTimestamps = stromTriggerTimestamps1;
         private static GpioPin stromContact;
         private static GpioPin RedLED;
         private static GpioPin GreenLED;
@@ -73,8 +79,9 @@ namespace SmartHome.NF
         private const int I2CClockPin = 33;
         private const int gasPin = 19;
         private const int stromPin = 18;
-        private static int TransmitInterval = (int)new TimeSpan(0, 10, 0).TotalMilliseconds;
+        private static int TransmitInterval = (int)new TimeSpan(0, 0, 15).TotalMilliseconds;
         private static int BlinkInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
+        private static object lockObject = new object();
 
 #endif
 
@@ -103,28 +110,19 @@ namespace SmartHome.NF
             {
                 Debug.WriteLine("Done");
 
-                Debug.Write("   - Azure IoT Hub...");
-                azureIoT = new DeviceClient(KellerSecrets.IotBrokerAddress, DeviceID, KellerSecrets.SasKey, azureCert: new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot)));
-                var isOpen = azureIoT.Open();
-                Debug.WriteLine("Done");
-
-                Debug.Write("   - Logging Service...");
-                LogManager.SendLogMessage(logUrl, "Application started, logging enabeled");
-                Debug.WriteLine("Done");
-
                 Debug.Write("   - GPIO...");
 
                 startLED.Write(PinValue.Low);
 
-                DistanceSensor = new Hcsr04(DistanceSensor_Trigger_Pin, DistanceSensor_Echo_Pin);
-                Configuration.SetPinFunction(I2CDataPin, DeviceFunction.I2C1_DATA);
-                Configuration.SetPinFunction(I2CClockPin, DeviceFunction.I2C1_CLOCK);
-                I2cConnectionSettings settings = new I2cConnectionSettings(1, Shtc3.DefaultI2cAddress);
-                I2cDevice device = I2cDevice.Create(settings);
-                TempHumiditySensor = new Shtc3(device);
+                //DistanceSensor = new Hcsr04(DistanceSensor_Trigger_Pin, DistanceSensor_Echo_Pin);
+                //Configuration.SetPinFunction(I2CDataPin, DeviceFunction.I2C1_DATA);
+                //Configuration.SetPinFunction(I2CClockPin, DeviceFunction.I2C1_CLOCK);
+                //I2cConnectionSettings settings = new I2cConnectionSettings(1, Shtc3.DefaultI2cAddress);
+                //I2cDevice device = I2cDevice.Create(settings);
+                //TempHumiditySensor = new Shtc3(device);
 
-                Timer blinkTimer = new Timer(IsAliveBlink, null, 0, BlinkInterval);
-                Timer transmitTimer = new Timer(TransmitDataToIotHub, null, 0, TransmitInterval);
+                //Timer blinkTimer = new Timer(IsAliveBlink, null, 0, BlinkInterval);
+                Timer transmitTimer = new Timer(TransmitDataToService, null, 0, TransmitInterval);
 
                 //GpioController.OpenPin(19, PinMode.Input);
 
@@ -155,87 +153,91 @@ namespace SmartHome.NF
                 {
                     var pingLED = RedLED;
 
-                    var status = LogManager.PingLogService(logUrl);
-                    if (status == HttpStatusCode.OK)
-                    {
-                        pingLED = BlueLED;
-                    }
+                    //var status = LogManager.PingLogService(logUrl);
+                    //if (status == HttpStatusCode.OK)
+                    //{
+                    //    pingLED = BlueLED;
+                    //}
 
                     pingLED.Write(PinValue.High);
                     Thread.Sleep(10);
                     pingLED.Toggle();
                     Thread.Sleep(1000);
+
+                    Debug.WriteLine($"{gasContact.Read().ToString()} - {gasTriggerTimestamps.Count} | {stromContact.Read().ToString()} - {stromTriggerTimestamps.Count}");
                 }
             }
             Thread.Sleep(Timeout.Infinite);
         }
 
+        private static void TransmitDataToService(object state)
+        {
+            var data = new ConsumptionData();
+            
+            try
+            {
+                if (stromTriggerTimestamps == stromTriggerTimestamps1)
+                {
+                    stromTriggerTimestamps = stromTriggerTimestamps2;
+                    data.PowerTriggerTimestamps = stromTriggerTimestamps1;
+                }
+                else
+                {
+                    stromTriggerTimestamps = stromTriggerTimestamps1;
+                    data.PowerTriggerTimestamps = stromTriggerTimestamps2;
+                }
+                
+                if (gasTriggerTimestamps == gasTriggerTimestamps1)
+                {
+                    gasTriggerTimestamps = gasTriggerTimestamps2;
+                    data.GasTriggerTimestamps = gasTriggerTimestamps1;
+                }
+                else
+                {
+                    gasTriggerTimestamps = gasTriggerTimestamps1;
+                    data.GasTriggerTimestamps = gasTriggerTimestamps2;
+                }
+
+                var json = JsonConvert.SerializeObject(data);
+                Debug.WriteLine($"Sending sensor data to SmartHome: {json}");
+
+                data.GasTriggerTimestamps.Clear();
+                data.PowerTriggerTimestamps.Clear();
+
+                HttpClient httpClient = new();
+                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                var responseMessage = httpClient.Post("http://surface-2:5005/writeconsumptiondata", content);
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error posting sensor data: " + ex.Message);
+            }
+        }
+
         private static void TriggerGasContact(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
         {
-            gasCounter++;
+            gasTriggerTimestamps.Add(DateTime.UtcNow);
+            if (gasTriggerTimestamps.Count > 1000)
+            {
+                gasTriggerTimestamps.RemoveAt(0);
+            }
+            Console.WriteLine("GasTrigger");
         }
 
         private static void TriggerStromContact(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
         {
-            stromCounter++;
+            stromTriggerTimestamps.Add(DateTime.UtcNow);
+            if (stromTriggerTimestamps.Count > 1000)
+            {
+                stromTriggerTimestamps.RemoveAt(0);
+            }
+            Console.WriteLine("StromTrigger");
         }
 
-        private static void TransmitDataToIotHub(object state)
-        {
-            try
-            {
-                IsAliveLED = GreenLED;
-
-                var message = new StringBuilder();
-                message.Append($"{{\"DeviceUTCTime\":\"{DateTime.UtcNow}\",\"deviceId\":\"{DeviceID}\",\"GasPulse\":{gasCounter},\"StromPulse\":{stromCounter}");
-
-                gasCounter = 0;
-                stromCounter = 0;
-
-                if (distanceCount > 0)
-                {
-                    message.Append($",\"ZisterneLevel\":{distanceSum / distanceCount}");
-
-                    minDistance = 999;
-                    maxDistance = 0;
-                    distanceCount = 0;
-                    distanceSum = 0;
-                }
-
-                if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
-                {
-                    message.Append($",\"KellerTemp\":{temperature.DegreesCelsius},\"KellerHumidity\":{relativeHumidity.Percent}");
-                    Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
-                    Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
-                }
-                else
-                {
-                    Debug.WriteLine("Error reading temperature and humidity");
-                    IsAliveLED = RedLED;
-                }
-
-                message.Append($",\"Memory\":{GC.Run(false)}");
-                message.Append("}");
-
-                TransmitLED.Write(PinValue.High);
-                var t = message.ToString();
-                Debug.WriteLine(t);
-                if (azureIoT.SendMessage(message.ToString()))
-                {
-                    Debug.Write("Data has been transmitted to Azure IoT Hub");
-                }
-                else
-                {
-                    Debug.WriteLine("Error transmitting data to Azure IoT Hub");
-                }
-                TransmitLED.Write(PinValue.Low);
-            }
-            catch (Exception ex)
-            {
-                IsAliveLED = RedLED;
-                LogManager.SendLogMessage(logUrl, "Exception in TransmitDataToIotHub: " + ex.Message);
-            }
-        }
         private static void IsAliveBlink(object state)
         {
             try
@@ -273,7 +275,7 @@ namespace SmartHome.NF
                 Thread.Sleep(10);
                 IsAliveLED.Toggle();
 
-                Debug.WriteLine($"{gasContact.Read().ToString()} - {gasCounter} | {stromContact.Read().ToString()} - {stromCounter}");
+                Debug.WriteLine($"{gasContact.Read().ToString()} - {gasTriggerTimestamps.Count} | {stromContact.Read().ToString()} - {stromTriggerTimestamps.Count}");
             }
             catch (Exception ex)
             {
@@ -281,6 +283,12 @@ namespace SmartHome.NF
                 LogManager.SendLogMessage(logUrl, "Exception in IsAliveBlink: " + ex.Message);
             }
         }
+    }
+
+    public class ConsumptionData
+    {
+        public ArrayList GasTriggerTimestamps { get; set; }
+        public ArrayList PowerTriggerTimestamps { get; set; }
 
     }
 }

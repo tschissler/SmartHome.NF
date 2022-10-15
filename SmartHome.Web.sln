@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secrets", "Secrets\Secrets.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorDataService", "SensorDataService\SensorDataService.csproj", "{8D8864DE-AADC-468A-9132-DC9FE433F9DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorData.Tests", "SensorData.Tests\SensorData.Tests.csproj", "{73343C56-7B9F-413A-A6FE-A54FA30F5098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,12 @@ Global
 		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D8864DE-AADC-468A-9132-DC9FE433F9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +137,7 @@ Global
 		{B5B7C3B3-C94D-4EBA-9151-AFB3CBA57701} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 		{C7158F1F-1A7C-4246-ABC7-E55F433DAD69} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 		{8D8864DE-AADC-468A-9132-DC9FE433F9DE} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
+		{73343C56-7B9F-413A-A6FE-A54FA30F5098} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}

@@ -29,9 +29,16 @@ app.MapPost("/setremotedisplaydata", bool ([FromBody] RemoteDisplayData remotedi
 })
 .WithName("SetRemotedisplayData");
 
+app.MapPost("/writeconsumptiondata", bool ([FromBody] ConsumptionData consumptiondata) =>
+{
+    //controller.ConsumptionChanged(consumptiondata);
+    return true;
+})
+.WithName("WriteConsumptionData");
+
 app.MapGet("/readremotedisplaydata", string () =>
 {
-    lock (controller.LockObject)
+    lock (controller.RemoteDisplayLockObject)
     {
         return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
     }
