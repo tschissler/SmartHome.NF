@@ -39,7 +39,14 @@ namespace ChargingService
             kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, 1002);
 
             recalculationTimer = new Timer(CalculateData, null, 0, (int)recalculationFrequency.TotalMilliseconds);
-            storageTimer = new Timer(StoreData, null, (int)storageFrequency.TotalMilliseconds, (int)storageFrequency.TotalMilliseconds);
+            if (Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE") != null && Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE").ToLower() == "false")
+            {
+                ConsoleHelpers.PrintInformation("WRITE_TABLE_TO_TABLESTORAGE is set to false, so we will not write data to the cloud");
+            }
+            else
+            {
+                storageTimer = new Timer(StoreData, null, (int)storageFrequency.TotalMilliseconds, (int)storageFrequency.TotalMilliseconds);
+            }
         }
 
         public ChargingDataPoints GetDataPoints()
