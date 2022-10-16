@@ -1,0 +1,56 @@
+﻿@page "/consumptionM3"
+
+@using HelpersLib;
+@using Newtonsoft.Json;
+@using Smarthome.Web.Controls
+
+<PageTitle>Verbrauch M1</PageTitle>
+
+<h2>Verbrauchsdaten</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Power" Color="#009900"></CircularGaugeControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataPoints="new List<DecimalDataPoint>{dataPoints.Power}" Label="Verbrauch"></HistoryControl>
+        </div>
+    </div>
+</div>
+
+<p>Zeit: @DateTime.Now</p>
+
+@code 
+{
+    private Timer refreshTimer;
+    private ConsumptionDataPoints dataPoints = new();
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+    }
+
+    private void Refresh(object? state)
+    {
+        try
+        {
+            using (HttpClient Http = new HttpClient())
+            {
+                var jsonString = Http.GetStringAsync($"http://localhost:5005/readconsumptiondata").Result;
+                dataPoints = JsonConvert.DeserializeObject<ConsumptionDataPoints>(jsonString);
+                InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage("Failed to read consumption data from SensorDataService, Error: " + ex.Message);
+        }
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}

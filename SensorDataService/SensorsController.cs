@@ -22,7 +22,10 @@ namespace SensorDataService
         public object RemoteDisplayLockObject = new object();
         public object ConsumptionLockObject = new object();
         public RemoteDisplayDataPoints remoteDisplayDataPoints = new();
-        
+        public ConsumptionDataPoints consumptionDataPoints = new();
+
+        private DateTime previousPowerTimeStamp = DateTime.MinValue;
+
         public void RemoteDisplayChanged(RemoteDisplayData sensorData)
         {
             lock (RemoteDisplayLockObject)
@@ -38,7 +41,17 @@ namespace SensorDataService
         {
             lock (ConsumptionLockObject)
             {
-                int i = 1;
+                if (sensorData.PowerTriggerTimestamps != null && sensorData.PowerTriggerTimestamps.Count > 0)
+                {
+                    foreach (var timestamp in sensorData.PowerTriggerTimestamps)
+                    {
+                        if (previousPowerTimeStamp != DateTime.MinValue)
+                        {
+                            consumptionDataPoints.Power.SetCorrectedValue(48000 / (timestamp - previousPowerTimeStamp).TotalSeconds);
+                        }
+                        previousPowerTimeStamp = timestamp;
+                    }
+                }
             }
         }
     }

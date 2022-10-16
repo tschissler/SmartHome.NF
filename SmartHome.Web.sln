@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorDataService", "Sensor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorData.Tests", "SensorData.Tests\SensorData.Tests.csproj", "{73343C56-7B9F-413A-A6FE-A54FA30F5098}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageLib", "StorageLib\StorageLib.csproj", "{4EA4B90B-40E6-4E5E-918B-FFAF3EFF362B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StorageLib", "StorageLib\StorageLib.csproj", "{4EA4B90B-40E6-4E5E-918B-FFAF3EFF362B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
