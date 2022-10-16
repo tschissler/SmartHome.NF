@@ -127,7 +127,7 @@ namespace ChargingService
                 dataPoints.AvailableChargingPower.CurrentValue = dataPoints.GridSaldo.CurrentValue + dataPoints.CurrentChargingPower.CurrentValue;
                 dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
                 // Limit increasing of charging to 10% per cycle
-                if (previousChargingCurrency > 0 && dataPoints.AvailableChargingCurrency.CurrentValue > previousChargingCurrency*1.1)
+                if (previousChargingCurrency > minimumChargingCurrency && dataPoints.AvailableChargingCurrency.CurrentValue > previousChargingCurrency*1.1)
                 {
                     dataPoints.AvailableChargingCurrency.CurrentValue = previousChargingCurrency * 1.1;
                 }
