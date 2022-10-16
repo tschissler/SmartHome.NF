@@ -6,6 +6,8 @@ using Secrets;
 using SharedContracts;
 using SharedContracts.DataPointCollections;
 using SharedContracts.DataPoints;
+using SharedContracts.StorageData;
+using StorageLib;
 using System.Net;
 
 namespace ChargingService
@@ -17,6 +19,8 @@ namespace ChargingService
         private double lastSetChargingCurrency;
         private Timer recalculationTimer;
         private TimeSpan recalculationFrequency = TimeSpan.FromSeconds(2);
+        private Timer storageTimer;
+        private TimeSpan storageFrequency = TimeSpan.FromSeconds(2);
         private DateTime chargingSessionStartTime;
         private int previousChargingState;
         public object lockobject = new object();
@@ -35,6 +39,7 @@ namespace ChargingService
             kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, 1002);
 
             recalculationTimer = new Timer(CalculateData, null, 0, (int)recalculationFrequency.TotalMilliseconds);
+            storageTimer = new Timer(StoreData, null, (int)storageFrequency.TotalMilliseconds, (int)storageFrequency.TotalMilliseconds);
         }
 
         public ChargingDataPoints GetDataPoints()
@@ -68,6 +73,34 @@ namespace ChargingService
             return chargingSettingsData;
         }
 
+        public void StoreData(object? state)
+        {
+            lock (lockobject)
+            {
+                try
+                {
+                    var timeStamp = DateTime.UtcNow;
+                    EnergyM3StorageData storageEntity = new()
+                    {
+                        RowKey = timeStamp.ToString("yyyyMMddHHmmss"),
+                        PartitionKey = timeStamp.ToString("yyyyMMddHHmm"),
+                        Timestamp = timeStamp,
+
+                        GridDemand = powerDog.DataPoints.GridDemand.CurrentValue,
+                        GridSupply = powerDog.DataPoints.GridSupply.CurrentValue,
+                        PVProduction = powerDog.DataPoints.PVProduction.CurrentValue,
+                        CarChargingStatus = kebaConnector.DataPoints.KebaStatus.CurrentValue,
+                        CarCharging = kebaConnector.DataPoints.CurrentChargingPower.CurrentValue
+                    };
+                    TableStorageConnector.WriteEnergyM3DataToTable(storageEntity);
+                }
+                catch (Exception ex)
+                {
+                    ConsoleHelpers.PrintErrorMessage($"Error while storing data: {ex.Message}");
+                }
+            }
+        }
+        
         public void CalculateData(object? state)
         {
             lock (lockobject)

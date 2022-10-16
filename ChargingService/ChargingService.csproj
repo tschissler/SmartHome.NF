@@ -21,6 +21,7 @@
     <ProjectReference Include="..\PowerDog\PowerDogLib.csproj" />
     <ProjectReference Include="..\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
+    <ProjectReference Include="..\StorageLib\StorageLib.csproj" />
   </ItemGroup>
 
 </Project>

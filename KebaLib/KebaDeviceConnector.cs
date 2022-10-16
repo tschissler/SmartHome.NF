@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using HelpersLib;
 using SharedContracts.DataPointCollections;
 using SharedContracts.DataPoints;
+using SharedContracts.StorageData;
 
 namespace KebaLib
 {
@@ -52,7 +53,8 @@ namespace KebaLib
         /// Reads data from the Keba device and updates the DataPoints and writes target current to the device.
         /// </summary>
         /// <remarks>
-        /// As the Keba documentation states there should be a 2 second delay between sending commands to the device, this method should not be called more frequently.
+        /// As the Keba documentation states there should be a 2 second delay between sending commands to the device, 
+        /// this method should not be called more frequently.
         /// </remarks>
         /// <param name="state"></param>
         internal void RefreshData(object? state)
@@ -75,11 +77,6 @@ namespace KebaLib
                 DataPoints.ConsumptionActiveSession.SetCorrectedValue(data.EnergyCurrentChargingSession);
                 DataPoints.CharingOverallTotal.SetCorrectedValue(data.EnergyTotal);
                 DataPoints.KebaStatus.CurrentValue = data.State;
-
-
-                //DataPoints.CurrentChargingPower = data.CurrentChargingPower;
-                //DataPoints.EffectiveMaximumChargingCurrency = new() { Label = "Aktuell eingestellter Strom", Unit = "A", MaxValue = 16, DecimalDigits = 1 };
-                //DataPoints.CarChargingManualCurrency = new() { Unit = "mA", MaxValue = 16000 };
 
                 ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.AssembleValueString()}, " +
                     $"Total: {DataPoints.CharingOverallTotal.AssembleValueString()}, "+
