@@ -110,6 +110,14 @@ namespace ChargingService
         
         public void CalculateData(object? state)
         {
+            if (kebaConnector.DataPoints.KebaStatus.CurrentValue == 1)
+            {
+                if (previousChargingState != 1)
+                {
+                    Console.WriteLine("Car not connected, no charging calculated.");
+                }
+                return;
+            }
             lock (lockobject)
             {
                 // The minimum currency the charging station needs to start charging, which is 6A
