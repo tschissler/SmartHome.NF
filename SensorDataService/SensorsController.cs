@@ -48,6 +48,11 @@ namespace SensorDataService
                     {
                         if (previousPowerTimeStamp != DateTime.MinValue)
                         {
+                            // If time is too short, it is not a new impulse but contact is bouncing
+                            if ((timestamp - previousPowerTimeStamp).TotalSeconds < 1)
+                            {
+                                break;
+                            }
                             consumptionDataPoints.Power.SetCorrectedValue(48000 / (timestamp - previousPowerTimeStamp).TotalSeconds);
                         }
                         previousPowerTimeStamp = timestamp;
@@ -60,6 +65,11 @@ namespace SensorDataService
                     {
                         if (previousGasTimeStamp != DateTime.MinValue)
                         {
+                            // If time is too short, it is not a new impulse but contact is bouncing
+                            if ((timestamp - previousGasTimeStamp).TotalSeconds < 1)
+                            {
+                                break;
+                            }
                             consumptionDataPoints.Gas.SetCorrectedValue(36 / (timestamp - previousGasTimeStamp).TotalSeconds);
                         }
                         previousGasTimeStamp = timestamp;
