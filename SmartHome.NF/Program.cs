@@ -178,6 +178,7 @@ namespace SmartHome.NF
 
         private static void TransmitDataToService(object state)
         {
+            BlueLED.Write(PinValue.High);
             var data = new ConsumptionData();
             
             try
@@ -238,6 +239,11 @@ namespace SmartHome.NF
             catch (Exception ex)
             {
                 Debug.WriteLine("Error posting sensor data: " + ex.Message);
+            }
+            finally
+            {
+                BlueLED.Write(PinValue.Low);
+
             }
         }
 
