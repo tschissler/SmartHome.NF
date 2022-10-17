@@ -49,7 +49,7 @@ jobs:
         pkill Smarthome.Web
         pkill PVService
         pkill ChargingService
-        pkill SensorDataService
+        pkill SensorDataServi*
         
     - name: Removing old content
       continue-on-error: true
