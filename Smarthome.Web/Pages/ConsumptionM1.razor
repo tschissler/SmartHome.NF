@@ -46,7 +46,7 @@
 
     protected override void OnInitialized()
     {
-        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+        refreshTimer = new Timer(Refresh, null, 1000, 60000);
     }
 
     private void Refresh(object? state)

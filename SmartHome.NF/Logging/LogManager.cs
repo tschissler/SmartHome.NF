@@ -6,6 +6,8 @@ using nanoFramework.Json;
 using nanoFramework.Networking;
 using System.Security.Cryptography.X509Certificates;
 using ExtensionMethods;
+using System.Diagnostics;
+using System.Net.Http;
 
 namespace SmartHome.NF.Logging
 {
@@ -56,20 +58,17 @@ namespace SmartHome.NF.Logging
 
             try
             {
-                using (var httpWebRequest = (HttpWebRequest)WebRequest.Create(url))
+                HttpClient httpClient = new();
+                var responseMessage = httpClient.Get(url);
+                responseCode = responseMessage.StatusCode;
+                if (!responseMessage.IsSuccessStatusCode)
                 {
-                    httpWebRequest.Method = "GET";
-                    httpWebRequest.KeepAlive = false;
-                    using (var httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse())
-                    {
-                        responseCode = httpWebResponse.StatusCode;
-                        httpWebResponse.Close();
-                    }
+                    Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
                 }
             }
             catch (Exception ex)
             {
-               
+                Debug.WriteLine("Error while reaching ping service: " + ex.Message);
             }
 
             return responseCode;

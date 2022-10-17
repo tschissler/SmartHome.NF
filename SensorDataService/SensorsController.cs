@@ -78,6 +78,10 @@ namespace SensorDataService
                         previousGasTimeStamp = timestamp;
                     }
                 }
+
+                consumptionDataPoints.WaterLevel.SetCorrectedValue(sensorData.WaterLevel);
+                consumptionDataPoints.Temperature.SetCorrectedValue(sensorData.Temperature);
+                consumptionDataPoints.Humidity.SetCorrectedValue(sensorData.Humidity);
             }
         }
     }

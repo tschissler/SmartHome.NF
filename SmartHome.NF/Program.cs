@@ -79,8 +79,8 @@ namespace SmartHome.NF
         private const int I2CClockPin = 33;
         private const int gasPin = 19;
         private const int stromPin = 18;
-        private static int TransmitInterval = (int)new TimeSpan(0, 0, 15).TotalMilliseconds;
-        private static int ReadDistanceInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
+        private static int TransmitInterval = (int)new TimeSpan(0, 1, 0).TotalMilliseconds;
+        private static int ReadDistanceInterval = (int)new TimeSpan(0, 0, 3).TotalMilliseconds;
         private static object lockObject = new object();
 
 #endif
@@ -152,20 +152,25 @@ namespace SmartHome.NF
 
                 while (true)
                 {
-                    var pingLED = RedLED;
-
-                    var status = LogManager.PingLogService(Secrets.KellerSecrets.PingUrl);
-                    if (status == HttpStatusCode.OK)
+                    try
                     {
-                        pingLED = BlueLED;
+                        var status = LogManager.PingLogService(Secrets.KellerSecrets.PingUrl);
+                        if (status == HttpStatusCode.OK)
+                        {
+                            RedLED.Write(PinValue.Low);
+                        }
+                        else
+                        {
+                            RedLED.Write(PinValue.High);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                        RedLED.Write(PinValue.High);
                     }
 
-                    pingLED.Write(PinValue.High);
-                    Thread.Sleep(10);
-                    pingLED.Toggle();
                     Thread.Sleep(1000);
-
-                    Debug.WriteLine($"{gasContact.Read().ToString()} - {gasTriggerTimestamps.Count} | {stromContact.Read().ToString()} - {stromTriggerTimestamps.Count}");
                 }
             }
             Thread.Sleep(Timeout.Infinite);
