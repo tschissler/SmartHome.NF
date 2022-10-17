@@ -115,6 +115,7 @@ namespace ChargingService
                 if (previousChargingState != 1)
                 {
                     Console.WriteLine("Car not connected, no charging calculated.");
+                    previousChargingState = dataPoints.KebaStatus.CurrentValue;
                 }
                 return;
             }
