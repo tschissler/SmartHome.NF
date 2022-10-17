@@ -25,6 +25,7 @@ namespace SensorDataService
         public ConsumptionDataPoints consumptionDataPoints = new();
 
         private DateTime previousPowerTimeStamp = DateTime.MinValue;
+        private DateTime previousGasTimeStamp = DateTime.MinValue;
 
         public void RemoteDisplayChanged(RemoteDisplayData sensorData)
         {
@@ -50,6 +51,18 @@ namespace SensorDataService
                             consumptionDataPoints.Power.SetCorrectedValue(48000 / (timestamp - previousPowerTimeStamp).TotalSeconds);
                         }
                         previousPowerTimeStamp = timestamp;
+                    }
+                }
+
+                if (sensorData.GasTriggerTimestamps != null && sensorData.GasTriggerTimestamps.Count > 0)
+                {
+                    foreach (var timestamp in sensorData.GasTriggerTimestamps)
+                    {
+                        if (previousGasTimeStamp != DateTime.MinValue)
+                        {
+                            consumptionDataPoints.Gas.SetCorrectedValue(36 / (timestamp - previousGasTimeStamp).TotalSeconds);
+                        }
+                        previousGasTimeStamp = timestamp;
                     }
                 }
             }

@@ -12,10 +12,18 @@
         <div class="col">
             <CircularGaugeControl DataPoint="@dataPoints.Power" Color="#009900"></CircularGaugeControl>
         </div>
+        <div class="col">
+            <CircularGaugeControl DataPoint="@dataPoints.Gas" Color="#009900"></CircularGaugeControl>
+        </div>
     </div>
     <div class="row">
         <div class="col">
             <HistoryControl DataPoints="new List<DecimalDataPoint>{dataPoints.Power}" Label="Verbrauch"></HistoryControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataPoints="new List<DecimalDataPoint>{dataPoints.Gas}" Label="Verbrauch"></HistoryControl>
         </div>
     </div>
 </div>

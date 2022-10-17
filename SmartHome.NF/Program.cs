@@ -206,7 +206,7 @@ namespace SmartHome.NF
 
                 HttpClient httpClient = new();
                 HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                var responseMessage = httpClient.Post("http://surface-2:5005/writeconsumptiondata", content);
+                var responseMessage = httpClient.Post(Secrets.KellerSecrets.SensorDataServiceUrl, content);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
                     Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
