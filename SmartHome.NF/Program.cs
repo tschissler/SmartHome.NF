@@ -80,7 +80,7 @@ namespace SmartHome.NF
         private const int gasPin = 19;
         private const int stromPin = 18;
         private static int TransmitInterval = (int)new TimeSpan(0, 0, 15).TotalMilliseconds;
-        private static int BlinkInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
+        private static int ReadDistanceInterval = (int)new TimeSpan(0, 0, 30).TotalMilliseconds;
         private static object lockObject = new object();
 
 #endif
@@ -114,14 +114,14 @@ namespace SmartHome.NF
 
                 startLED.Write(PinValue.Low);
 
-                //DistanceSensor = new Hcsr04(DistanceSensor_Trigger_Pin, DistanceSensor_Echo_Pin);
-                //Configuration.SetPinFunction(I2CDataPin, DeviceFunction.I2C1_DATA);
-                //Configuration.SetPinFunction(I2CClockPin, DeviceFunction.I2C1_CLOCK);
-                //I2cConnectionSettings settings = new I2cConnectionSettings(1, Shtc3.DefaultI2cAddress);
-                //I2cDevice device = I2cDevice.Create(settings);
-                //TempHumiditySensor = new Shtc3(device);
+                DistanceSensor = new Hcsr04(DistanceSensor_Trigger_Pin, DistanceSensor_Echo_Pin);
+                Configuration.SetPinFunction(I2CDataPin, DeviceFunction.I2C1_DATA);
+                Configuration.SetPinFunction(I2CClockPin, DeviceFunction.I2C1_CLOCK);
+                I2cConnectionSettings settings = new I2cConnectionSettings(1, Shtc3.DefaultI2cAddress);
+                I2cDevice device = I2cDevice.Create(settings);
+                TempHumiditySensor = new Shtc3(device);
 
-                //Timer blinkTimer = new Timer(IsAliveBlink, null, 0, BlinkInterval);
+                Timer readDistanceTimer = new Timer(ReadDistance, null, 0, ReadDistanceInterval);
                 Timer transmitTimer = new Timer(TransmitDataToService, null, 0, TransmitInterval);
 
                 //GpioController.OpenPin(19, PinMode.Input);
@@ -132,7 +132,8 @@ namespace SmartHome.NF
                 //gasContact.SetDriveMode(PinMode.InputPullUp);
 
                 // add a debounce timeout 
-                //gasContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
+                gasContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
+                stromContact.DebounceTimeout = new TimeSpan(0, 0, 0, 0, 20);
                 //gasContact.ValueChanged += TriggerGasContact;
 
 
@@ -153,11 +154,11 @@ namespace SmartHome.NF
                 {
                     var pingLED = RedLED;
 
-                    //var status = LogManager.PingLogService(logUrl);
-                    //if (status == HttpStatusCode.OK)
-                    //{
-                    //    pingLED = BlueLED;
-                    //}
+                    var status = LogManager.PingLogService(Secrets.KellerSecrets.PingUrl);
+                    if (status == HttpStatusCode.OK)
+                    {
+                        pingLED = BlueLED;
+                    }
 
                     pingLED.Write(PinValue.High);
                     Thread.Sleep(10);
@@ -196,6 +197,23 @@ namespace SmartHome.NF
                 {
                     gasTriggerTimestamps = gasTriggerTimestamps1;
                     data.GasTriggerTimestamps = gasTriggerTimestamps2;
+                }
+
+                data.WaterLevel = distanceSum / distanceCount;
+                distanceCount = 0;
+                distanceSum = 0;
+
+                if (TempHumiditySensor.TryGetTemperatureAndHumidity(out var temperature, out var relativeHumidity))
+                {
+                    data.Temperature = temperature.DegreesCelsius;
+                    data.Humidity = relativeHumidity.Percent;
+                    Debug.WriteLine($"Temp: {temperature.DegreesCelsius} °C");
+                    Debug.WriteLine($"Humidity: {relativeHumidity.Percent} %");
+                }
+                else
+                {
+                    Debug.WriteLine("Error reading temperature and humidity");
+                    IsAliveLED = RedLED;
                 }
 
                 var json = JsonConvert.SerializeObject(data);
@@ -238,7 +256,7 @@ namespace SmartHome.NF
             Console.WriteLine("StromTrigger");
         }
 
-        private static void IsAliveBlink(object state)
+        private static void ReadDistance(object state)
         {
             try
             {
@@ -265,7 +283,7 @@ namespace SmartHome.NF
                     Debug.WriteLine($"Min: {minDistance} | Max: {maxDistance} | Var: {maxDistance - minDistance} | Avg: {distanceSum / distanceCount}");
                 }
 
-                Debug.WriteLine($"Available memory: {GC.Run(false)}");
+                // Debug.WriteLine($"Available memory: {GC.Run(false)}");
 
                 IsAliveLED.Write(PinValue.High);
                 Thread.Sleep(10);
@@ -274,13 +292,11 @@ namespace SmartHome.NF
                 IsAliveLED.Toggle();
                 Thread.Sleep(10);
                 IsAliveLED.Toggle();
-
-                Debug.WriteLine($"{gasContact.Read().ToString()} - {gasTriggerTimestamps.Count} | {stromContact.Read().ToString()} - {stromTriggerTimestamps.Count}");
             }
             catch (Exception ex)
             {
                 IsAliveLED = RedLED;
-                LogManager.SendLogMessage(logUrl, "Exception in IsAliveBlink: " + ex.Message);
+                LogManager.SendLogMessage(logUrl, "Exception in ReadDistance: " + ex.Message);
             }
         }
     }
@@ -289,6 +305,8 @@ namespace SmartHome.NF
     {
         public ArrayList GasTriggerTimestamps { get; set; }
         public ArrayList PowerTriggerTimestamps { get; set; }
-
+        public double WaterLevel { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
     }
 }

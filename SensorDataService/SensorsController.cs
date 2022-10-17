@@ -15,6 +15,9 @@ namespace SensorDataService
     {
         public List<DateTime> GasTriggerTimestamps { get; set; }
         public List<DateTime> PowerTriggerTimestamps { get; set; }
+        public double WaterLevel { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
     }
 
     public class SensorsController

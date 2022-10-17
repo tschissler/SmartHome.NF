@@ -54,15 +54,9 @@ namespace SmartHome.NF.Logging
         {
             var responseCode = HttpStatusCode.NotFound;
 
-            //X509Certificate rootCACert = new X509Certificate(SmartHome.NF.Resources.GetBytes(SmartHome.NF.Resources.BinaryResources.AzureRoot));
-            //X509Certificate rootCACert = new X509Certificate(Resources.GetBytes(Resources.BinaryResources.DigiCertGlobalRootCA));
-            //httpWebRequest.ContentType = "application/json";
-            //httpWebRequest.SslProtocols = System.Net.Security.SslProtocols.Tls12;
-            //httpWebRequest.HttpsAuthentCert = rootCACert;
-
             try
             {
-                using (var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://www.google.de"))
+                using (var httpWebRequest = (HttpWebRequest)WebRequest.Create(url))
                 {
                     httpWebRequest.Method = "GET";
                     httpWebRequest.KeepAlive = false;

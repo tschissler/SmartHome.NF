@@ -54,4 +54,10 @@ app.MapGet("/readconsumptiondata", string () =>
 })
 .WithName("ReadConsumptionData");
 
+app.MapGet("/ping", bool () =>
+{
+    return true;
+})
+.WithName("Ping");
+
 app.Run();
