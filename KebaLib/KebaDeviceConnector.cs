@@ -78,11 +78,11 @@ namespace KebaLib
                 DataPoints.CharingOverallTotal.SetCorrectedValue(data.EnergyTotal);
                 DataPoints.KebaStatus.CurrentValue = data.State;
 
-                ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.AssembleValueString()}, " +
-                    $"Total: {DataPoints.CharingOverallTotal.AssembleValueString()}, "+
-                    $"Power: {DataPoints.CurrentChargingPower.AssembleValueString()}, " +
-                    $"Max: {DataPoints.EffectiveMaximumChargingCurrency.AssembleValueString()}, " +
-                    $"State: {DataPoints.KebaStatus.CurrentValue}");
+                //ConsoleHelpers.PrintMessage($"Active Session: {DataPoints.ConsumptionActiveSession.AssembleValueString()}, " +
+                //    $"Total: {DataPoints.CharingOverallTotal.AssembleValueString()}, "+
+                //    $"Power: {DataPoints.CurrentChargingPower.AssembleValueString()}, " +
+                //    $"Max: {DataPoints.EffectiveMaximumChargingCurrency.AssembleValueString()}, " +
+                //    $"State: {DataPoints.KebaStatus.CurrentValue}");
             }
 
             if (previousChargingCurrencyWrittenToDevice != DataPoints.AdjustedCharingCurrency.CurrentValue &&
