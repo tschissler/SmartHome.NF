@@ -65,23 +65,26 @@ jobs:
         name: SmartHome.Web.artifacts
         path: ~/SmartHome
         
-    - name: Start PV Service
-      run: |
-        chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
-        cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
-        RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./PVService
-    - name: Start Charging Service
-      run: |
-        chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
-        cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/
-        RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./ChargingService
-    - name: Start SensorDataController Service
-      run: |
-        chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
-        cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/
-        RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./SensorDataService
-    - name: Start Webapp
-      run: |
-        chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
-        cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/
-        RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./Smarthome.Web
+    #- name: Start PV Service
+    #  run: |
+    #    chmod +x ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/PVService
+    #    cd ~/SmartHome/PVService/bin/Debug/net6.0/linux-arm/publish/
+    #    RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./PVService
+    #- name: Start Charging Service
+    #  run: |
+    #    chmod +x ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/ChargingService
+    #    cd ~/SmartHome/ChargingService/bin/Debug/net6.0/linux-arm/publish/
+    #    RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./ChargingService
+    #- name: Start SensorDataController Service
+    #  run: |
+    #    chmod +x ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/SensorDataService
+    #    cd ~/SmartHome/SensorDataService/bin/Debug/net6.0/linux-arm/publish/
+    #    RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./SensorDataService
+    #- name: Start Webapp
+    #  run: |
+    #    chmod +x ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/Smarthome.Web
+    #    cd ~/SmartHome/Smarthome.Web/bin/Debug/net6.0/linux-arm/publish/
+    #    RUNNER_TRACKING_ID="" && gnome-terminal --tab -- ./Smarthome.Web
+
+    - name: Start Services
+      run: RUNNER_TRACKING_ID="" && ~/startsmarthome.sh
