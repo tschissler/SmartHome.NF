@@ -22,6 +22,7 @@ namespace ChargingService
         private Timer storageTimer;
         private TimeSpan storageFrequency = TimeSpan.FromSeconds(2);
         private DateTime chargingSessionStartTime;
+        private DateTime chargingSessionLastChargingTime;
         private int previousChargingState;
         public object lockobject = new object();
 
@@ -152,16 +153,19 @@ namespace ChargingService
                 {
                     ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is high enough to start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.AvailableChargingCurrency.CurrentValue;
+                    chargingSessionLastChargingTime = DateTime.Now;
                 }
                 else if (!dataPoints.AutomaticCharging.CurrentValue && dataPoints.ManualChargingCurrency.CurrentValue >= 6)
                 {
                     ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is greater than 0 so start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.ManualChargingCurrency.CurrentValue;
+                    chargingSessionLastChargingTime = DateTime.Now;
                 }
                 else if (dataPoints.AutomaticCharging.CurrentValue && dataPoints.AvailableChargingCurrency.CurrentValue >= dataPoints.MinimumActivationPVCurrency.CurrentValue)
                 {
                     ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
                     dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
+                    chargingSessionLastChargingTime = DateTime.Now;
                 }
                 else
                 {
@@ -171,12 +175,20 @@ namespace ChargingService
                         // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
                         if ((DateTime.Now - chargingSessionStartTime).TotalSeconds < 60)
                         {
-                            ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorte than 60sec, so continuing");
+                            ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorter than 60sec, so continuing");
                         }
                         else
                         {
-                            ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
-                            dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
+                            // Min. 10 Sek. weiterladen um kurfristige Aussetzer zu kompensieren
+                            if ((DateTime.Now - chargingSessionLastChargingTime).TotalSeconds < 10)
+                            {
+                                ConsoleHelpers.PrintMessage($"----> Available charging currency too low but waiting for 10 more seconds before stopping");
+                            }
+                            else
+                            {
+                                ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
+                                dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
+                            }
                         }
                     }
                     else
