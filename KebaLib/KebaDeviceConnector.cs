@@ -112,12 +112,12 @@ namespace KebaLib
         {
             return ExecuteUDPCommand("report 1");
         }
-        
+
         internal string GetDeviceReport2()
         {
             return ExecuteUDPCommand("report 2");
         }
-           
+
         /// <summary>
         /// Writes the charging current to the device
         /// </summary>
@@ -169,41 +169,38 @@ namespace KebaLib
         {
             string result = "";
 
-            //Console.WriteLine($"Before Lock {command}");
-            //lock (lockObject)
+            Console.WriteLine($"Before Using {command}");
+            using (UdpClient udpClient = new UdpClient(uDPPort))
             {
-                //Console.WriteLine($"After Lock {command}");
-                using (UdpClient udpClient = new UdpClient(uDPPort))
+                Console.WriteLine($"Inside Using {command}");
+
+                try
                 {
-                    //Console.WriteLine($"Inside Using {command}");
+                    Console.WriteLine($"Inside try");
+                    udpClient.Connect(ipAddress, uDPPort);
 
-                    try
-                    {
-                        udpClient.Connect(ipAddress, uDPPort);
+                    // Sends a message to the host to which you have connected.
+                    byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
-                        // Sends a message to the host to which you have connected.
-                        byte[] sendBytes = Encoding.ASCII.GetBytes(command);
-                        
-                        udpClient.Send(sendBytes, sendBytes.Length);
+                    udpClient.Send(sendBytes, sendBytes.Length);
 
-                        //IPEndPoint object will allow us to read datagrams sent from any source.
-                        IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
+                    //IPEndPoint object will allow us to read datagrams sent from any source.
+                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
-                        // Blocks until a message returns on this socket from a remote host.
-                        byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                        string returnData = Encoding.ASCII.GetString(receiveBytes);
+                    // Blocks until a message returns on this socket from a remote host.
+                    byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                    string returnData = Encoding.ASCII.GetString(receiveBytes);
 
-                        result = returnData.ToString();
-                        //Thread.Sleep(500);
-                    }
-                    catch (Exception e)
-                    {
-                        ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
-                    }
-                    finally
-                    {
-                        udpClient.Close();
-                    }
+                    result = returnData.ToString();
+                    //Thread.Sleep(500);
+                }
+                catch (Exception e)
+                {
+                    ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
+                }
+                finally
+                {
+                    udpClient.Close();
                 }
             }
             return result;
