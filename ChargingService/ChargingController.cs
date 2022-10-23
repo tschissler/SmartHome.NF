@@ -120,82 +120,92 @@ namespace ChargingService
                 }
                 return;
             }
-            lock (lockobject)
+            //lock (lockobject)
+            if (Monitor.TryEnter(lockobject, 1000))
             {
-                // The minimum currency the charging station needs to start charging, which is 6A
-                var minimumChargingCurrency = 6;
-                var chargingStartOffset = 0.1;
-                var previousChargingCurrency = kebaConnector.DataPoints.AvailableChargingCurrency.CurrentValue;
+                try
+                {
+                    // The minimum currency the charging station needs to start charging, which is 6A
+                    var minimumChargingCurrency = 6;
+                    var chargingStartOffset = 0.1;
+                    var previousChargingCurrency = kebaConnector.DataPoints.AvailableChargingCurrency.CurrentValue;
 
-                powerDog.ReadSensorsData(state);
+                    powerDog.ReadSensorsData(state);
 
-                // Calculation
-                ChargingDataPoints dataPoints = kebaConnector.DataPoints;
-                dataPoints.GridSupply.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue;
-                dataPoints.GridDemand.CurrentValue = powerDog.DataPoints.GridDemand.CurrentValue;
-                dataPoints.GridSaldo.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue - powerDog.DataPoints.GridDemand.CurrentValue;
-                dataPoints.AvailableChargingPower.CurrentValue = dataPoints.GridSaldo.CurrentValue + dataPoints.CurrentChargingPower.CurrentValue;
-                dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
-                // Limit increasing of charging to 10% per cycle
-                if (previousChargingCurrency > minimumChargingCurrency && dataPoints.AvailableChargingCurrency.CurrentValue > previousChargingCurrency*1.1)
-                {
-                    dataPoints.AvailableChargingCurrency.CurrentValue = previousChargingCurrency * 1.1;
-                }
-                dataPoints.MinimumActivationPVCurrency.CurrentValue = minimumChargingCurrency * dataPoints.MinimumPVShare.CurrentValue / 100;
-
-                if (dataPoints.KebaStatus.CurrentValue == 3 && previousChargingState != 3)
-                {
-                    chargingSessionStartTime = DateTime.Now;
-                }
-                previousChargingState = dataPoints.KebaStatus.CurrentValue;
-
-                if (dataPoints.AvailableChargingCurrency.CurrentValue >= minimumChargingCurrency)
-                {
-                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is high enough to start charging");
-                    dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.AvailableChargingCurrency.CurrentValue;
-                    chargingSessionLastChargingTime = DateTime.Now;
-                }
-                else if (!dataPoints.AutomaticCharging.CurrentValue && dataPoints.ManualChargingCurrency.CurrentValue >= 6)
-                {
-                    ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is greater than 0 so start charging");
-                    dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.ManualChargingCurrency.CurrentValue;
-                    chargingSessionLastChargingTime = DateTime.Now;
-                }
-                else if (dataPoints.AutomaticCharging.CurrentValue && dataPoints.AvailableChargingCurrency.CurrentValue >= dataPoints.MinimumActivationPVCurrency.CurrentValue)
-                {
-                    ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
-                    dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
-                    chargingSessionLastChargingTime = DateTime.Now;
-                }
-                else
-                {
-                    if (dataPoints.AutomaticCharging.CurrentValue)
+                    // Calculation
+                    ChargingDataPoints dataPoints = kebaConnector.DataPoints;
+                    dataPoints.GridSupply.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue;
+                    dataPoints.GridDemand.CurrentValue = powerDog.DataPoints.GridDemand.CurrentValue;
+                    dataPoints.GridSaldo.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue - powerDog.DataPoints.GridDemand.CurrentValue;
+                    dataPoints.AvailableChargingPower.CurrentValue = dataPoints.GridSaldo.CurrentValue + dataPoints.CurrentChargingPower.CurrentValue;
+                    dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
+                    // Limit increasing of charging to 10% per cycle
+                    if (previousChargingCurrency > minimumChargingCurrency && dataPoints.AvailableChargingCurrency.CurrentValue > previousChargingCurrency * 1.1)
                     {
-                        // Problem mit Wechselrichter, schaltet ab , wenn Ladesitzung startet.
-                        // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
-                        if ((DateTime.Now - chargingSessionStartTime).TotalSeconds < 60)
-                        {
-                            ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorter than 60sec, so continuing");
-                        }
-                        else
-                        {
-                            // Min. 10 Sek. weiterladen um kurfristige Aussetzer zu kompensieren
-                            if ((DateTime.Now - chargingSessionLastChargingTime).TotalSeconds < 10)
-                            {
-                                ConsoleHelpers.PrintMessage($"----> Available charging currency too low but waiting for 10 more seconds before stopping");
-                            }
-                            else
-                            {
-                                ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
-                                dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
-                            }
-                        }
+                        dataPoints.AvailableChargingCurrency.CurrentValue = previousChargingCurrency * 1.1;
+                    }
+                    dataPoints.MinimumActivationPVCurrency.CurrentValue = minimumChargingCurrency * dataPoints.MinimumPVShare.CurrentValue / 100;
+
+                    if (dataPoints.KebaStatus.CurrentValue == 3 && previousChargingState != 3)
+                    {
+                        chargingSessionStartTime = DateTime.Now;
+                    }
+                    previousChargingState = dataPoints.KebaStatus.CurrentValue;
+
+                    if (dataPoints.AvailableChargingCurrency.CurrentValue >= minimumChargingCurrency)
+                    {
+                        ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is high enough to start charging");
+                        dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.AvailableChargingCurrency.CurrentValue;
+                        chargingSessionLastChargingTime = DateTime.Now;
+                    }
+                    else if (!dataPoints.AutomaticCharging.CurrentValue && dataPoints.ManualChargingCurrency.CurrentValue >= 6)
+                    {
+                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is greater than 0 so start charging");
+                        dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.ManualChargingCurrency.CurrentValue;
+                        chargingSessionLastChargingTime = DateTime.Now;
+                    }
+                    else if (dataPoints.AutomaticCharging.CurrentValue && dataPoints.AvailableChargingCurrency.CurrentValue >= dataPoints.MinimumActivationPVCurrency.CurrentValue)
+                    {
+                        ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
+                        dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
+                        chargingSessionLastChargingTime = DateTime.Now;
                     }
                     else
                     {
-                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is not greater than 0 so don't start charging");
-                        dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
+                        if (dataPoints.AutomaticCharging.CurrentValue)
+                        {
+                            // Problem mit Wechselrichter, schaltet ab , wenn Ladesitzung startet.
+                            // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
+                            if ((DateTime.Now - chargingSessionStartTime).TotalSeconds < 60)
+                            {
+                                ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorter than 60sec, so continuing");
+                                dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
+                            }
+                            else
+                            {
+                                // Min. 10 Sek. weiterladen um kurfristige Aussetzer zu kompensieren
+                                if ((DateTime.Now - chargingSessionLastChargingTime).TotalSeconds < 10)
+                                {
+                                    ConsoleHelpers.PrintMessage($"----> Available charging currency too low but waiting for 10 more seconds before stopping but reducing to min currency yet.");
+                                    dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
+                                }
+                                else
+                                {
+                                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
+                                    dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is not greater than 0 so don't start charging");
+                            dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
+                        }
                     }
+                }
+                finally
+                {
+                    Monitor.Exit(lockobject);
                 }
             }
         }

@@ -2,6 +2,7 @@
 using HelpersLib;
 using SharedContracts.DataPointCollections;
 using System.Globalization;
+using System.Reflection;
 
 namespace PowerDogLib
 {
@@ -26,24 +27,33 @@ namespace PowerDogLib
 
         public void ReadSensorsData(object? state)
         {
-            lock (Lockobject)
+            //lock (Lockobject)
+            if (Monitor.TryEnter(Lockobject, 1000))
             {
-                var result = proxy.getAllCurrentLinearValues(password);
-                if (result.ErrorCode != 0)
+                try
                 {
-                    ConsoleHelpers.PrintErrorMessage($"Error reading data from PowerDog: {result.ErrorString}");
-                    return;
+                    var result = proxy.getAllCurrentLinearValues(password);
+                    if (result.ErrorCode != 0)
+                    {
+                        ConsoleHelpers.PrintErrorMessage($"Error reading data from PowerDog: {result.ErrorString}");
+                        return;
+                    }
+
+                    if (result.Reply == null)
+                    {
+                        ConsoleHelpers.PrintErrorMessage("Reply is empty, communication with PowerDog failed");
+                        return;
+                    }
+
+                    DataPoints.PVProduction.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]));
+                    DataPoints.GridSupply.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["lieferung"]));
+                    DataPoints.GridDemand.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Bezug"]));
+                }
+                finally
+                {
+                    Monitor.Exit(Lockobject);
                 }
 
-                if (result.Reply == null)
-                {
-                    ConsoleHelpers.PrintErrorMessage("Reply is empty, communication with PowerDog failed");
-                    return;
-                }
-
-                DataPoints.PVProduction.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]));
-                DataPoints.GridSupply.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["lieferung"]));
-                DataPoints.GridDemand.SetCorrectedValue(ParseSensorValue(result.Reply, sensorKeys["Bezug"]));
             }
         }
 
