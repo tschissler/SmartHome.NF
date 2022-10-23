@@ -169,38 +169,49 @@ namespace KebaLib
         {
             string result = "";
 
-            Console.WriteLine($"Before Using {command}");
-            using (UdpClient udpClient = new UdpClient(uDPPort))
+            if (Monitor.TryEnter(lockObject, 1000))
             {
-                Console.WriteLine($"Inside Using {command}");
-
                 try
                 {
-                    Console.WriteLine($"Inside try");
-                    udpClient.Connect(ipAddress, uDPPort);
+                    Console.WriteLine($"Before Using {command}");
+                    using (UdpClient udpClient = new UdpClient(uDPPort))
+                    {
+                        Console.WriteLine($"Inside Using {command}");
 
-                    // Sends a message to the host to which you have connected.
-                    byte[] sendBytes = Encoding.ASCII.GetBytes(command);
+                        try
+                        {
+                            Console.WriteLine($"Inside try");
+                            udpClient.Connect(ipAddress, uDPPort);
 
-                    udpClient.Send(sendBytes, sendBytes.Length);
+                            // Sends a message to the host to which you have connected.
+                            byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
-                    //IPEndPoint object will allow us to read datagrams sent from any source.
-                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
+                            udpClient.Send(sendBytes, sendBytes.Length);
 
-                    // Blocks until a message returns on this socket from a remote host.
-                    byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                    string returnData = Encoding.ASCII.GetString(receiveBytes);
+                            //IPEndPoint object will allow us to read datagrams sent from any source.
+                            IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
-                    result = returnData.ToString();
-                    //Thread.Sleep(500);
-                }
-                catch (Exception e)
-                {
-                    ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
+                            // Blocks until a message returns on this socket from a remote host.
+                            byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                            string returnData = Encoding.ASCII.GetString(receiveBytes);
+
+                            result = returnData.ToString();
+                            //Thread.Sleep(500);
+                        }
+                        catch (Exception e)
+                        {
+                            ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
+                        }
+                        finally
+                        {
+                            udpClient.Close();
+                        }
+                    }
+                    
                 }
                 finally
                 {
-                    udpClient.Close();
+                    Monitor.Exit(lockObject);
                 }
             }
             return result;
