@@ -216,10 +216,6 @@ namespace KebaLib
                 {
                     Monitor.Exit(lockObject);
                 }
-                finally
-                {
-                    Monitor.Exit(lockObject);
-                }
             }
             return result;
         }
