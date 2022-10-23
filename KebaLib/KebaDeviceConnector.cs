@@ -207,7 +207,14 @@ namespace KebaLib
                             udpClient.Close();
                         }
                     }
-                    
+                }
+                catch (Exception ex)
+                {
+                    ConsoleHelpers.PrintErrorMessage($"Error while communicating via UDP with Keba device: {ex.Message}");
+                }
+                finally
+                {
+                    Monitor.Exit(lockObject);
                 }
                 finally
                 {
