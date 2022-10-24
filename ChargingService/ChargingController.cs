@@ -37,7 +37,7 @@ namespace ChargingService
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
             powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password);
-            kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090, 1002);
+            kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090);
 
             recalculationTimer = new Timer(CalculateData, null, 0, (int)recalculationFrequency.TotalMilliseconds);
             if (Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE") != null && Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE").ToLower() == "false")
