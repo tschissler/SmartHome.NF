@@ -14,8 +14,6 @@ namespace KebaLib
     {
         private IPAddress ipAddress;
         private int uDPPort;
-        private readonly object lockObject;
-        //private UdpClient udpClient;
         private double previousChargingCurrencyWrittenToDevice = -99;
         private Timer updateTimer;
         private TimeSpan updateTimeSpan = TimeSpan.FromSeconds(2);
@@ -26,9 +24,6 @@ namespace KebaLib
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
-            //udpClient = new UdpClient(uDPPort);
-            //udpClient.Connect(ipAddress, uDPPort);
-            this.lockObject = lockObject != null ? lockObject : new object();
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
             DataPoints.ConsumptionActiveSession.CurrentValueCorrection = 0.1; ;
@@ -169,53 +164,40 @@ namespace KebaLib
         {
             string result = "";
 
-            if (Monitor.TryEnter(lockObject, 1000))
+            Console.WriteLine($"Before Using {command}");
+            using (UdpClient udpClient = new UdpClient(uDPPort))
             {
+                Console.WriteLine($"Inside Using {command}");
+
                 try
                 {
-                    Console.WriteLine($"Before Using {command}");
-                    using (UdpClient udpClient = new UdpClient(uDPPort))
-                    {
-                        Console.WriteLine($"Inside Using {command}");
+                    Console.WriteLine($"Inside try");
+                    udpClient.Connect(ipAddress, uDPPort);
 
-                        try
-                        {
-                            Console.WriteLine($"Inside try");
-                            udpClient.Connect(ipAddress, uDPPort);
+                    // Sends a message to the host to which you have connected.
+                    byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
-                            // Sends a message to the host to which you have connected.
-                            byte[] sendBytes = Encoding.ASCII.GetBytes(command);
+                    udpClient.Send(sendBytes, sendBytes.Length);
 
-                            udpClient.Send(sendBytes, sendBytes.Length);
+                    //IPEndPoint object will allow us to read datagrams sent from any source.
+                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
 
-                            //IPEndPoint object will allow us to read datagrams sent from any source.
-                            IPEndPoint RemoteIpEndPoint = new IPEndPoint(ipAddress, 0);
+                    // Blocks until a message returns on this socket from a remote host.
+                    byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                    string returnData = Encoding.ASCII.GetString(receiveBytes);
 
-                            // Blocks until a message returns on this socket from a remote host.
-                            byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                            string returnData = Encoding.ASCII.GetString(receiveBytes);
-
-                            result = returnData.ToString();
-                            //Thread.Sleep(500);
-                        }
-                        catch (Exception e)
-                        {
-                            ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
-                        }
-                        finally
-                        {
-                            udpClient.Close();
-                        }
-                    }
+                    result = returnData.ToString();
+                    Thread.Sleep(200);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    ConsoleHelpers.PrintErrorMessage($"Error while communicating via UDP with Keba device: {ex.Message}");
+                    ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
                 }
                 finally
                 {
-                    Monitor.Exit(lockObject);
+                    udpClient.Close();
                 }
+
             }
             return result;
         }
