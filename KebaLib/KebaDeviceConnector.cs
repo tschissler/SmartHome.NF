@@ -26,6 +26,7 @@ namespace KebaLib
             ipAddress = IpAddress;
             uDPPort = UDPPort;
             udpClient = new UdpClient(uDPPort);
+            udpClient.Connect(ipAddress, uDPPort);
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
             DataPoints.ConsumptionActiveSession.CurrentValueCorrection = 0.1; ;
@@ -174,7 +175,6 @@ namespace KebaLib
                 try
                 {
                     Console.WriteLine($"Inside try");
-                    udpClient.Connect(ipAddress, uDPPort);
 
                     // Sends a message to the host to which you have connected.
                     byte[] sendBytes = Encoding.ASCII.GetBytes(command);
