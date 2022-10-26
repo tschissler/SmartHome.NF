@@ -195,11 +195,6 @@ namespace KebaLib
                 {
                     ConsoleHelpers.PrintErrorMessage("Error while communicating via UDP with Keba device: " + e.Message);
                 }
-                finally
-                {
-                    udpClient.Close();
-                }
-
             }
             return result;
         }
