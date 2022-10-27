@@ -7,6 +7,7 @@ using HelpersLib;
 using SharedContracts.DataPointCollections;
 using SharedContracts.DataPoints;
 using SharedContracts.StorageData;
+using System.Diagnostics;
 
 namespace KebaLib
 {
@@ -57,6 +58,10 @@ namespace KebaLib
         /// <param name="state"></param>
         internal void RefreshData(object? state)
         {
+            GC.Collect();
+            var gcInfo = GC.GetGCMemoryInfo();
+            Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
+
             KebaDeviceStatusData data = null;
             try
             {
@@ -166,16 +171,10 @@ namespace KebaLib
         internal string ExecuteUDPCommand(string command)
         {
             string result = "";
-
-            Console.WriteLine($"Before Using {command}");
             //using (UdpClient udpClient = new UdpClient(uDPPort))
             {
-                Console.WriteLine($"Inside Using {command}");
-
                 try
                 {
-                    Console.WriteLine($"Inside try");
-
                     // Sends a message to the host to which you have connected.
                     byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
