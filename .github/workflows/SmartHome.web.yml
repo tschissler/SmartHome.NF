@@ -33,10 +33,10 @@ jobs:
       with:
         name: SmartHome.Web.artifacts
         path: |
-          PVService/bin/Debug/net6.0/linux-arm/publish
-          ChargingService/bin/Debug/net6.0/linux-arm/publish
-          SensorDataService/bin/Debug/net6.0/linux-arm/publish
-          Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
+          PVService/bin/Debug/net6.0/linux-arm64/publish
+          ChargingService/bin/Debug/net6.0/linux-arm64/publish
+          SensorDataService/bin/Debug/net6.0/linux-arm64/publish
+          Smarthome.Web/bin/Debug/net6.0/linux-arm64/publish
   
   deploy:
     runs-on: [self-hosted]
