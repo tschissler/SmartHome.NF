@@ -86,6 +86,10 @@
 
     private void Refresh(object? state)
     {
+        GC.Collect();
+        var gcInfo = GC.GetGCMemoryInfo();
+        Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
+
         try
         {
             using (HttpClient Http = new HttpClient())

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
+    <ProjectReference Include="..\ShellyLib\ShellyLib.csproj" />
   </ItemGroup>
 
 </Project>

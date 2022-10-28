@@ -1,5 +1,7 @@
 ﻿using SharedContracts.DataPointCollections;
+using ShellyLib;
 using System.Collections;
+using System.Net;
 
 namespace SensorDataService
 {
@@ -29,6 +31,20 @@ namespace SensorDataService
 
         private DateTime previousPowerTimeStamp = DateTime.MinValue;
         private DateTime previousGasTimeStamp = DateTime.MinValue;
+
+        private TimeSpan gatherSensorDataInterval = TimeSpan.FromSeconds(2);
+        private Timer gatherSensorDataTimer;
+        
+        public SensorsController()
+        {
+            gatherSensorDataTimer = new Timer(GatherSensorData, null, 0, (int)gatherSensorDataInterval.TotalMilliseconds);
+        }
+
+        private void GatherSensorData(object? state)
+        {
+            consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
+            consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));
+        }
 
         public void RemoteDisplayChanged(RemoteDisplayData sensorData)
         {
