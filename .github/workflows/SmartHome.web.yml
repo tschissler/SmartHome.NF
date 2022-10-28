@@ -23,9 +23,9 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ${{ env.solution }} -r linux-arm
+      run: dotnet restore ${{ env.solution }} -r linux-arm64
     - name: Build
-      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm --self-contained false
+      run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm64 --self-contained false
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal
     
@@ -33,10 +33,10 @@ jobs:
       with:
         name: SmartHome.Web.artifacts
         path: |
-          PVService/bin/Debug/net6.0/linux-arm/publish
-          ChargingService/bin/Debug/net6.0/linux-arm/publish
-          SensorDataService/bin/Debug/net6.0/linux-arm/publish
-          Smarthome.Web/bin/Debug/net6.0/linux-arm/publish
+          PVService/bin/Debug/net6.0/linux-arm64/publish
+          ChargingService/bin/Debug/net6.0/linux-arm64/publish
+          SensorDataService/bin/Debug/net6.0/linux-arm64/publish
+          Smarthome.Web/bin/Debug/net6.0/linux-arm64/publish
   
   deploy:
     runs-on: [self-hosted]
