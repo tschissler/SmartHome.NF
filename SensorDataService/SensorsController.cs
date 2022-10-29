@@ -42,8 +42,12 @@ namespace SensorDataService
 
         private void GatherSensorData(object? state)
         {
-            consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
-            consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));
+            consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
+            consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));
+            var em3Data = ShellyConnector.Read3EMPower(new IPAddress(new byte[] { 192, 168, 178, 179 })));
+            consumptionDataPoints.PowerPhase1.SetCorrectedValue(em3Data[0]);
+            consumptionDataPoints.PowerPhase2.SetCorrectedValue(em3Data[1]);
+            consumptionDataPoints.PowerPhase3.SetCorrectedValue(em3Data[2]);
         }
 
         public void RemoteDisplayChanged(RemoteDisplayData sensorData)

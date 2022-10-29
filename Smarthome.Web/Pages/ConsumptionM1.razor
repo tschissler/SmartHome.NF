@@ -32,15 +32,24 @@
         <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.PowerDevice2" Color="#999900"></CircularGaugeControl>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data}" Label="Verbrauch"></HistoryControl>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.PowerPhase1" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.PowerPhase2" Color="#999900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.PowerPhase3" Color="#009999"></CircularGaugeControl>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
+            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch"></HistoryControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
         </div>
     </div>
 </div>
@@ -54,7 +63,10 @@
 
     public HistoryChartDataSeries PowerDevice1Data;
     public HistoryChartDataSeries PowerDevice2Data;
-
+    public HistoryChartDataSeries PowerPhase1Data;
+    public HistoryChartDataSeries PowerPhase2Data;
+    public HistoryChartDataSeries PowerPhase3Data;
+    
     protected override void OnInitialized()
     {
         refreshTimer = new Timer(Refresh, null, 1000, 15000);
@@ -80,6 +92,9 @@
 
         PowerDevice1Data = new() { DataPoint = dataPoints.PowerDevice1, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
         PowerDevice2Data = new() { DataPoint = dataPoints.PowerDevice2, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+        PowerPhase1Data = new() { DataPoint = dataPoints.PowerPhase1, Type = ChartSeriesType.StackingArea, Color = "#009900", Opacity = 1 };
+        PowerPhase2Data = new() { DataPoint = dataPoints.PowerPhase2, Type = ChartSeriesType.StackingArea, Color = "#999900", Opacity = 1 };
+        PowerPhase3Data = new() { DataPoint = dataPoints.PowerPhase3, Type = ChartSeriesType.StackingArea, Color = "#009999", Opacity = 1 };
 
     }
 
