@@ -102,7 +102,7 @@ namespace KebaLib
                 {
                     ConsoleHelpers.PrintErrorMessage($"Failed to write {DataPoints.AdjustedCharingCurrency.CurrentValue} to device as new target charging currency (currtime). {ex.Message}");
                 }
-                Thread.Sleep(2000);
+                //Thread.Sleep(2000);
             }
         }
 
