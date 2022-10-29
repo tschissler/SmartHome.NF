@@ -60,6 +60,7 @@ namespace KebaLib
         {
             GC.Collect();
             var gcInfo = GC.GetGCMemoryInfo();
+            Console.WriteLine($"Time {DateTime.Now.ToString("HH:mm:ss:ffff")}"); 
             Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
 
             KebaDeviceStatusData data = null;
@@ -102,7 +103,6 @@ namespace KebaLib
                 {
                     ConsoleHelpers.PrintErrorMessage($"Failed to write {DataPoints.AdjustedCharingCurrency.CurrentValue} to device as new target charging currency (currtime). {ex.Message}");
                 }
-                //Thread.Sleep(2000);
             }
         }
 
@@ -140,6 +140,7 @@ namespace KebaLib
             {
                 ConsoleHelpers.PrintMessage("Updated charging currency to " + current);
             }
+            Thread.Sleep(2000);
         }
 
         internal KebaDeviceStatusData GetDeviceStatus()
