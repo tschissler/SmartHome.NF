@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShellyLib\ShellyLib.csproj" />
+    <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
   </ItemGroup>
 
 </Project>

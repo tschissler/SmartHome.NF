@@ -142,7 +142,7 @@ namespace Keba.Tests
             var actual1 = connector.GetDeviceStatus();
             var time1 = watch.ElapsedMilliseconds;
             watch.Restart();
-            connector.SetChargingCurrent(0);
+            connector.WriteChargingCurrentToDevice(6);
             var time2 = watch.ElapsedMilliseconds;
             watch.Restart();
             var actual3 = connector.GetDeviceStatus();
@@ -151,7 +151,7 @@ namespace Keba.Tests
             actual1.EnergyTotal.Should().BeGreaterThan(0);
             actual3.EnergyTotal.Should().BeGreaterThan(0);
             time1.Should().BeLessThan(500);
-            time2.Should().BeLessThan(500);
+            time2.Should().BeLessThan(3000);
             time3.Should().BeLessThan(500);
             connector.Dispose();
         }

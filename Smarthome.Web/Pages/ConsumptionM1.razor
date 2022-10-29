@@ -44,19 +44,47 @@
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch"></HistoryControl>
+@*            <div class="control-section" align="center">
+                <SfChart Title="Test">
+                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" LabelFormat="HH:mm:ss" Title="Time">
+                        <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                    </ChartPrimaryXAxis>
+                    <ChartArea>
+                        <ChartAreaBorder Width="0"></ChartAreaBorder>
+                    </ChartArea>
+                    <ChartPrimaryYAxis Title="Leistung" Minimum="0" LabelFormat="{value}W">
+                        <ChartAxisLineStyle Width="0" Color="transparent"></ChartAxisLineStyle>
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries Type="ChartSeriesType.StackingArea" Name="Test" Width="2" DataSource="@dataPoints.PowerPhase1.History.DataHistory"
+                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="#009900" Opacity="0.5">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                        <ChartSeries Type="ChartSeriesType.StackingArea" Name="Test2" Width="2" DataSource="@dataPoints.PowerPhase2.History.DataHistory"
+                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="#990000" Opacity="0.5">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                        <ChartSeries Type="ChartSeriesType.StackingArea" Name="Test3" Width="2" DataSource="@dataPoints.PowerPhase3.History.DataHistory"
+                                     XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="#000099" Opacity="0.5">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>*@
+            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.Category" DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch"></HistoryControl>
+            
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
+            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.Category" DataSeries="new List<HistoryChartDataSeries>{PowerDevice1Data, PowerDevice2Data, PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
         </div>
     </div>
 </div>
 
 <p>Zeit: @DateTime.Now</p>
 
-@code 
+@code
 {
     private Timer refreshTimer;
     private ConsumptionDataPoints dataPoints = new();
@@ -66,10 +94,10 @@
     public HistoryChartDataSeries PowerPhase1Data;
     public HistoryChartDataSeries PowerPhase2Data;
     public HistoryChartDataSeries PowerPhase3Data;
-    
+
     protected override void OnInitialized()
     {
-        refreshTimer = new Timer(Refresh, null, 1000, 15000);
+        refreshTimer = new Timer(Refresh, null, 1000, 2000);
     }
 
     private void Refresh(object? state)
@@ -80,6 +108,21 @@
             {
                 var jsonString = Http.GetStringAsync($"http://localhost:5005/readconsumptiondata").Result;
                 dataPoints = JsonConvert.DeserializeObject<ConsumptionDataPoints>(jsonString);
+                Cleanup(dataPoints.Gas);
+                Cleanup(dataPoints.Humidity);
+                Cleanup(dataPoints.Power);
+                Cleanup(dataPoints.PowerDevice1);
+                Cleanup(dataPoints.PowerDevice2);
+                Cleanup(dataPoints.PowerPhase1);
+                Cleanup(dataPoints.PowerPhase2);
+                Cleanup(dataPoints.PowerPhase3);
+
+                //PowerDevice1Data = new() { DataPoint = dataPoints.PowerDevice1, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+                //PowerDevice2Data = new() { DataPoint = dataPoints.PowerDevice2, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+                PowerPhase1Data = new() { DataPoint = dataPoints.PowerPhase1, Type = ChartSeriesType.StackingArea, Color = "#009900", Opacity = 0.5 };
+                PowerPhase2Data = new() { DataPoint = dataPoints.PowerPhase2, Type = ChartSeriesType.StackingArea, Color = "#999900", Opacity = 0.5 };
+                PowerPhase3Data = new() { DataPoint = dataPoints.PowerPhase3, Type = ChartSeriesType.StackingArea, Color = "#009999", Opacity = 0.5 };
+
                 InvokeAsync(StateHasChanged);
             }
         }
@@ -87,15 +130,18 @@
         {
             ConsoleHelpers.PrintErrorMessage("Failed to read consumption data from SensorDataService, Error: " + ex.Message);
         }
+    }
 
-        
-
-        PowerDevice1Data = new() { DataPoint = dataPoints.PowerDevice1, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
-        PowerDevice2Data = new() { DataPoint = dataPoints.PowerDevice2, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
-        PowerPhase1Data = new() { DataPoint = dataPoints.PowerPhase1, Type = ChartSeriesType.StackingArea, Color = "#009900", Opacity = 1 };
-        PowerPhase2Data = new() { DataPoint = dataPoints.PowerPhase2, Type = ChartSeriesType.StackingArea, Color = "#999900", Opacity = 1 };
-        PowerPhase3Data = new() { DataPoint = dataPoints.PowerPhase3, Type = ChartSeriesType.StackingArea, Color = "#009999", Opacity = 1 };
-
+    private void Cleanup(DecimalDataPoint dataPoint)
+    {
+        if (dataPoint.History.DataHistory.Count > 1)
+        {
+            dataPoint.History.DataHistory.RemoveAt(0);
+        }
+        if (dataPoint.History.AggregatedHistory.Count > 1)
+        {
+            dataPoint.History.AggregatedHistory.RemoveAt(0);
+        }
     }
 
     public void Dispose()

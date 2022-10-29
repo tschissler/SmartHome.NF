@@ -2,7 +2,7 @@
 @using Syncfusion.Blazor.Charts
 <div class="control-section" align="center">
     <SfChart Title="@Label">
-        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" LabelFormat="HH:mm:ss" Title="Time">
+        <ChartPrimaryXAxis ValueType="@XAxisValueType" LabelFormat="HH:mm:ss" Title="Time">
             <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
         </ChartPrimaryXAxis>
         <ChartArea>
@@ -74,4 +74,7 @@
 
     [Parameter]
     public bool UseAggregated { get; set; } = false;
+
+    [Parameter]
+    public Syncfusion.Blazor.Charts.ValueType XAxisValueType { get; set; } = Syncfusion.Blazor.Charts.ValueType.DateTime;
 }

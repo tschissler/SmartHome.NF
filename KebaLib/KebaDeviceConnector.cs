@@ -26,8 +26,8 @@ namespace KebaLib
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
-            udpClient = new UdpClient(uDPPort);
-            udpClient.Connect(ipAddress, uDPPort);
+            udpClient = new UdpClient();
+            udpClient.Connect(IpAddress, uDPPort);
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
             DataPoints.ConsumptionActiveSession.CurrentValueCorrection = 0.1; ;

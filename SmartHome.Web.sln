@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C
 	ProjectSection(SolutionItems) = preProject
 		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
+		start.ps1 = start.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{0FC44A16-58E5-4965-879D-A702BA4861A7}"
@@ -18,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		Dockerfile = Dockerfile
 		.github\workflows\SmartHome.web.yml = .github\workflows\SmartHome.web.yml
+		start.ps1 = start.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedContracts", "Shared.Contracts\SharedContracts.csproj", "{6116DC9B-B2C8-4B9B-A6C1-6B8FBF9665BE}"
@@ -52,9 +54,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TapoLib", "TapoLib\TapoLib.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StorageService", "StorageService\StorageService.csproj", "{E4B967A7-55BA-4711-815D-36ED4A8D5B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellyLib", "ShellyLib\ShellyLib.csproj", "{DC0C938F-CACB-4837-A05C-C6CCC0049460}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShellyLib", "ShellyLib\ShellyLib.csproj", "{DC0C938F-CACB-4837-A05C-C6CCC0049460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellyLibTests", "ShellyLibTests\ShellyLibTests.csproj", "{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShellyLibTests", "ShellyLibTests\ShellyLibTests.csproj", "{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesTests", "ServicesTests\ServicesTests.csproj", "{11538673-2609-4286-97F0-168DB31F7D01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +169,12 @@ Global
 		{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11538673-2609-4286-97F0-168DB31F7D01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -184,6 +194,7 @@ Global
 		{E4B967A7-55BA-4711-815D-36ED4A8D5B4E} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 		{DC0C938F-CACB-4837-A05C-C6CCC0049460} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
 		{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB} = {65E26E51-1BD7-4AE3-B557-45892C739814}
+		{11538673-2609-4286-97F0-168DB31F7D01} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}
