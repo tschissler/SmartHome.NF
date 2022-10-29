@@ -17,7 +17,7 @@ namespace KebaLib
         private int uDPPort;
         private double previousChargingCurrencyWrittenToDevice = -99;
         private Timer updateTimer;
-        private TimeSpan updateTimeSpan = TimeSpan.FromSeconds(2);
+        private TimeSpan updateTimeSpan = TimeSpan.FromSeconds(3);
         private UdpClient udpClient;
 
         public ChargingDataPoints DataPoints { get; private set; }
