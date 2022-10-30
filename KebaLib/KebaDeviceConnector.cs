@@ -18,7 +18,7 @@ namespace KebaLib
         private double previousChargingCurrencyWrittenToDevice = -99;
         private Timer updateTimer;
         private TimeSpan updateTimeSpan = TimeSpan.FromSeconds(3);
-        private UdpClient udpClient;
+        //private UdpClient udpClient;
 
         public ChargingDataPoints DataPoints { get; private set; }
 
@@ -26,8 +26,8 @@ namespace KebaLib
         {
             ipAddress = IpAddress;
             uDPPort = UDPPort;
-            udpClient = new UdpClient();
-            udpClient.Connect(IpAddress, uDPPort);
+            //udpClient = new UdpClient();
+            //udpClient.Connect(IpAddress, uDPPort);
             DataPoints = new ChargingDataPoints();
             // Energy is in 0.1Wh, so we need to divide by 10
             DataPoints.ConsumptionActiveSession.CurrentValueCorrection = 0.1; ;
@@ -172,10 +172,12 @@ namespace KebaLib
         internal string ExecuteUDPCommand(string command)
         {
             string result = "";
-            //using (UdpClient udpClient = new UdpClient(uDPPort))
+            using (UdpClient udpClient = new UdpClient(uDPPort))
             {
                 try
                 {
+                    udpClient.Connect(ipAddress, uDPPort);
+                    
                     // Sends a message to the host to which you have connected.
                     byte[] sendBytes = Encoding.ASCII.GetBytes(command);
 
@@ -201,8 +203,8 @@ namespace KebaLib
 
         public void Dispose()
         {
-            udpClient.Close();
-            udpClient.Dispose();
+            //udpClient.Close();
+            //udpClient.Dispose();
         }
     }
 }
