@@ -38,7 +38,7 @@ app.MapPost("/writeconsumptiondata", bool ([FromBody] ConsumptionData consumptio
 
 app.MapGet("/readremotedisplaydata", string () =>
 {
-    lock (controller.RemoteDisplayLockObject)
+    lock (controller.LockObject)
     {
         return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
     }
@@ -47,7 +47,7 @@ app.MapGet("/readremotedisplaydata", string () =>
 
 app.MapGet("/readconsumptiondata", string () =>
 {
-    lock (controller.ConsumptionLockObject)
+    lock (controller.LockObject)
     {
         return JsonConvert.SerializeObject(controller.consumptionDataPoints);
     }
