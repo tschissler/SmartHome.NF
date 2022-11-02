@@ -1,3 +1,4 @@
+using HelpersLib;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SensorDataService;
@@ -38,19 +39,43 @@ app.MapPost("/writeconsumptiondata", bool ([FromBody] ConsumptionData consumptio
 
 app.MapGet("/readremotedisplaydata", string () =>
 {
-    lock (controller.LockObject)
+    if (Monitor.TryEnter(controller.LockObject, 1000))
     {
-        return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
+        try
+        {
+            return JsonConvert.SerializeObject(controller.remoteDisplayDataPoints);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage($"Error reading remote display data: {ex.Message}");
+        }
+        finally
+        {
+            Monitor.Exit(controller.LockObject);
+        }
     }
+    return "Locked";
 })
 .WithName("ReadRemotedisplayData");
 
 app.MapGet("/readconsumptiondata", string () =>
 {
-    lock (controller.LockObject)
+    if (Monitor.TryEnter(controller.LockObject, 1000))
     {
-        return JsonConvert.SerializeObject(controller.consumptionDataPoints);
+        try
+        {
+            return JsonConvert.SerializeObject(controller.consumptionDataPoints);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage($"Error reading remote display data: {ex.Message}");
+        }
+        finally
+        {
+            Monitor.Exit(controller.LockObject);
+        }
     }
+    return "Locked";
 })
 .WithName("ReadConsumptionData");
 
