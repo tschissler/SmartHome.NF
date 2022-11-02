@@ -1,18 +1,49 @@
 ﻿@page "/testpage"
 
+@using Smarthome.Web.Controls
+@using Smarthome.Web.Data;
+@using Syncfusion.Blazor.Charts;
 @using Syncfusion.Blazor.Inputs
 
 <h3>Test</h3>
+<HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" DataSeries="new List<HistoryChartDataSeries>{PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
 
-<SfSlider ID="ManCurrency"
-          TValue="double"
-          @bind-Value="@testvalue"
-          Type=SliderType.MinRange
-          Min="0"
-          Max="16"
-          Step="0.5"
-          Width="70%">
-</SfSlider>
+        
 @code {
     private double testvalue = 0;
+
+    public HistoryChartDataSeries PowerPhase1Data;
+    public HistoryChartDataSeries PowerPhase2Data;
+    public HistoryChartDataSeries PowerPhase3Data;
+
+    protected override void OnInitialized()
+    {
+        var dataPoints = new ConsumptionDataPoints();
+
+        dataPoints.PowerPhase1.History.AggregatedHistory = new List<HistoryDataPoint>()
+        {
+            new HistoryDataPoint { Value = 1, Timestamp = new DateTime(2022, 11, 2, 10, 0, 0) },
+            new HistoryDataPoint { Value = 4, Timestamp = new DateTime(2022, 11, 2, 10, 1, 0) },
+            new HistoryDataPoint { Value = 3, Timestamp = new DateTime(2022, 11, 2, 10, 2, 0) },
+            new HistoryDataPoint { Value = 5, Timestamp = new DateTime(2022, 11, 2, 10, 3, 0) }
+        };
+        dataPoints.PowerPhase2.History.AggregatedHistory = new List<HistoryDataPoint>()
+        {
+            new HistoryDataPoint { Value = 3, Timestamp = new DateTime(2022, 11, 2, 10, 0, 0) },
+            new HistoryDataPoint { Value = 2, Timestamp = new DateTime(2022, 11, 2, 10, 1, 0) },
+            new HistoryDataPoint { Value = 1, Timestamp = new DateTime(2022, 11, 2, 10, 2, 0) },
+            new HistoryDataPoint { Value = 3, Timestamp = new DateTime(2022, 11, 2, 10, 3, 0) }
+        };
+        dataPoints.PowerPhase3.History.AggregatedHistory = new List<HistoryDataPoint>()
+        {
+            new HistoryDataPoint { Value = 2, Timestamp = new DateTime(2022, 11, 2, 10, 0, 0) },
+            new HistoryDataPoint { Value = 2, Timestamp = new DateTime(2022, 11, 2, 10, 1, 0) },
+            new HistoryDataPoint { Value = 2, Timestamp = new DateTime(2022, 11, 2, 10, 2, 0) },
+            new HistoryDataPoint { Value = 2, Timestamp = new DateTime(2022, 11, 2, 10, 3, 0) }
+        };
+    
+        PowerPhase1Data = new () { DataPoint = dataPoints.PowerPhase1, Type = ChartSeriesType.StackingArea, Color = "#009900", Opacity = 0.5 };
+        PowerPhase2Data = new () { DataPoint = dataPoints.PowerPhase2, Type = ChartSeriesType.StackingArea, Color = "#999900", Opacity = 0.5 };
+        PowerPhase3Data = new () { DataPoint = dataPoints.PowerPhase3, Type = ChartSeriesType.StackingArea, Color = "#009999", Opacity = 0.5 };
+    }
 }

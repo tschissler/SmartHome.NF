@@ -71,13 +71,13 @@
                     </ChartSeriesCollection>
                 </SfChart>
             </div>*@
-            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.Category" DataSeries="new List<HistoryChartDataSeries>{PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch"></HistoryControl>
+            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" DataSeries="new List<HistoryChartDataSeries>{PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch"></HistoryControl>
             
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.Category" DataSeries="new List<HistoryChartDataSeries>{PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
+            <HistoryControl XAxisValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" DataSeries="new List<HistoryChartDataSeries>{PowerPhase1Data, PowerPhase2Data, PowerPhase3Data}" Label="Verbrauch" UseAggregated="true"></HistoryControl>
         </div>
     </div>
 </div>
@@ -117,8 +117,8 @@
                 Cleanup(dataPoints.PowerPhase2);
                 Cleanup(dataPoints.PowerPhase3);
 
-                //PowerDevice1Data = new() { DataPoint = dataPoints.PowerDevice1, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
-                //PowerDevice2Data = new() { DataPoint = dataPoints.PowerDevice2, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+                PowerDevice1Data = new() { DataPoint = dataPoints.PowerDevice1, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+                PowerDevice2Data = new() { DataPoint = dataPoints.PowerDevice2, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
                 PowerPhase1Data = new() { DataPoint = dataPoints.PowerPhase1, Type = ChartSeriesType.StackingArea, Color = "#009900", Opacity = 0.5 };
                 PowerPhase2Data = new() { DataPoint = dataPoints.PowerPhase2, Type = ChartSeriesType.StackingArea, Color = "#999900", Opacity = 0.5 };
                 PowerPhase3Data = new() { DataPoint = dataPoints.PowerPhase3, Type = ChartSeriesType.StackingArea, Color = "#009999", Opacity = 0.5 };
