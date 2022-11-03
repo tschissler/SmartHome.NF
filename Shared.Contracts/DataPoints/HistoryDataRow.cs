@@ -89,7 +89,7 @@ namespace SharedContracts.DataPoints
                         break;
                 }
                 //AggregatedHistory.Add(new HistoryDataPoint { Timestamp = DateTime.Now, Value = DataHistory.Where(i => i.Timestamp > lastAggregationTimestamp).Average(x => x.Value) });
-                lastAggregationTimestamp = DateTime.Now;
+                lastAggregationTimestamp = DateTime.Now.Floor(new TimeSpan(0, 0, 10));
                 if (AggregatedHistory.Count >= AggregationHistoryLength)
                 {
                     AggregatedHistory.RemoveAt(0);

@@ -67,9 +67,6 @@
     <Reference Include="mscorlib">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.12.0\lib\mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="nanoFramework.Azure.Devices.Client">
-      <HintPath>..\packages\nanoFramework.Azure.Devices.Client.1.1.45\lib\nanoFramework.Azure.Devices.Client.dll</HintPath>
-    </Reference>
     <Reference Include="nanoFramework.Json">
       <HintPath>..\packages\nanoFramework.Json.2.2.29\lib\nanoFramework.Json.dll</HintPath>
     </Reference>

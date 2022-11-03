@@ -84,8 +84,8 @@ namespace RemoteDisplay
 
             while (true)
             {
-                // Try catch slows down execution, therefore removed
-                //try
+                //Try catch slows down execution, therefore removed
+                try
                 {
                     if (IsBH1750SensorPresent)
                     {
@@ -114,76 +114,77 @@ namespace RemoteDisplay
                         temperature = I2CSensors.ReadSHTC3Temperature();
                         humidity = I2CSensors.ReadSHTC3Humitidy();
                     }
-                }
-                //catch (Exception)
-                //{
-                //    Debug.WriteLine("Error reading sensors");
-                //}
 
-                if (cycle == 1)
-                {
-                    new Thread(() => SendData(temperature, humidity, preassure, illumination)).Start();
-                    Debug.WriteLine($"Illumination: {illumination.ToString("F1")} lux");
-                    Debug.WriteLine($"Temperature: {temperature.ToString("F1")}°C - Pressure: {preassure.ToString("F1")}hPa - Humidity: {humidity.ToString("F0")}%");
-                }
-
-                if (cycle <= 6)
-                {
-                    // Show clock
-                    var hour = DateTime.UtcNow.Hour;
-                    var minute = DateTime.UtcNow.Minute;
-                    var second = DateTime.UtcNow.Second;
-
-                    if (IsSummerTime(DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.DayOfWeek))
+                    if (cycle == 7)
                     {
-                        hour += 2;
+                        //new Thread(() => SendData(temperature, humidity, preassure, illumination)).Start();
+                        SendData(temperature, humidity, preassure, illumination);
+                        Debug.WriteLine($"Illumination: {illumination.ToString("F1")} lux");
+                        Debug.WriteLine($"Temperature: {temperature.ToString("F1")}°C - Pressure: {preassure.ToString("F1")}hPa - Humidity: {humidity.ToString("F0")}%");
+                        Debug.WriteLine($"Available memory: {GC.Run(false)}");
+                    }
+
+                    if (cycle <= 6)
+                    {
+                        // Show clock
+                        var hour = DateTime.UtcNow.Hour;
+                        var minute = DateTime.UtcNow.Minute;
+                        var second = DateTime.UtcNow.Second;
+
+                        if (IsSummerTime(DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.DayOfWeek))
+                        {
+                            hour += 2;
+                        }
+                        else
+                        {
+                            hour++;
+                        }
+                        if (hour >= 24)
+                        {
+                            hour -= 24;
+                        }
+
+                        if (cycle % 2 == 0)
+                        {
+                            text = $"{hour.ToString("D2")}:{minute.ToString("D2")}:{second.ToString("D2")}";
+                        }
+                        else
+                        {
+                            text = $"{hour.ToString("D2")} {minute.ToString("D2")} {second.ToString("D2")}";
+                        }
+                        display.ShowText(text, brightness, characterSpace: 1);
+                    }
+                    else if (cycle <= 12)
+                    {
+                        //if (IsSHT3xSensorPresent)
+                        //{
+                        //    text = $"{I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C";
+                        //}
+                        //else if (IsSHTC3SensorPresent)
+                        //{
+                        //    text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
+                        //}
+                        //else if (IsBMP180SensorPresent)
+                        //{
+                        //    text = $"{temperature.ToString("F1")}°C";
+                        //}
+
+                        text = $"{temperature.ToString("F1")}°C";
+                        display.ShowText(text, brightness, characterSpace: 1);
                     }
                     else
                     {
-                        hour++;
-                    }
-                    if (hour >= 24)
-                    {
-                        hour -= 24;
+                        cycle = 0;
                     }
 
-                    if (cycle % 2 == 0)
-                    {
-                        text = $"{hour.ToString("D2")}:{minute.ToString("D2")}:{second.ToString("D2")}";
-                    }
-                    else
-                    {
-                        text = $"{hour.ToString("D2")} {minute.ToString("D2")} {second.ToString("D2")}";
-                    }
-                    display.ShowText(text, brightness, characterSpace: 1);
+                    Thread.Sleep(300);
+                    cycle++;
                 }
-                else if (cycle <= 12)
+                catch (Exception)
                 {
-                    //if (IsSHT3xSensorPresent)
-                    //{
-                    //    text = $"{I2CSensors.ReadSHT3xTemperature().ToString("F1")}°C";
-                    //}
-                    //else if (IsSHTC3SensorPresent)
-                    //{
-                    //    text = $"{I2CSensors.ReadSHTC3Temperature().ToString("F1")}°C/{I2CSensors.ReadSHTC3Humitidy().ToString("F0")}%";
-                    //}
-                    //else if (IsBMP180SensorPresent)
-                    //{
-                    //    text = $"{temperature.ToString("F1")}°C";
-                    //}
-
-                    text = $"{temperature.ToString("F1")}°C";
-                    display.ShowText(text, brightness, characterSpace: 1);
+                    Debug.WriteLine("Error reading sensors");
                 }
-                else
-                {
-                    cycle = 0;
-                }
-
-                Thread.Sleep(300);
-                cycle++;
             }
-
         }
 
         public static void SendData(double temperature = 0, double humidity = 0, double pressure = 0, double illumination = 0)
@@ -201,12 +202,14 @@ namespace RemoteDisplay
                 var json = JsonConvert.SerializeObject(data);
                 Debug.WriteLine($"Sending sensor data to SmartHome: {json}");
 
-                HttpClient httpClient = new();
-                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                var responseMessage = httpClient.Post("http://smarthomepi:5005/setremotedisplaydata", content);
-                if (!responseMessage.IsSuccessStatusCode)
+                using (HttpClient httpClient = new HttpClient())
                 {
-                    Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+                    HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var responseMessage = httpClient.Post("http://smarthomepi:5005/setremotedisplaydata", content);
+                    if (!responseMessage.IsSuccessStatusCode)
+                    {
+                        Debug.WriteLine("Error posting sensor data: " + responseMessage.StatusCode + " - " + responseMessage.ReasonPhrase);
+                    }
                 }
             }
             catch (Exception ex)
