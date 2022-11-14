@@ -25,5 +25,8 @@
         }
 
         public Func<bool, bool> CurrentValueCorrection;
+
+        public string Label { get; set; }
+
     }
 }

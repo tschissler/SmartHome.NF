@@ -1,4 +1,5 @@
 ﻿using HelpersLib;
+using HomematicLib;
 using SharedContracts.DataPointCollections;
 using ShellyLib;
 using System.Collections;
@@ -32,13 +33,41 @@ namespace SensorDataService
         private DateTime previousGasTimeStamp = DateTime.MinValue;
 
         private TimeSpan gatherSensorDataInterval = TimeSpan.FromSeconds(2);
+        private TimeSpan gatherRoomSensorDataInterval = TimeSpan.FromSeconds(60);
         private Timer gatherSensorDataTimer;
+        private Timer gatherRoomSensorDataTimer;
 
         public object LockObject = new object();
 
         public SensorsController()
         {
             gatherSensorDataTimer = new Timer(GatherSensorData, null, 0, (int)gatherSensorDataInterval.TotalMilliseconds);
+            gatherRoomSensorDataTimer = new Timer(GatherRoomSensorData, null, 0, (int)gatherRoomSensorDataInterval.TotalMilliseconds);
+        }
+
+        private void GatherRoomSensorData(object? state)
+        {
+            if (Monitor.TryEnter(LockObject, 1000))
+            {
+                try
+                {
+                    var homematicData = HomematicConnector.ReadData(new Uri("https://srz23.homematic.com:6969/hmip/home/getCurrentState")).Result;
+                    remoteDisplayDataPoints.TempBathRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.valveActualTemperature);
+                    remoteDisplayDataPoints.TempSetBathRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.setPointTemperature);
+                    remoteDisplayDataPoints.TempKidsRoom.SetCorrectedValue(homematicData.devices.ThermostatKidsRoom.functionalChannels.DeviceData.valveActualTemperature);
+                    remoteDisplayDataPoints.TempSetKidsRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.setPointTemperature);
+                    remoteDisplayDataPoints.WindowBathRoom.CurrentValue = homematicData.devices.WindowContactBathRoom.functionalChannels.DeviceData.windowState.ToLower() == "open";
+                    remoteDisplayDataPoints.WindowKidsRoom.CurrentValue = homematicData.devices.WindowContactKidsRoom.functionalChannels.DeviceData.windowState.ToLower() == "open";
+                }
+                catch (Exception ex)
+                {
+                    ConsoleHelpers.PrintErrorMessage($"Error reading Homematic sensor data: {ex.Message}");
+                }
+                finally
+                {
+                    Monitor.Exit(LockObject);
+                }
+            }
         }
 
         private void GatherSensorData(object? state)

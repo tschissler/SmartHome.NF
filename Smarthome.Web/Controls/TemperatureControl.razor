@@ -1,0 +1,80 @@
+﻿@using Smarthome.Web.Data
+@using Syncfusion.Blazor.Charts
+<div class="control-section" align="center">
+    <SfChart Title="@Label">
+        <ChartPrimaryXAxis ValueType="@XAxisValueType" LabelFormat="HH:mm:ss" Title="Time">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+        </ChartPrimaryXAxis>
+        <ChartArea>
+            <ChartAreaBorder Width="0"></ChartAreaBorder>
+        </ChartArea>
+        <ChartPrimaryYAxis Title="Temperature" Minimum="15"  LabelFormat="{value}°C">
+            <ChartAxisLineStyle Width="0" Color="transparent"></ChartAxisLineStyle>
+        </ChartPrimaryYAxis>
+        <ChartSeriesCollection>
+            @if (DataPoints != null)
+            {
+                foreach (var dataPoint in DataPoints)
+                {
+                    if (UseAggregated)
+                    {
+                        <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.AggregatedHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    }
+                    else
+                    {
+                        <ChartSeries Type="ChartSeriesType.Line" Name="@dataPoint.Label" Width="2" DataSource="@dataPoint.History.DataHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)">
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    }
+                }
+            }
+            @if (DataSeries != null)
+            {
+                foreach (var dataSerie in DataSeries)
+                {
+                    if (dataSerie != null && dataSerie.DataPoint != null)
+                    {
+                        if (UseAggregated)
+                        {
+                            int i = 0;
+                            <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.AggregatedHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="@dataSerie.Color" Opacity="@dataSerie.Opacity">
+                                <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                            </ChartSeries>
+                        }
+                        else
+                        {
+                            <ChartSeries Type="@dataSerie.Type" Name="@(string.IsNullOrEmpty(dataSerie.Name)?dataSerie.DataPoint.Label:dataSerie.Name)" Width="2" DataSource="@dataSerie.DataPoint.History.DataHistory"
+                         XName="@nameof(HistoryDataPoint.Timestamp)" YName="@nameof(HistoryDataPoint.Value)" Fill="@dataSerie.Color" Opacity="@dataSerie.Opacity">
+                                <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                            </ChartSeries>
+                        }
+
+                    }
+                }
+            }
+        </ChartSeriesCollection>
+        <ChartLegendSettings EnableHighlight="true"></ChartLegendSettings>
+    </SfChart>
+</div>
+
+@code {
+    [Parameter]
+    public List<DecimalDataPoint>? DataPoints { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public List<HistoryChartDataSeries>? DataSeries { get; set; }
+
+    [Parameter]
+    public bool UseAggregated { get; set; } = false;
+
+    [Parameter]
+    public Syncfusion.Blazor.Charts.ValueType XAxisValueType { get; set; } = Syncfusion.Blazor.Charts.ValueType.DateTime;
+}

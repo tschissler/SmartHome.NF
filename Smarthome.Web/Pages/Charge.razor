@@ -2,13 +2,11 @@
 
 @using HelpersLib
 @using Newtonsoft.Json
-@using SharedContracts
-@using SharedContracts.DataPointCollections
-@using SharedContracts.DataPoints
 @using Smarthome.Web.Controls
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
 @using System.Diagnostics
+@implements IDisposable
 
 <h3>Lade-Einstellungen</h3>
 <div class="container-fluid">
@@ -177,6 +175,11 @@
         string format = "0." + new String('0', dataPoint.DecimalDigits);
 
         return $"{dataPoint.CurrentValue.ToString(format)} {dataPoint.Unit}";
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
     }
 }
 

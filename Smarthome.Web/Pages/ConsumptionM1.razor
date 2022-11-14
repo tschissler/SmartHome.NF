@@ -1,10 +1,12 @@
 ﻿@page "/consumptionM3"
-
+@using SharedContracts.DataPoints
+@using SharedContracts.DataPointCollections
 @using HelpersLib;
 @using Newtonsoft.Json;
-@using Smarthome.Web.Controls
+@using Smarthome.Web.Controls;
 @using Smarthome.Web.Data;
 @using Syncfusion.Blazor.Charts;
+@implements IDisposable
 
 <PageTitle>Verbrauch M1</PageTitle>
 

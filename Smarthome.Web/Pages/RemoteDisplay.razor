@@ -2,28 +2,41 @@
 @using HelpersLib
 @using Newtonsoft.Json
 @using Smarthome.Web.Controls
+@implements IDisposable
 
 <PageTitle>Esszimmer</PageTitle>
 
 <h2>Remote Display</h2>
 <div class="container">
     <div class="row">
-        <div class="col">
+        <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.Temperature" Color="#009900"></CircularGaugeControl>
         </div>
-        <div class="col">
+        <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.Humidity" Color="#009900"></CircularGaugeControl>
         </div>
-        <div class="col">
+        <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.Pressure" Color="#009900"></CircularGaugeControl>
         </div>
-        <div class="col">
+        <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.Illumination" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.TempKidsRoom" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.TempBathRoom" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.TempSetKidsRoom" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-3">
+            <CircularGaugeControl DataPoint="@dataPoints.TempSetBathRoom" Color="#009900"></CircularGaugeControl>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <HistoryControl DataPoints="new List<DecimalDataPoint>{dataPoints.Temperature}" Label="Temperatur" UseAggregated=true></HistoryControl>
+            <TemperatureControl DataPoints="new List<DecimalDataPoint>{dataPoints.Temperature, dataPoints.TempKidsRoom, dataPoints.TempBathRoom, dataPoints.TempSetKidsRoom, dataPoints.TempSetBathRoom}" Label="Temperatur" UseAggregated=true></TemperatureControl>
         </div>
     </div>
 </div>
