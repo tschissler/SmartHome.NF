@@ -55,7 +55,7 @@ namespace SensorDataService
                     remoteDisplayDataPoints.TempBathRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.valveActualTemperature);
                     remoteDisplayDataPoints.TempSetBathRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.setPointTemperature);
                     remoteDisplayDataPoints.TempKidsRoom.SetCorrectedValue(homematicData.devices.ThermostatKidsRoom.functionalChannels.DeviceData.valveActualTemperature);
-                    remoteDisplayDataPoints.TempSetKidsRoom.SetCorrectedValue(homematicData.devices.ThermostatBathRoom.functionalChannels.DeviceData.setPointTemperature);
+                    remoteDisplayDataPoints.TempSetKidsRoom.SetCorrectedValue(homematicData.devices.ThermostatKidsRoom.functionalChannels.DeviceData.setPointTemperature);
                     remoteDisplayDataPoints.WindowBathRoom.CurrentValue = homematicData.devices.WindowContactBathRoom.functionalChannels.DeviceData.windowState.ToLower() == "open";
                     remoteDisplayDataPoints.WindowKidsRoom.CurrentValue = homematicData.devices.WindowContactKidsRoom.functionalChannels.DeviceData.windowState.ToLower() == "open";
                 }
