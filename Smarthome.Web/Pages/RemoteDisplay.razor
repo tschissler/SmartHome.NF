@@ -6,7 +6,7 @@
 
 <PageTitle>Esszimmer</PageTitle>
 
-<h2>Remote Display</h2>
+<h2>Raumklima</h2>
 <div class="container">
     <div class="row">
         <div class="col-3">
@@ -32,6 +32,11 @@
         </div>
         <div class="col-3">
             <CircularGaugeControl DataPoint="@dataPoints.TempSetBathRoom" Color="#009900"></CircularGaugeControl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <TemperatureControl DataPoints="new List<DecimalDataPoint>{dataPoints.Temperature, dataPoints.TempKidsRoom, dataPoints.TempBathRoom, dataPoints.TempSetKidsRoom, dataPoints.TempSetBathRoom}" Label="Temperatur" UseAggregated=false></TemperatureControl>
         </div>
     </div>
     <div class="row">
