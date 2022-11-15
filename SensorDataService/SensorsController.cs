@@ -33,7 +33,7 @@ namespace SensorDataService
         private DateTime previousGasTimeStamp = DateTime.MinValue;
 
         private TimeSpan gatherSensorDataInterval = TimeSpan.FromSeconds(2);
-        private TimeSpan gatherRoomSensorDataInterval = TimeSpan.FromSeconds(60);
+        private TimeSpan gatherRoomSensorDataInterval = TimeSpan.FromMinutes(10);
         private Timer gatherSensorDataTimer;
         private Timer gatherRoomSensorDataTimer;
 
