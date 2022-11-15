@@ -65,12 +65,29 @@
             {
                 var jsonString = Http.GetStringAsync($"http://localhost:5005/readremotedisplaydata").Result;
                 dataPoints = JsonConvert.DeserializeObject<RemoteDisplayDataPoints>(jsonString);
+                Cleanup(dataPoints.TempBathRoom);
+                Cleanup(dataPoints.TempKidsRoom);
+                Cleanup(dataPoints.TempSetBathRoom);
+                Cleanup(dataPoints.TempSetKidsRoom);
+                Cleanup(dataPoints.Temperature);
                 InvokeAsync(StateHasChanged);
             }
         }
         catch (Exception ex)
         {
             ConsoleHelpers.PrintErrorMessage("Failed to read data from SensorDataService, Error: " + ex.Message);
+        }
+    }
+
+    private void Cleanup(DecimalDataPoint dataPoint)
+    {
+        if (dataPoint.History.DataHistory.Count > 1)
+        {
+            dataPoint.History.DataHistory.RemoveAt(0);
+        }
+        if (dataPoint.History.AggregatedHistory.Count > 1)
+        {
+            dataPoint.History.AggregatedHistory.RemoveAt(0);
         }
     }
 
