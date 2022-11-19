@@ -19,7 +19,7 @@ namespace HomematicLib
             try
             {
                 body = await executePost(new Uri("https://lookup.homematic.com:48335/getHost  "));
-                string url = JsonConvert.DeserializeObject<GetHostResponse>(body).urlREST;
+                string url = JsonConvert.DeserializeObject<GetHostResponse>(body).urlREST + "/hmip/home/getCurrentState";
                 body = await executePost(new Uri(url));
                 value = JsonConvert.DeserializeObject<HomeMaticData>(body);
             }
