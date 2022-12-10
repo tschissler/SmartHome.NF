@@ -12,6 +12,13 @@ namespace HomematicLib
 {
     public class HomematicConnector
     {
+        static HttpClient client;
+        
+        static HomematicConnector()
+        {
+            client = new HttpClient();        
+        }
+        
         public static async Task<HomeMaticData> ReadData(Uri deviceAddress)
         {
             string body = "";
@@ -33,7 +40,7 @@ namespace HomematicLib
         private static async Task<string> executePost(Uri url)
         {
             string body = "";
-            var client = new HttpClient();
+            //var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,

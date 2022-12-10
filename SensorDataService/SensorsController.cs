@@ -33,7 +33,7 @@ namespace SensorDataService
         private DateTime previousGasTimeStamp = DateTime.MinValue;
 
         private TimeSpan gatherSensorDataInterval = TimeSpan.FromSeconds(2);
-        private TimeSpan gatherRoomSensorDataInterval = TimeSpan.FromMinutes(5);
+        private TimeSpan gatherRoomSensorDataInterval = TimeSpan.FromMinutes(10);
         private Timer gatherSensorDataTimer;
         private Timer gatherRoomSensorDataTimer;
 
@@ -76,9 +76,9 @@ namespace SensorDataService
             {
                 try
                 {
-                    GC.Collect();
-                    var gcInfo = GC.GetGCMemoryInfo();
-                    Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
+                    //GC.Collect();
+                    //var gcInfo = GC.GetGCMemoryInfo();
+                    //Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
 
                     consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
                     consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));

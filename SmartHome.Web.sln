@@ -60,9 +60,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShellyLibTests", "ShellyLib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesTests", "ServicesTests\ServicesTests.csproj", "{11538673-2609-4286-97F0-168DB31F7D01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomematicLib", "HomematicLib\HomematicLib.csproj", "{C288AF20-92E0-4BFC-9DD5-525CE10082BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomematicLib", "HomematicLib\HomematicLib.csproj", "{C288AF20-92E0-4BFC-9DD5-525CE10082BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomematicLibTests", "HomematicLibTests\HomematicLibTests.csproj", "{F20B2BE9-F9BF-41EF-8E92-E2E82779FEE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomematicLibTests", "HomematicLibTests\HomematicLibTests.csproj", "{F20B2BE9-F9BF-41EF-8E92-E2E82779FEE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -212,6 +212,7 @@ Global
 		{2E0B9189-FAD2-49ED-96B5-9F6EF39D37BB} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{11538673-2609-4286-97F0-168DB31F7D01} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{C288AF20-92E0-4BFC-9DD5-525CE10082BD} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
+		{F20B2BE9-F9BF-41EF-8E92-E2E82779FEE0} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}
