@@ -1,0 +1,62 @@
+﻿@page "/"
+@using Syncfusion.Blazor.CircularGauge
+
+<h1>Hello, world!</h1>
+
+<SfCircularGauge Background="transparent">
+    <CircularGaugeAxes>
+        <CircularGaugeAxis StartAngle="200" EndAngle="160" Minimum="0" Maximum="100" Radius="100%">
+            <CircularGaugeAxisLineStyle Width="0" />
+
+            <CircularGaugeAxisLabelStyle>
+                <CircularGaugeAxisLabelFont Size="0px" FontFamily="inherit" />
+            </CircularGaugeAxisLabelStyle>
+            <CircularGaugeAxisMajorTicks Height="0" />
+            <CircularGaugeAxisMinorTicks Height="0" />
+
+            <CircularGaugeRanges>
+                <CircularGaugeRange Start="0" End="100" Radius="90%" StartWidth="30" EndWidth="30" Color="#E0E0E0" RoundedCornerRadius="5" />
+            </CircularGaugeRanges>
+
+            <CircularGaugePointers>
+                <CircularGaugePointer Value="45" RoundedCornerRadius="5" Type="PointerType.RangeBar" Color="#009900" Radius="90%" PointerWidth="30">
+                    <CircularGaugePointerAnimation Enable="true" />
+                    <CircularGaugePointerBorder Width="0" />
+                </CircularGaugePointer>
+            </CircularGaugePointers>
+
+            <CircularGaugeAnnotations>
+                <CircularGaugeAnnotation Radius="0%" Angle="0" ZIndex="1">
+                    <ContentTemplate>
+                        <div class="col annotationText"><span style="font-size:0.6em">Test</span><br /></div><br/>
+                    </ContentTemplate>
+                </CircularGaugeAnnotation>
+            </CircularGaugeAnnotations>
+
+        </CircularGaugeAxis>
+    </CircularGaugeAxes>
+</SfCircularGauge>
+
+<button @onclick="TakePhoto">Test</button>
+
+@code
+{
+    public async void TakePhoto()
+    {
+        if (MediaPicker.Default.IsCaptureSupported)
+        {
+            FileResult photo = await MediaPicker.Default.CapturePhotoAsync();
+
+            if (photo != null)
+            {
+                // save the file into local storage
+                string localFilePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
+
+                using Stream sourceStream = await photo.OpenReadAsync();
+                using FileStream localFileStream = File.OpenWrite(localFilePath);
+
+                await sourceStream.CopyToAsync(localFileStream);
+            }
+        }
+    }
+}
