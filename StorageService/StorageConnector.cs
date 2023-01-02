@@ -31,7 +31,7 @@ namespace StorageService
                     };
                     addEntitiesBatch.Add(new TableTransactionAction(TableTransactionActionType.Add, storageEntity));
                 }
-                await TableStorageConnector.BatchWriteDataToTable(addEntitiesBatch, "SmartHome_PVM3");
+                await TableStorageConnector.BatchWriteDataToTable(addEntitiesBatch, "SmartHomePVM3");
             }
             catch (Exception ex)
             {
