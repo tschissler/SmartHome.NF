@@ -20,8 +20,8 @@ jobs:
       run: dotnet workload restore ${{ env.solution }}
     - name: Restore dependencies
       run: dotnet restore ${{ env.solution }} -r linux-arm64
-    - name: Restore Workloads
-      run: dotnet workload restore
+    #- name: Restore Workloads
+    #  run: dotnet workload restore
     - name: Build
       run: dotnet publish ${{ env.solution }} --no-restore -r linux-arm64 --self-contained false
     #- name: Test
