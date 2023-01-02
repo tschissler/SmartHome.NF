@@ -1,0 +1,43 @@
+name: Build StorageService
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - 'StorageService/**'
+      - 'StorageLib/**'
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      projectPath: 'StorageService'
+      runtime: 'win-x64'
+      configuration: 'Release'
+      AZURE_WEBAPP_NAME: 'SmartHomeStorageService'
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.projectPath }} -r ${{ env.runtime }}
+    - name: Build
+      run: dotnet build ${{ env.projectPath }} --configuration ${{ env.configuration }}
+    - name: Publish
+      run: dotnet publish ${{ env.projectPath }} -r ${{ env.runtime }} -o ./${{ env.projectPath }}
+    #- name: Test
+    #  run: dotnet test --no-build --verbosity normal
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.AZURE_WEBAPP_NAME }} 
+        publish-profile: ${{ secrets.STORAGESERVICE_PUBLISH_PROFILE }}
+        package: ./${{ env.projectPath }}
+        
