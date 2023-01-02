@@ -7,35 +7,72 @@ namespace StorageLib
 {
     public class TableStorageConnector
     {
-        public static void WriteEnergyM3DataToTable(EnergyM3StorageData energyM3DataPoints)
+        public const string ConnectionStringEnvironmentVariable = "SmartHomeStorageConnectionString";
+        
+        public static async Task BatchWriteDataToTable(List<TableTransactionAction> data, string tableName)
         {
-            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString")))
+            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariable)))
             {
-                throw new Exception("SmartHomeStorageConnectionString is not set");
+                throw new Exception($"{ConnectionStringEnvironmentVariable} is not set");
             }
             TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
-            TableClient tableClient = tableServiceClient.GetTableClient(tableName: "SmartHomeEnergieM3");
+            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
 
             tableClient.CreateIfNotExistsAsync().Wait();
 
-            tableClient.AddEntityAsync(energyM3DataPoints).Wait();
-        }
+            Response<IReadOnlyList<Response>> response = await tableClient.SubmitTransactionAsync(data).ConfigureAwait(false);
 
-        public static async void WriteLowFrequencyDataToTable(List<LowFrequencyData> lowFrequencyData)
-        {
-            TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
-            TableClient tableClient = tableServiceClient.GetTableClient(tableName: "LowFrequencyData");
-
-            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString")))
+            if (response.Value.Count != data.Count)
             {
-                throw new Exception("SmartHomeStorageConnectionString is not set");
+                throw new Exception("Not all data was written to the table");
             }
-
-            tableClient.CreateIfNotExistsAsync().Wait();
-            
-            List<TableTransactionAction> addEntitiesBatch = new List<TableTransactionAction>();
-            addEntitiesBatch.AddRange(lowFrequencyData.Select(e => new TableTransactionAction(TableTransactionActionType.Add, e)));
-            Response<IReadOnlyList<Response>> response = await tableClient.SubmitTransactionAsync(addEntitiesBatch).ConfigureAwait(false);
         }
+
+        public static int CountDataTableEntriesPerPartitionKey(string tableName, string partitionKey)
+        {
+            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariable)))
+            {
+                throw new Exception($"{ConnectionStringEnvironmentVariable} is not set");
+            }
+            TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
+            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
+
+            return tableClient.Query<TableEntity>($"PartitionKey eq '{partitionKey}'").Count();
+        }
+
+        //public static async void WritePVM3DataToTable(List<PVM3StorageData> pvM3DataPoints)
+        //{
+        //    if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString")))
+        //    {
+        //        throw new Exception("SmartHomeStorageConnectionString is not set");
+        //    }
+        //    TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
+        //    TableClient tableClient = tableServiceClient.GetTableClient(tableName: "SmartHomePVM3");
+
+        //    tableClient.CreateIfNotExistsAsync().Wait();
+
+        //    List<TableTransactionAction> addEntitiesBatch = new List<TableTransactionAction>();
+        //    addEntitiesBatch.AddRange(pvM3DataPoints.Select(e => new TableTransactionAction(TableTransactionActionType.Add, e)));
+        //    Response<IReadOnlyList<Response>> response = await tableClient.SubmitTransactionAsync(addEntitiesBatch).ConfigureAwait(false);
+
+        //    //tableClient.AddEntityAsync(pvM3DataPoints).Wait();
+        //}
+
+        //public static async void WriteLowFrequencyDataToTable(List<LowFrequencyData> lowFrequencyData)
+        //{
+        //    TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
+        //    TableClient tableClient = tableServiceClient.GetTableClient(tableName: "LowFrequencyData");
+
+        //    if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString")))
+        //    {
+        //        throw new Exception("SmartHomeStorageConnectionString is not set");
+        //    }
+
+        //    tableClient.CreateIfNotExistsAsync().Wait();
+
+        //    List<TableTransactionAction> addEntitiesBatch = new List<TableTransactionAction>();
+        //    addEntitiesBatch.AddRange(lowFrequencyData.Select(e => new TableTransactionAction(TableTransactionActionType.Add, e)));
+        //    Response<IReadOnlyList<Response>> response = await tableClient.SubmitTransactionAsync(addEntitiesBatch).ConfigureAwait(false);
+        //}
     }
 }

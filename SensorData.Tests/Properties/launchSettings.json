@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SensorData.Tests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63788;http://localhost:63790"
+    }
+  }
+}

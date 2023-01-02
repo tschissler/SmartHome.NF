@@ -81,33 +81,33 @@ namespace ChargingService
             return chargingSettingsData;
         }
 
-        public void StoreData(object? state)
-        {
-            lock (lockobject)
-            {
-                try
-                {
-                    var timeStamp = DateTime.UtcNow;
-                    EnergyM3StorageData storageEntity = new()
-                    {
-                        RowKey = timeStamp.ToString("yyyyMMddHHmmss"),
-                        PartitionKey = timeStamp.ToString("yyyyMMddHHmm"),
-                        Timestamp = timeStamp,
+        //public void StoreData(object? state)
+        //{
+        //    lock (lockobject)
+        //    {
+        //        try
+        //        {
+        //            var timeStamp = DateTime.UtcNow;
+        //            PVM3StorageData storageEntity = new()
+        //            {
+        //                RowKey = timeStamp.ToString("yyyyMMddHHmmss"),
+        //                PartitionKey = timeStamp.ToString("yyyyMMddHHmm"),
+        //                Timestamp = timeStamp,
 
-                        GridDemand = powerDog.DataPoints.GridDemand.CurrentValue,
-                        GridSupply = powerDog.DataPoints.GridSupply.CurrentValue,
-                        PVProduction = powerDog.DataPoints.PVProduction.CurrentValue,
-                        CarChargingStatus = kebaConnector.DataPoints.KebaStatus.CurrentValue,
-                        CarCharging = kebaConnector.DataPoints.CurrentChargingPower.CurrentValue
-                    };
-                    TableStorageConnector.WriteEnergyM3DataToTable(storageEntity);
-                }
-                catch (Exception ex)
-                {
-                    ConsoleHelpers.PrintErrorMessage($"Error while storing data: {ex.Message}");
-                }
-            }
-        }
+        //                GridDemand = powerDog.DataPoints.GridDemand.CurrentValue,
+        //                GridSupply = powerDog.DataPoints.GridSupply.CurrentValue,
+        //                PVProduction = powerDog.DataPoints.PVProduction.CurrentValue,
+        //                CarChargingStatus = kebaConnector.DataPoints.KebaStatus.CurrentValue,
+        //                CarCharging = kebaConnector.DataPoints.CurrentChargingPower.CurrentValue
+        //            };
+        //            TableStorageConnector.WriteEnergyM3DataToTable(storageEntity);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ConsoleHelpers.PrintErrorMessage($"Error while storing data: {ex.Message}");
+        //        }
+        //    }
+        //}
         
         public void CalculateData(object? state)
         {
