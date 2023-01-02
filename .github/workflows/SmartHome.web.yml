@@ -3,8 +3,8 @@ name: Build SmartHome.Web
 on:
   push:
     branches: [ "master" ]
-    paths-ignore:
-      - '.github/**'
+    paths:
+      - 'ChargingService/**'
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
