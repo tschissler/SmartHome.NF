@@ -11,7 +11,7 @@ namespace HelpersLib
 
         public static void PrintErrorMessage(string message)
         {
-            System.Diagnostics.Trace.TraceError($"##{GetTimeStampText()} - {message}");
+            System.Diagnostics.Trace.TraceError($"{GetTimeStampText()} - {message}");
             //Console.ForegroundColor = ConsoleColor.Red;
             //Console.WriteLine($"## Error: {GetTimeStampText()} - {message}");
             //Console.ResetColor();
