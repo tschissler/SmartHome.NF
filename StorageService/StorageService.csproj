@@ -4,9 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationInsightsResourceId>/subscriptions/100f7c22-6d8b-484a-b718-549c0dca8e56/resourceGroups/SmartHome/providers/microsoft.insights/components/SmartHomeInsights</ApplicationInsightsResourceId>
+    <UserSecretsId>844e0aaf-1d38-482c-ae02-0635d56ac707</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>

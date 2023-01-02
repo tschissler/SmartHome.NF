@@ -8,7 +8,8 @@ namespace PVService
     public class PVStorageConnector
     {
         private PowerDog powerDog;
-        private const string storageServiceUrl = "http://localhost:5006";
+        //private const string storageServiceUrl = "http://localhost:5006";
+        private const string storageServiceUrl = "https://smarthomestorageservice.azurewebsites.net";
 
 
         public PVStorageConnector(PowerDog powerDog)
@@ -24,7 +25,6 @@ namespace PVService
 
                 using (HttpClient Http = new HttpClient())
                 {
-                    //var result = Http.PostAsJsonAsync($"https://smarthomestorageservice.azurewebsites.net/addpvm3data", data, new CancellationToken()).Result;
                     var result = Http.PostAsJsonAsync($"{storageServiceUrl}/addpvm3data", data, new CancellationToken()).Result;
 
                     if (result.EnsureSuccessStatusCode().IsSuccessStatusCode) 
