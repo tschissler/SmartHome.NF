@@ -13,6 +13,7 @@ namespace StorageService
     {
         public static async void AddPVM3Data(List<PVM3RestDataPoint> m3PVRestDataPoints)
         {
+            ConsoleHelpers.PrintInformation("AddPVM3Data() called");
             try
             {
                 List<TableTransactionAction> addEntitiesBatch = new List<TableTransactionAction>();
@@ -30,8 +31,7 @@ namespace StorageService
                     };
                     addEntitiesBatch.Add(new TableTransactionAction(TableTransactionActionType.Add, storageEntity));
                 }
-                TableStorageConnector.BatchWriteDataToTable(addEntitiesBatch, "SmartHome_PVM3");
-
+                await TableStorageConnector.BatchWriteDataToTable(addEntitiesBatch, "SmartHome_PVM3");
             }
             catch (Exception ex)
             {
