@@ -23,6 +23,6 @@ app.MapPost("/addpvm3data", bool ([FromBody] List<PVM3RestDataPoint> pvM3RestDat
     StorageConnector.AddPVM3Data(pvM3RestDataPoints);
     return true;
 })
-.WithName("SetChargingCurrency");
+.WithName("AddPVM3Data");
 
 app.Run();

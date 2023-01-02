@@ -11,12 +11,10 @@ namespace StorageService
 {
     public class StorageConnector
     {
-
-        public void AddPVM3Data(List<PVM3RestDataPoint> m3PVRestDataPoints)
+        public static async void AddPVM3Data(List<PVM3RestDataPoint> m3PVRestDataPoints)
         {
             try
             {
-
                 List<TableTransactionAction> addEntitiesBatch = new List<TableTransactionAction>();
 
                 foreach (var data in m3PVRestDataPoints)

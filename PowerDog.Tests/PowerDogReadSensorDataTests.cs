@@ -17,11 +17,11 @@ namespace PowerDog.Tests
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
 
-            UriBuilder uri = new ("http", "192.168.178.150", 20000);
+            UriBuilder uri = new ("http", "powerdog", 20000);
 
             PowerDogLib.PowerDog target = new(sensorKeys, uri.Uri, "admin");
             target.ReadSensorsData(null);
-            (target.DataPoints.PVProduction.CurrentValue + target.DataPoints.GridDemand.CurrentValue).Should().BeGreaterThan(0);
+            (target.LocalDataPoints.PVProduction.CurrentValue + target.LocalDataPoints.GridDemand.CurrentValue).Should().BeGreaterThan(0);
         }
     }
 }

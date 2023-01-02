@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PowerDogLib;
+using PVService;
 using Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,16 +29,20 @@ Dictionary<string, string> sensorKeys = new()
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
 
-var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password);
+var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, PowerDogSecrets.Password);
+var pvStorageConnector = new PVStorageConnector();
+
 TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(1);
+TimeSpan sendDataToCloudInterval = TimeSpan.FromSeconds(10);
 
 var refreshDataTimer = new Timer(new TimerCallback(powerDog.ReadSensorsData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
+var sendDataToCloudTimer = new Timer(new TimerCallback(pvStorageConnector.SendDataToCloud), null, 0, (int)sendDataToCloudInterval.TotalMilliseconds);
 
 app.MapGet("/readSensorsdata", string () =>
 {
     lock (powerDog.Lockobject)
     {
-        return JsonConvert.SerializeObject(powerDog.DataPoints);
+        return JsonConvert.SerializeObject(powerDog.LocalDataPoints);
     }
 })
 .WithName("ReadSensorsData");

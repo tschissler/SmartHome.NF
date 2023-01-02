@@ -134,9 +134,9 @@ namespace ChargingService
 
                     // Calculation
                     ChargingDataPoints dataPoints = kebaConnector.DataPoints;
-                    dataPoints.GridSupply.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue;
-                    dataPoints.GridDemand.CurrentValue = powerDog.DataPoints.GridDemand.CurrentValue;
-                    dataPoints.GridSaldo.CurrentValue = powerDog.DataPoints.GridSupply.CurrentValue - powerDog.DataPoints.GridDemand.CurrentValue;
+                    dataPoints.GridSupply.CurrentValue = powerDog.LocalDataPoints.GridSupply.CurrentValue;
+                    dataPoints.GridDemand.CurrentValue = powerDog.LocalDataPoints.GridDemand.CurrentValue;
+                    dataPoints.GridSaldo.CurrentValue = powerDog.LocalDataPoints.GridSupply.CurrentValue - powerDog.LocalDataPoints.GridDemand.CurrentValue;
                     dataPoints.AvailableChargingPower.CurrentValue = dataPoints.GridSaldo.CurrentValue + dataPoints.CurrentChargingPower.CurrentValue;
                     dataPoints.AvailableChargingCurrency.CurrentValue = dataPoints.CurrentVoltage.CurrentValue > 0 ? dataPoints.AvailableChargingPower.CurrentValue / dataPoints.CurrentVoltage.CurrentValue / 3 : dataPoints.AvailableChargingPower.CurrentValue / 230 / 3;
                     // Limit increasing of charging to 10% per cycle
