@@ -6,6 +6,11 @@ using System.Net;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 
+if (!String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("SyncfusionLicenseKey")))
+{
+    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(System.Environment.GetEnvironmentVariable("SyncfusionLicenseKey"));
+}
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
