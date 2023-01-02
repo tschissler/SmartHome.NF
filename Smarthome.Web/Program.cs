@@ -1,3 +1,4 @@
+using HelpersLib;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor;
@@ -6,9 +7,16 @@ using System.Net;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 
-if (!String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("SyncfusionLicenseKey")))
+string SyncfusionLicenseKeyEnvironmentVariable = "SyncfusionLicenseKey";
+
+if (!String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable)))
 {
-    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(System.Environment.GetEnvironmentVariable("SyncfusionLicenseKey"));
+    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable));
+    ConsoleHelpers.PrintInformation("Setting license key for syncfusion components");
+}
+else
+{
+    ConsoleHelpers.PrintInformation($"Could not find environment variable {SyncfusionLicenseKeyEnvironmentVariable}, cannot set license key for Syncfusion lib.");
 }
 
 // Add services to the container.
