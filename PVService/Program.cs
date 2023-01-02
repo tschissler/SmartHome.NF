@@ -30,7 +30,7 @@ Dictionary<string, string> sensorKeys = new()
             };
 
 var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, PowerDogSecrets.Password);
-var pvStorageConnector = new PVStorageConnector();
+var pvStorageConnector = new PVStorageConnector(powerDog);
 
 TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(1);
 TimeSpan sendDataToCloudInterval = TimeSpan.FromSeconds(10);

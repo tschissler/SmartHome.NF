@@ -27,21 +27,25 @@ namespace PowerDogLib
             proxy = new XmlRpcProxy();
             proxy.Url = deviceUri.ToString();
             LocalDataPoints = new PVDataPoints();
+            cloudDataCache = new List<PVM3RestDataPoint>();
         }
 
         public List<PVM3RestDataPoint> ReadCloudDataCache()
         {
             var returndata = new List<PVM3RestDataPoint>();
-            if (Monitor.TryEnter(Lockobject, 1000))
+            if (cloudDataCache != null)
             {
-                try
+                if (Monitor.TryEnter(Lockobject, 1000))
                 {
-                    returndata = cloudDataCache.ToList();
-                    cloudDataCache.Clear();
-                }
-                finally
-                {
-                    Monitor.Exit(Lockobject);
+                    try
+                    {
+                        returndata = cloudDataCache.ToList();
+                        cloudDataCache.Clear();
+                    }
+                    finally
+                    {
+                        Monitor.Exit(Lockobject);
+                    }
                 }
             }
 
@@ -67,7 +71,7 @@ namespace PowerDogLib
                         return;
                     }
                     double production = ParseSensorValue(result.Reply, sensorKeys["Erzeugung"]);
-                    double gridSupply = ParseSensorValue(result.Reply, sensorKeys["Lieferung"]);
+                    double gridSupply = ParseSensorValue(result.Reply, sensorKeys["lieferung"]);
                     double gridDemand = ParseSensorValue(result.Reply, sensorKeys["Bezug"]);
 
                     LocalDataPoints.PVProduction.SetCorrectedValue(production);
