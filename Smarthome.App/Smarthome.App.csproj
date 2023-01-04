@@ -59,6 +59,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Azure.Identity" Version="1.8.0" />
+      <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.4.0" />
+      <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
       <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.42" />
     </ItemGroup>
 

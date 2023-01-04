@@ -1,5 +1,8 @@
-﻿using HelpersLib;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using HelpersLib;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using Microsoft.Azure.Services.AppAuthentication;
 using Smarthome.App.Data;
 using Syncfusion.Blazor;
 
@@ -21,16 +24,26 @@ namespace Smarthome.App
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
-            string SyncfusionLicenseKeyEnvironmentVariable = "SyncfusionLicenseKey";
-            if (!String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable)))
-            {
-                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable));
-                ConsoleHelpers.PrintInformation("Setting license key for syncfusion components");
-            }
-            else
-            {
-                ConsoleHelpers.PrintInformation($"Could not find environment variable {SyncfusionLicenseKeyEnvironmentVariable}, cannot set license key for Syncfusion lib.");
-            }
+
+            const string secretName = "SyncfusionLicenseKey";
+            var keyVaultName = "SmartHomeKeyVault";
+            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+            var secret = client.GetSecretAsync(secretName).Result;
+
+
+            //var clientId = "your-client-id";
+            //var clientSecret = "your-client-secret";
+            //var tenantId = "your-tenant-id";
+
+            //var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            //var keyVaultClient = new KeyVaultClient(
+            //    new KeyVaultClient.AuthenticationCallback(
+            //        azureServiceTokenProvider.KeyVaultTokenCallback));
+
+
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(secret.Value.Value);
 
             builder.Services.AddSingleton<WeatherForecastService>();
             

@@ -4,6 +4,8 @@
 @using SharedContracts.DataPoints;
 @using SharedContracts.RestDataPoints;
 @using Smarthome.Controls
+@using Smarthome.Controls.Data;
+@using Syncfusion.Blazor.Charts;
 @using Syncfusion.Blazor.CircularGauge
 @using System.Net.Http.Headers;
 
@@ -22,7 +24,12 @@
         </div>
     </div>
 </div>
-    
+<div class="row">
+    <div class="col">
+        <HistoryControl DataSeries="new List<HistoryChartDataSeries>{PVProductionSeries, GridSupplySeries, GridDemandSeries}" Label="Photovoltaik"></HistoryControl>
+    </div>
+</div>
+
 <button @onclick="TakePhoto">Test</button>
 
 @code
@@ -32,7 +39,11 @@
     public DecimalDataPoint GridDemand = new() { Label = "Bezug", Unit = "W", MaxValue = 8000, DecimalDigits = 1, History = new() { DataHistoryLength = 300 }, AutoAddCurrentValueToHistory = false };
 
     private Timer refreshTimer;
-    private DateTime lastUpdateTimestamp = DateTime.Now.Subtract(TimeSpan.FromMinutes(2)).ToUniversalTime();
+    private DateTime lastUpdateTimestamp = DateTime.Now.Subtract(TimeSpan.FromMinutes(10)).ToUniversalTime();
+
+    public HistoryChartDataSeries PVProductionSeries;
+    public HistoryChartDataSeries GridSupplySeries;
+    public HistoryChartDataSeries GridDemandSeries;
 
     protected override void OnInitialized()
     {
@@ -82,6 +93,11 @@
                 PVProduction.SetCorrectedValue(data.Last().PVProduction);
                 GridSupply.SetCorrectedValue(data.Last().GridSupply);
                 GridDemand.SetCorrectedValue(data.Last().GridDemand);
+
+                PVProductionSeries = new() { DataPoint = PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+                GridSupplySeries = new() { DataPoint = GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+                GridDemandSeries = new() { DataPoint = GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
+
             }
 
                 //var jsonString = Http.GetStringAsync($"https://smarthomestorageservice.azurewebsites.net/readpvm3data").Result;
