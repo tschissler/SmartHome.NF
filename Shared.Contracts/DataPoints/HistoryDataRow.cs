@@ -56,6 +56,15 @@ namespace SharedContracts.DataPoints
             lastAggregationTimestamp = DateTime.Now;
         }
 
+        public void AddHistoryDataPoint (double dataPoint, DateTime timeStamp)
+        {
+            if (DataHistory.Count >= DataHistoryLength && DataHistoryLength > 0)
+            {
+                DataHistory.RemoveAt(0);
+            }
+            DataHistory.Add(new HistoryDataPoint { Timestamp = timeStamp, Value = dataPoint });
+        }
+
         public void AddHistoryDataPoint(double dataPoint)
         {
             if (DataHistory.Count >= DataHistoryLength && DataHistoryLength > 0)

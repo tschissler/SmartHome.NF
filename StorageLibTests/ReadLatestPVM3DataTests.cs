@@ -22,11 +22,5 @@ namespace StorageLibTests
             var actual = TableStorageConnector.ReadLatestPVM3Data(timestamp, TestTableName, Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString_Prod"));
             actual.Result.Count().Should().BeGreaterThanOrEqualTo(15);
         }
-
-        [TestMethod]
-        public void JsonDateTime()
-        {
-            var x = JsonConvert.SerializeObject(DateTime.Now.ToUniversalTime());
-        }
     }
 }

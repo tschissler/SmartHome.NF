@@ -14,7 +14,7 @@
             {
                 currentValue = value;
                 LastUpdate = DateTime.Now;
-                if (History.DataHistoryLength > 0)
+                if (History.DataHistoryLength > 0 && AutoAddCurrentValueToHistory)
                 {
                     History.AddHistoryDataPoint(value);
                 }
@@ -27,6 +27,7 @@
         public HistoryDataRow History { get; set; }
         public double? CurrentValueCorrection { get; set; }
         public string Label { get; set; }
+        public bool AutoAddCurrentValueToHistory { get; set; } = true;
 
         public DecimalDataPoint()
         {

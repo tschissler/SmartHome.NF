@@ -1,46 +1,110 @@
 ﻿@page "/"
+@using HelpersLib;
+@using Newtonsoft.Json;
+@using SharedContracts.DataPoints;
+@using SharedContracts.RestDataPoints;
+@using Smarthome.Controls
 @using Syncfusion.Blazor.CircularGauge
+@using System.Net.Http.Headers;
 
 <h1>Hello, world!</h1>
-
-<SfCircularGauge Background="transparent">
-    <CircularGaugeAxes>
-        <CircularGaugeAxis StartAngle="200" EndAngle="160" Minimum="0" Maximum="100" Radius="100%">
-            <CircularGaugeAxisLineStyle Width="0" />
-
-            <CircularGaugeAxisLabelStyle>
-                <CircularGaugeAxisLabelFont Size="0px" FontFamily="inherit" />
-            </CircularGaugeAxisLabelStyle>
-            <CircularGaugeAxisMajorTicks Height="0" />
-            <CircularGaugeAxisMinorTicks Height="0" />
-
-            <CircularGaugeRanges>
-                <CircularGaugeRange Start="0" End="100" Radius="90%" StartWidth="30" EndWidth="30" Color="#E0E0E0" RoundedCornerRadius="5" />
-            </CircularGaugeRanges>
-
-            <CircularGaugePointers>
-                <CircularGaugePointer Value="45" RoundedCornerRadius="5" Type="PointerType.RangeBar" Color="#009900" Radius="90%" PointerWidth="30">
-                    <CircularGaugePointerAnimation Enable="true" />
-                    <CircularGaugePointerBorder Width="0" />
-                </CircularGaugePointer>
-            </CircularGaugePointers>
-
-            <CircularGaugeAnnotations>
-                <CircularGaugeAnnotation Radius="0%" Angle="0" ZIndex="1">
-                    <ContentTemplate>
-                        <div class="col annotationText"><span style="font-size:0.6em">Test</span><br /></div><br/>
-                    </ContentTemplate>
-                </CircularGaugeAnnotation>
-            </CircularGaugeAnnotations>
-
-        </CircularGaugeAxis>
-    </CircularGaugeAxes>
-</SfCircularGauge>
-
+ 
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <CircularGaugeControl DataPoint="@PVProduction" Color="#009900"></CircularGaugeControl>
+        </div>
+        <div class="col-4">
+            <CircularGaugeControl DataPoint="@GridSupply" Color="#999900"></CircularGaugeControl>
+        </div>
+        <div class="col-4">
+            <CircularGaugeControl DataPoint="@GridDemand" Color="#990000"></CircularGaugeControl>
+        </div>
+    </div>
+</div>
+    
 <button @onclick="TakePhoto">Test</button>
 
 @code
 {
+    public DecimalDataPoint PVProduction = new() { Label = "Produktion", Unit = "W", MaxValue = 12000, DecimalDigits = 1, History = new() { DataHistoryLength = 300 }, CurrentValueCorrection = (5.7 + 5.13) / 5.7, AutoAddCurrentValueToHistory=false };
+    public DecimalDataPoint GridSupply = new() { Label = "Einspeisung", Unit = "W", MaxValue = 12000, DecimalDigits = 1, History = new() { DataHistoryLength = 300 }, AutoAddCurrentValueToHistory = false };
+    public DecimalDataPoint GridDemand = new() { Label = "Bezug", Unit = "W", MaxValue = 8000, DecimalDigits = 1, History = new() { DataHistoryLength = 300 }, AutoAddCurrentValueToHistory = false };
+
+    private Timer refreshTimer;
+    private DateTime lastUpdateTimestamp = DateTime.Now.Subtract(TimeSpan.FromMinutes(2)).ToUniversalTime();
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(Refresh, null, 0, 10000);
+    }
+
+    private void Refresh(object? state)
+    {
+        try
+        {
+            var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://smarthomestorageservice.azurewebsites.net/readpvm3data"),
+                    //RequestUri = new Uri("http://localhost:5006/readpvm3data"),
+                    Content = new StringContent($"\"{lastUpdateTimestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\"")
+                    {
+                        Headers =
+                            {
+                                ContentType = new MediaTypeHeaderValue("application/json")
+                            }
+                    }
+                };
+                
+            lastUpdateTimestamp = DateTime.Now.ToUniversalTime();
+
+            List<PVM3RestDataPoint> data;
+            using (HttpClient Http = new HttpClient())
+            {
+                using (var response = Http.SendAsync(request).Result)
+                {
+                    response.EnsureSuccessStatusCode();
+                    var body = response.Content.ReadAsStringAsync().Result;
+                    data = JsonConvert.DeserializeObject<List<PVM3RestDataPoint>>(body);
+                }
+            }
+
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    PVProduction.History.AddHistoryDataPoint(item.PVProduction, item.TimeStamp);
+                    GridSupply.History.AddHistoryDataPoint(item.GridSupply, item.TimeStamp);
+                    GridDemand.History.AddHistoryDataPoint(item.GridDemand, item.TimeStamp);
+                }
+                
+                PVProduction.SetCorrectedValue(data.Last().PVProduction);
+                GridSupply.SetCorrectedValue(data.Last().GridSupply);
+                GridDemand.SetCorrectedValue(data.Last().GridDemand);
+            }
+
+                //var jsonString = Http.GetStringAsync($"https://smarthomestorageservice.azurewebsites.net/readpvm3data").Result;
+                //var data = JsonConvert.DeserializeObject<PVM3RestDataPoint>(jsonString);
+                
+                //Cleanup(PVDataPoints.PVProduction);
+                //Cleanup(PVDataPoints.GridDemand);
+                //Cleanup(PVDataPoints.GridSupply);
+        }
+        catch (Exception ex)
+        {
+            ConsoleHelpers.PrintErrorMessage("Failed to read data from StorageService, Error: " + ex.Message);
+        }
+
+        //PVProduction = new() { DataPoint = PVDataPoints.PVProduction, Type = ChartSeriesType.Line, Color = "#009900", Opacity = 1 };
+        //GridSupply = new() { DataPoint = PVDataPoints.GridSupply, Type = ChartSeriesType.Line, Color = "#999900", Opacity = 1 };
+        //GridDemand = new() { DataPoint = PVDataPoints.GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
+        //CurrentCharging = new() { DataPoint = ChargingDataPoints.CurrentChargingPower, Type = ChartSeriesType.Line, Color = "#000099", Opacity = 1 };
+
+        InvokeAsync(StateHasChanged);
+
+    }
+
     public async void TakePhoto()
     {
         if (MediaPicker.Default.IsCaptureSupported)

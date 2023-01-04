@@ -62,4 +62,9 @@
       <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.42" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
+      <ProjectReference Include="..\Smarthome.Controls\Smarthome.Controls.csproj" />
+    </ItemGroup>
+
 </Project>
