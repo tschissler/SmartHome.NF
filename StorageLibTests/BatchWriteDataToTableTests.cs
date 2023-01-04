@@ -9,12 +9,10 @@ namespace StorageLibTests
     public class BatchWriteDataToTableTests
     {
         public const string TestTableName = "UnitTests";
-
+        
         [TestMethod]
         public void WriteTestDataToTable()
-        {
-            System.Environment.SetEnvironmentVariable(TableStorageConnector.ConnectionStringEnvironmentVariable, "DefaultEndpointsProtocol=https;AccountName=smarthomestoragetest;AccountKey=O4RZthocPTtbS0yaHaXW/qeIyXjEjKzFlVpXNRjcSjqF80g3pPLIN87JveTSe8sXtSjFNbGFP+c3+AStyIxrZg==;BlobEndpoint=https://smarthomestoragetest.blob.core.windows.net/;QueueEndpoint=https://smarthomestoragetest.queue.core.windows.net/;TableEndpoint=https://smarthomestoragetest.table.core.windows.net/;FileEndpoint=https://smarthomestoragetest.file.core.windows.net/;");
-
+        {           
             List<TableTransactionAction> testdata = new();
             string key = Guid.NewGuid().ToString();
             int count = 3;
@@ -34,9 +32,9 @@ namespace StorageLibTests
                 testdata.Add(new TableTransactionAction(TableTransactionActionType.Add, storageEntity));
             }
 
-            TableStorageConnector.BatchWriteDataToTable(testdata, TestTableName).Wait();
+            TableStorageConnector.BatchWriteDataToTable(testdata, TestTableName, Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString_Test")).Wait();
 
-            TableStorageConnector.CountDataTableEntriesPerPartitionKey(TestTableName, key).Should().Be(count);
+            TableStorageConnector.CountDataTableEntriesPerPartitionKey(TestTableName, key, Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString_Test")).Should().Be(count);
         }
 
         [TestMethod]
@@ -61,7 +59,7 @@ namespace StorageLibTests
                 testdata.Add(new TableTransactionAction(TableTransactionActionType.Add, storageEntity));
             }
 
-            Action act = () => TableStorageConnector.BatchWriteDataToTable(testdata, TestTableName).Wait();
+            Action act = () => TableStorageConnector.BatchWriteDataToTable(testdata, TestTableName, "").Wait();
             act.Should().Throw<Exception>();
         }
     }

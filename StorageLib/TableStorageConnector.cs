@@ -9,13 +9,17 @@ namespace StorageLib
     {
         public const string ConnectionStringEnvironmentVariable = "SmartHomeStorageConnectionString";
         
-        public static async Task BatchWriteDataToTable(List<TableTransactionAction> data, string tableName)
+        //static TableStorageConnector()
+        //{
+        //    if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariable)))
+        //    {
+        //        throw new Exception($"{ConnectionStringEnvironmentVariable} is not set");
+        //    }
+        //}
+        
+        public static async Task BatchWriteDataToTable(List<TableTransactionAction> data, string tableName, string connectionString)
         {
-            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariable)))
-            {
-                throw new Exception($"{ConnectionStringEnvironmentVariable} is not set");
-            }
-            TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
+            TableServiceClient tableServiceClient = new TableServiceClient(connectionString);
             TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
 
             tableClient.CreateIfNotExistsAsync().Wait();
@@ -28,13 +32,17 @@ namespace StorageLib
             }
         }
 
-        public static int CountDataTableEntriesPerPartitionKey(string tableName, string partitionKey)
+        public static async Task<Pageable<PVM3StorageData>> ReadLatestPVM3Data(DateTime fromTimeStamp, string tableName, string connectionString)
         {
-            if (String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariable)))
-            {
-                throw new Exception($"{ConnectionStringEnvironmentVariable} is not set");
-            }
-            TableServiceClient tableServiceClient = new TableServiceClient(Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString"));
+            TableServiceClient tableServiceClient = new TableServiceClient(connectionString);
+            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
+
+            return tableClient.Query<PVM3StorageData>($"Timestamp ge datetime'{ fromTimeStamp.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}'");
+        }
+        
+        public static int CountDataTableEntriesPerPartitionKey(string tableName, string partitionKey, string connectionString)
+        {
+            TableServiceClient tableServiceClient = new TableServiceClient(connectionString);
             TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
 
             return tableClient.Query<TableEntity>($"PartitionKey eq '{partitionKey}'").Count();

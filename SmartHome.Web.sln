@@ -68,6 +68,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CloudServices", "CloudServi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StorageLibTests", "StorageLibTests\StorageLibTests.csproj", "{DD900D38-8C28-4439-9686-D2EC65461C7B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.App", "Smarthome.App\Smarthome.App.csproj", "{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,15 @@ Global
 		{DD900D38-8C28-4439-9686-D2EC65461C7B}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{DD900D38-8C28-4439-9686-D2EC65461C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD900D38-8C28-4439-9686-D2EC65461C7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Dev|Any CPU.Deploy.0 = Debug|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
