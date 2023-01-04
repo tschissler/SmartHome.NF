@@ -5,6 +5,7 @@ VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C8C28-CB59-4500-AFFC-B93CD82CE91F}"
 	ProjectSection(SolutionItems) = preProject
+		CreateAndroidPackage.txt = CreateAndroidPackage.txt
 		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
 		start.ps1 = start.ps1
