@@ -37,7 +37,7 @@ app.MapGet("/readpvm3data", string ([FromBody] DateTime timeStampFrom) =>
     }
     try
     {
-        return JsonConvert.SerializeObject(StorageConnector.ReadPVM3Data(timeStampFrom));
+        return JsonConvert.SerializeObject(StorageConnector.ReadPVM3Data(timeStampFrom).Result);
     }
     catch (Exception ex)
     {
