@@ -59,7 +59,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.41" />
+      <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.42" />
     </ItemGroup>
 
 </Project>
