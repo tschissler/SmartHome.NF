@@ -5,6 +5,7 @@ on:
     branches: [ "master" ]
     paths:
       - 'Smarthome.App/**'
+      - '.github/workflows/AndroidApp.yml'
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
