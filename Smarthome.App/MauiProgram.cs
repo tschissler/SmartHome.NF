@@ -2,7 +2,6 @@
 using Azure.Security.KeyVault.Secrets;
 using HelpersLib;
 using Microsoft.AspNetCore.Components.WebView.Maui;
-using Microsoft.Azure.Services.AppAuthentication;
 using Smarthome.App.Data;
 using Syncfusion.Blazor;
 
@@ -43,7 +42,7 @@ namespace Smarthome.App
             //        azureServiceTokenProvider.KeyVaultTokenCallback));
 
 
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(secret.Value.Value);
+            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(secret.Value.Value);
 
             builder.Services.AddSingleton<WeatherForecastService>();
             
