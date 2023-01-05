@@ -43,7 +43,7 @@ jobs:
         run: dotnet restore ${{ env.ProjectFile }} 
 
       - name: Build MAUI Android
-        run: dotnet build ${{ env.ProjectFile }} -c Release -f net6.0-android --no-restore -o ./Android 
+        run: dotnet build ${{ env.ProjectFile }} -c Release -f net6.0-android --no-restore -o ./Android /p:AndroidSigningKeyPass=${{ secrets.ANDROIDSIGNINGKEYPASS }} /p:AndroidSigningStorePass=${{ secrets.ANDROIDSIGNINGKEYPASS }}
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v2.3.1
