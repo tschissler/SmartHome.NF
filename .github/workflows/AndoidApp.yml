@@ -9,47 +9,47 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
-#jobs:
-#  build-android:
-#    runs-on: windows-2022
-#    name: Android Build
+jobs:
+  build-android:
+    runs-on: windows-2022
+    name: Android Build
     
-#    env:
-#      DOTNET_NOLOGO: true                     # Disable the .NET logo
-#      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
-#      DOTNET_CLI_TELEMETRY_OPTOUT: true       # Disable sending .NET CLI telemetry
-#      ProjectFile: Smarthome.App/Smarthome.App.csproj
+    env:
+      DOTNET_NOLOGO: true                     # Disable the .NET logo
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
+      DOTNET_CLI_TELEMETRY_OPTOUT: true       # Disable sending .NET CLI telemetry
+      ProjectFile: Smarthome.App/Smarthome.App.csproj
   
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-#      - name: Setup .NET 6
-#        uses: actions/setup-dotnet@v1
-#        with:
-#          dotnet-version: 6.0.x
-#          include-prerelease: true
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+          include-prerelease: true
 
-#      - uses: actions/setup-java@v2
-#        with:
-#          distribution: 'microsoft'
-#          java-version: '11'
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'microsoft'
+          java-version: '11'
 
-#      - name: Install MAUI Workloads
-#        run: |
-#          dotnet workload install android --ignore-failed-sources
-#          dotnet workload install maui --ignore-failed-sources
-#      - name: Restore Dependencies
-#        run: dotnet restore ${{ env.ProjectFile }} 
+      - name: Install MAUI Workloads
+        run: |
+          dotnet workload install android --ignore-failed-sources
+          dotnet workload install maui --ignore-failed-sources
+      - name: Restore Dependencies
+        run: dotnet restore ${{ env.ProjectFile }} 
 
-#      - name: Build MAUI Android
-#        run: dotnet build ${{ env.ProjectFile }} -c Release -f net6.0-android --no-restore -o ./Android 
+      - name: Build MAUI Android
+        run: dotnet build ${{ env.ProjectFile }} -c Release -f net6.0-android --no-restore -o ./Android 
 
-#      - name: Upload Android Artifact
-#        uses: actions/upload-artifact@v2.3.1
-#        with:
-#          name: android-ci-build
-#          path: ./Android/publish
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: android-ci-build
+          path: ./Android/publish
           
 #  build-ios:
 #    runs-on: macos-12
