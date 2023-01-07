@@ -69,7 +69,7 @@ namespace StorageService
                         GridDemand = item.GridDemand,
                         GridSupply = item.GridSupply,
                         PVProduction = item.PVProduction,
-                        TimeStamp = item.Timestamp.Value.LocalDateTime
+                        TimeStamp = item.MeassureTimeStamp.ToLocalTime()
                     });
                 }
                 return restDataPoints;
