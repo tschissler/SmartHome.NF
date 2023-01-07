@@ -9,12 +9,16 @@ namespace PVService
     {
         private PowerDog powerDog;
         //private const string storageServiceUrl = "http://localhost:5006";
-        private const string storageServiceUrl = "https://smarthomestorageservice.azurewebsites.net";
+        private string storageServiceUrl = "https://smarthomestorageservice.azurewebsites.net";
 
 
         public PVStorageConnector(PowerDog powerDog)
         {
             this.powerDog = powerDog;
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("StorageServiceUrl")))
+            {
+                storageServiceUrl = Environment.GetEnvironmentVariable("StorageServiceUrl");
+            }
         }
         
         public void SendDataToCloud(object? state)
