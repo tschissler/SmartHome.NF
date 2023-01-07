@@ -15,6 +15,7 @@ namespace SharedContracts.StorageData
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; } = default;
 
+        public DateTime MeassureTimeStamp { get; set; }
         public double GridDemand { get; set; }
         public double GridSupply { get; set; }
         public double PVProduction { get; set; }

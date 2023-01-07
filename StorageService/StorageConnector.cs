@@ -6,11 +6,26 @@ using SharedContracts.DataPointCollections;
 using SharedContracts.RestDataPoints;
 using SharedContracts.StorageData;
 using StorageLib;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using System.Text.RegularExpressions;
 
 namespace StorageService
 {
     public class StorageConnector
     {
+        static StorageConnector()
+        {
+            var connectionString = Environment.GetEnvironmentVariable("SmartHomeStorageConnectionString");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                ConsoleHelpers.PrintInformation($"SmartHomeStorageConnectionString is not defined, cannot access table storage");
+            }
+            else
+            {
+                string pattern = @"AccountName=([^;]*)";
+                ConsoleHelpers.PrintInformation($"Using table storage at {Regex.Match(connectionString, pattern).Groups[1].Value} ");
+            }
+        }
         public static async void AddPVM3Data(List<PVM3RestDataPoint> m3PVRestDataPoints)
         {
             ConsoleHelpers.PrintInformation("AddPVM3Data() called");
@@ -24,7 +39,7 @@ namespace StorageService
                     {
                         RowKey = data.TimeStamp.ToString("yyyyMMddHHmmss"),
                         PartitionKey = data.TimeStamp.ToString("yyyyMMdd"),
-                        Timestamp = data.TimeStamp,
+                        MeassureTimeStamp = data.TimeStamp.ToUniversalTime(),
                         GridDemand = data.GridDemand,
                         GridSupply = data.GridSupply,
                         PVProduction = data.PVProduction
