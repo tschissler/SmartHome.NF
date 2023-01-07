@@ -29,9 +29,9 @@ app.MapPost("/addpvm3data", bool ([FromBody] List<PVM3RestDataPoint> pvM3RestDat
 })
 .WithName("AddPVM3Data");
 
-app.MapGet("/readpvm3data", string ([FromBody] DateTime timeStampFrom) =>
+app.MapPost("/readpvm3data", string ([FromBody] DateTime timeStampFrom) =>
 {
-    if ((DateTime.Now.ToUniversalTime() - timeStampFrom).TotalSeconds > 600)
+    if ((DateTime.Now.ToUniversalTime() - timeStampFrom).TotalSeconds > 700)
     {
         throw new InvalidOperationException("Time difference between now and timestamp is too big, maximum of 600 seconds is allowed");
     }
