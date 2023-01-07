@@ -47,7 +47,7 @@
 
     protected override void OnInitialized()
     {
-        refreshTimer = new Timer(Refresh, null, 0, 10000);
+        refreshTimer = new Timer(Refresh, null, 1, 10000);
     }
 
     private void Refresh(object? state)
@@ -56,7 +56,7 @@
         {
             var request = new HttpRequestMessage
                 {
-                    Method = HttpMethod.Get,
+                    Method = HttpMethod.Post,
                     RequestUri = new Uri("https://smarthomestorageservice.azurewebsites.net/readpvm3data"),
                     //RequestUri = new Uri("http://localhost:5006/readpvm3data"),
                     Content = new StringContent($"\"{lastUpdateTimestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\"")
@@ -99,9 +99,6 @@
                 GridDemandSeries = new() { DataPoint = GridDemand, Type = ChartSeriesType.Line, Color = "#990000", Opacity = 1 };
 
             }
-
-                //var jsonString = Http.GetStringAsync($"https://smarthomestorageservice.azurewebsites.net/readpvm3data").Result;
-                //var data = JsonConvert.DeserializeObject<PVM3RestDataPoint>(jsonString);
                 
                 //Cleanup(PVDataPoints.PVProduction);
                 //Cleanup(PVDataPoints.GridDemand);

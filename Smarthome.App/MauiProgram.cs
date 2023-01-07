@@ -1,9 +1,8 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using HelpersLib;
-using Microsoft.AspNetCore.Components.WebView.Maui;
+﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+using Newtonsoft.Json;
 using Smarthome.App.Data;
 using Syncfusion.Blazor;
+using System.Reflection;
 
 namespace Smarthome.App
 {
@@ -21,34 +20,35 @@ namespace Smarthome.App
 
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
+            try
+            {
+                //using var stream = FileSystem.OpenAppPackageFileAsync("appsettings.json").Result;
+                //using var reader = new StreamReader(stream);
+                //var json = reader.ReadToEndAsync().Result;
 
-            const string secretName = "SyncfusionLicenseKey";
-            var keyVaultName = "SmartHomeKeyVault";
-            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Smarthome.App.appsettings.json";
+                string json;
 
-            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-            var secret = client.GetSecretAsync(secretName).Result;
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    json = reader.ReadToEnd();
+                }
+                var settings = JsonConvert.DeserializeObject<Settings>(json);
 
-
-            //var clientId = "your-client-id";
-            //var clientSecret = "your-client-secret";
-            //var tenantId = "your-tenant-id";
-
-            //var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            //var keyVaultClient = new KeyVaultClient(
-            //    new KeyVaultClient.AuthenticationCallback(
-            //        azureServiceTokenProvider.KeyVaultTokenCallback));
-
-
-            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(secret.Value.Value);
-
-            builder.Services.AddSingleton<WeatherForecastService>();
+                // Add Syncfusion license
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(settings.SyncfusionLicenseKey);
+            }
+            catch (Exception ex)
+            {
+            }
             
             // Set IgnoreScriptIsolation as true to load scripts externally.
             builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
-            
+
             return builder.Build();
         }
     }

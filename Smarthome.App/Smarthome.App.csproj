@@ -59,8 +59,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Identity" Version="1.9.0-beta.1" />
-      <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0-beta.1" />
+      <Content Remove="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.42" />
     </ItemGroup>
 
@@ -68,5 +74,4 @@
       <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
       <ProjectReference Include="..\Smarthome.Controls\Smarthome.Controls.csproj" />
     </ItemGroup>
-
 </Project>
