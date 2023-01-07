@@ -19,6 +19,7 @@ namespace PVService
             {
                 storageServiceUrl = Environment.GetEnvironmentVariable("StorageServiceUrl");
             }
+            ConsoleHelpers.PrintInformation($"Using StorageService at location '{storageServiceUrl}'");
         }
         
         public void SendDataToCloud(object? state)
