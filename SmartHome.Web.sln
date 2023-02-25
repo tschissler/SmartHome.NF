@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.App", "Smarthome.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontends", "Frontends", "{7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smarthome.Controls", "Smarthome.Controls\Smarthome.Controls.csproj", "{6085E0A1-344C-45E9-BE34-01A828C98DFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Controls", "Smarthome.Controls\Smarthome.Controls.csproj", "{6085E0A1-344C-45E9-BE34-01A828C98DFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
