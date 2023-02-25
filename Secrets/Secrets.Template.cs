@@ -6,7 +6,11 @@ namespace Secrets
     {
         public static string AzureStorageConnectionString = "%%AzureStorageConnectionString%%";
     }
-    
+
+    public class LicenseSecrets {
+        public static string SyncfusionLicenseKey = "%%SyncfusionLicenseKey%%";
+    }
+
     public class DeviceSecretsData
     {
         public string Ssid { get; set; }
