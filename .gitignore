@@ -364,3 +364,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /Smarthome.App/appsettings.json
+/Secrets/Secrets.cs
