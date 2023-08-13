@@ -10,7 +10,19 @@ namespace ShellyLibTests
         [TestMethod]
         public void ReadPowerFromPlug()
         {
-            var result = ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 177 }));
+            var result = 0.0;
+            IPAddress deviceAddress = new IPAddress(new byte[] { 192, 168, 178, 177 });
+
+            ShellyConnector.TurnRelayOn(deviceAddress);
+            using (CancellationTokenSource cts = new CancellationTokenSource(20000))
+            {
+                while (result == 0.0)
+                {
+                    result = ShellyConnector.ReadPlugPower(deviceAddress);
+                    cts.Token.ThrowIfCancellationRequested();
+                }
+            }
+            ShellyConnector.TurnRelayOff(deviceAddress);
             result.Should().BeGreaterThan(0);
         }
 

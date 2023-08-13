@@ -26,6 +26,40 @@ namespace ShellyLib
             return value;
         }
 
+        public static bool TurnRelayOn(IPAddress deviceAddress)
+        {
+            return TurnRelay(deviceAddress, true);
+        }
+
+        public static bool TurnRelayOff(IPAddress deviceAddress)
+        {
+            return TurnRelay(deviceAddress, false);
+        }
+
+        private static bool TurnRelay(IPAddress deviceAddress, bool turnOn)
+        {
+            bool value = false;
+            try
+            {
+                var turnString = turnOn ? "on" : "off";
+
+                using (HttpClient Http = new HttpClient())
+                {
+                    var jsonString = Http.GetStringAsync($"http://{deviceAddress}/relay/0?turn={turnString}").Result;
+                    value = JsonConvert.DeserializeObject<TurnOnOffResponse>(jsonString).ison;
+                }
+                if (value != turnOn)
+                {
+                    throw new Exception($"Turning relay {turnString} did not succeed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelpers.PrintErrorMessage($"Failed to turn on relay on Shelly device {deviceAddress}, Error: " + ex.Message);
+            }
+            return value;
+        }
+
         public static double[] Read3EMPower(IPAddress deviceAddress)
         {
             double[] value = new double[3];
@@ -81,4 +115,17 @@ namespace ShellyLib
         public float total { get; set; }
         public float total_returned { get; set; }
     }
+
+
+    public class TurnOnOffResponse
+    {
+        public bool ison { get; set; }
+        public bool has_timer { get; set; }
+        public int timer_started { get; set; }
+        public int timer_duration { get; set; }
+        public int timer_remaining { get; set; }
+        public bool overpower { get; set; }
+        public string source { get; set; }
+    }
+
 }
