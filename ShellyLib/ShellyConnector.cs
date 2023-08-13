@@ -7,33 +7,48 @@ namespace ShellyLib
 {
     public class ShellyConnector
     {
-        public static double ReadPlugPower(IPAddress deviceAddress)
+        public static double ReadPower(ShellyDevice device)
         {
             double value = 0;
             try
             {
                 using (HttpClient Http = new HttpClient())
                 {
-                    var jsonString = Http.GetStringAsync($"http://{deviceAddress}/meter/0").Result;
-                    value = JsonConvert.DeserializeObject<ShellyPlugMeterData>(jsonString).power;
+                    string jsonString;
 
+                    switch (device.DeviceType)
+                    {
+                        case DeviceType.ShellyPlugS:
+                            jsonString = Http.GetStringAsync($"http://{device.IPAddress}/meter/0").Result;
+                            value = JsonConvert.DeserializeObject<ShellyPlugMeterData>(jsonString).power;
+                            break;
+                        case DeviceType.ShellyPlusPlugS:
+                        case DeviceType.ShellyPlus1PM:
+                            jsonString = Http.GetStringAsync($"http://{device.IPAddress}/rpc/Switch.GetStatus?id=0").Result;
+                            value = JsonConvert.DeserializeObject<ShellyPlusPlugMeterData>(jsonString).apower;
+                            break;
+                        case DeviceType.Shelly3EM:
+                            jsonString = Http.GetStringAsync($"http://{device.IPAddress}/status").Result;
+                            value = JsonConvert.DeserializeObject<EM3Data>(jsonString).total_power;
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                ConsoleHelpers.PrintErrorMessage($"Failed to read data from Shelly device {deviceAddress}, Error: " + ex.Message);
+                ConsoleHelpers.PrintErrorMessage($"Failed to read data from Shelly device {device.IPAddress}, Error: " + ex.Message);
             }
             return value;
         }
 
-        public static bool TurnRelayOn(IPAddress deviceAddress)
+        public static bool TurnRelayOn(ShellyDevice device)
         {
-            return TurnRelay(deviceAddress, true);
+            return TurnRelay(device.IPAddress, true);
         }
 
-        public static bool TurnRelayOff(IPAddress deviceAddress)
+        public static bool TurnRelayOff(ShellyDevice device)
         {
-            return TurnRelay(deviceAddress, false);
+            return TurnRelay(device.IPAddress, false);
         }
 
         private static bool TurnRelay(IPAddress deviceAddress, bool turnOn)
@@ -59,27 +74,6 @@ namespace ShellyLib
             }
             return value;
         }
-
-        public static double[] Read3EMPower(IPAddress deviceAddress)
-        {
-            double[] value = new double[3];
-            try
-            {
-                using (HttpClient Http = new HttpClient())
-                {
-                    var jsonString = Http.GetStringAsync($"http://{deviceAddress}/status").Result;
-                    var data = JsonConvert.DeserializeObject<EM3Data>(jsonString);
-                    value[0] = data.emeters[0].power;
-                    value[1] = data.emeters[1].power;
-                    value[2] = data.emeters[2].power;
-                }
-            }
-            catch (Exception ex)
-            {
-                ConsoleHelpers.PrintErrorMessage($"Failed to read data from 3EM Shelly device {deviceAddress}, Error: " + ex.Message);
-            }
-            return value;
-        }
     }
 
     public class ShellyPlugMeterData
@@ -92,6 +86,24 @@ namespace ShellyLib
         public double number { get; set; }
     }
 
+
+    public class ShellyPlusPlugMeterData
+    {
+        public int id { get; set; }
+        public string source { get; set; }
+        public bool output { get; set; }
+        public float apower { get; set; }
+        public float voltage { get; set; }
+        public float current { get; set; }
+        public Aenergy aenergy { get; set; }
+    }
+
+    public class Aenergy
+    {
+        public float total { get; set; }
+        public float[] by_minute { get; set; }
+        public int minute_ts { get; set; }
+    }
 
     public class EM3Data
     {

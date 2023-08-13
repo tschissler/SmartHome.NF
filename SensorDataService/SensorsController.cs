@@ -80,12 +80,12 @@ namespace SensorDataService
                     //var gcInfo = GC.GetGCMemoryInfo();
                     //Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
 
-                    consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
-                    consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));
-                    var em3Data = ShellyConnector.Read3EMPower(new IPAddress(new byte[] { 192, 168, 178, 179 }));
-                    consumptionDataPoints.PowerPhase1.SetCorrectedValue(em3Data[0]);
-                    consumptionDataPoints.PowerPhase2.SetCorrectedValue(em3Data[1]);
-                    consumptionDataPoints.PowerPhase3.SetCorrectedValue(em3Data[2]);
+                    //consumptionDataPoints.PowerDevice1.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 177 })));
+                    //consumptionDataPoints.PowerDevice2.SetCorrectedValue(ShellyConnector.ReadPlugPower(new IPAddress(new byte[] { 192, 168, 178, 178 })));
+                    //var em3Data = ShellyConnector.Read3EMPower(new IPAddress(new byte[] { 192, 168, 178, 179 }));
+                    //consumptionDataPoints.PowerPhase1.SetCorrectedValue(em3Data[0]);
+                    //consumptionDataPoints.PowerPhase2.SetCorrectedValue(em3Data[1]);
+                    //consumptionDataPoints.PowerPhase3.SetCorrectedValue(em3Data[2]);
                 }
                 catch (Exception ex)
                 {
