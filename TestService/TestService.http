@@ -1,0 +1,15 @@
+@TestService_HostAddress = http://localhost:32768
+
+GET {{TestService_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{TestService_HostAddress}}/todos/1
+Accept: application/json
+
+###
+
+GET {{TestService_HostAddress}}/ping/
+
+###
