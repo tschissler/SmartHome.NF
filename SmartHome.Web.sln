@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C
 		CreateAndroidPackage.txt = CreateAndroidPackage.txt
 		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
+		microk8s as autostart service.txt = microk8s as autostart service.txt
 		start.ps1 = start.ps1
 	EndProjectSection
 EndProject
@@ -74,6 +75,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontends", "Frontends", "{7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Controls", "Smarthome.Controls\Smarthome.Controls.csproj", "{6085E0A1-344C-45E9-BE34-01A828C98DFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnphaseLib", "EnphaseLib\EnphaseLib.csproj", "{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnphaseLibTests", "EnphaseLibTests\EnphaseLibTests.csproj", "{FC7F1DB4-1D54-45EB-8341-7D9406041397}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -223,6 +228,18 @@ Global
 		{6085E0A1-344C-45E9-BE34-01A828C98DFC}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{6085E0A1-344C-45E9-BE34-01A828C98DFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6085E0A1-344C-45E9-BE34-01A828C98DFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -249,6 +266,8 @@ Global
 		{DD900D38-8C28-4439-9686-D2EC65461C7B} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{FF8F1F59-CA15-47F4-8C06-3DE736C8BBD5} = {7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}
 		{6085E0A1-344C-45E9-BE34-01A828C98DFC} = {7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}
+		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
+		{FC7F1DB4-1D54-45EB-8341-7D9406041397} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}

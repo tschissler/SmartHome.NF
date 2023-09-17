@@ -1,0 +1,65 @@
+To start MicroK8s automatically on your Raspberry Pi running Raspberry Pi OS (formerly Raspbian) each time your device boots, you can create a systemd service unit. systemd is the default init system on most modern Linux distributions, including Raspberry Pi OS. Here are the steps to create and enable such a service:
+
+1. **Create a systemd Service Unit File**:
+
+   Open a terminal on your Raspberry Pi and create a systemd service unit file for MicroK8s. You can use your favorite text editor. For example:
+
+   ```bash
+   sudo nano /etc/systemd/system/microk8s.service
+   ```
+
+   Add the following content to the file:
+
+   ```ini
+   [Unit]
+   Description=MicroK8s
+
+   [Service]
+   ExecStart=/snap/bin/microk8s.start
+   Restart=always
+   User=<your_username>
+   Group=<your_group>
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   Replace `<your_username>` and `<your_group>` with your actual username and group. You can find your username by running `whoami` and your group with the `groups` command.
+
+2. **Reload systemd**:
+
+   After creating the service unit file, you need to reload systemd to recognize the new service. Run the following command:
+
+   ```bash
+   sudo systemctl daemon-reload
+   ```
+
+3. **Enable the Service**:
+
+   To enable the MicroK8s service to start at boot, use the following command:
+
+   ```bash
+   sudo systemctl enable microk8s
+   ```
+
+4. **Start the Service**:
+
+   You can either reboot your Raspberry Pi or start the MicroK8s service manually with the following command:
+
+   ```bash
+   sudo systemctl start microk8s
+   ```
+
+   It will now start automatically at boot.
+
+5. **Check the Service Status**:
+
+   You can check the status of the MicroK8s service to ensure it's running properly:
+
+   ```bash
+   sudo systemctl status microk8s
+   ```
+
+   It should show that the service is active and running.
+
+That's it! Your MicroK8s should now start automatically each time your Raspberry Pi boots up. You can also stop and disable it if needed using `sudo systemctl stop microk8s` and `sudo systemctl disable microk8s`, respectively.
