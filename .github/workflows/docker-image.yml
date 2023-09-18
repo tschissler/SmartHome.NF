@@ -15,12 +15,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build and publish Docker image
+    - name: Set Version Environment Variable
       env:
-        PACKAGE_VERSION: ${{ steps.get_version.outputs.version }}
+        VERSION: ${{ github.event_name == 'release' && github.ref == 'refs/tags/v*' && github.event.release.tag_name }}
       run: |
-        # Get the package version from your package.json or equivalent file.
-        PACKAGE_VERSION=$(cat package.json | jq -r .version)
+        # Use GitHub Actions context to set the VERSION environment variable.
+        if [ -n "$VERSION" ]; then
+          echo "Version is $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        fi
         
+    - name: Build and publish Docker image
+      run: |        
         # Build the Docker image with the package version tag.
-        docker build -t tschissler/testservice:${PACKAGE_VERSION} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
+        docker build -t tschissler/testservice::${VERSION} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
