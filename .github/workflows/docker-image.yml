@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file TestService/Dockerfile --tag tschissler/testservice:$(date +%s)
+      run: docker build -t tschissler/testservice:$(date +%s) -f .\TestService\Dockerfile . --push
