@@ -23,7 +23,8 @@ RUN dotnet build "TestService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 FROM build AS publish
 RUN dotnet publish "TestService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
+FROM build AS final
+# FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
 WORKDIR /app
 EXPOSE 8080
 COPY --from=publish /app/publish .
