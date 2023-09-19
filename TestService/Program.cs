@@ -26,10 +26,10 @@ todosApi.MapGet("/{id}", (int id) =>
         : Results.NotFound());
 
 var pingApi = app.MapGroup("/ping");
-pingApi.MapGet("/", () => "I am alive version 1.2");
+pingApi.MapGet("/", () => "I am alive version 1.3");
 
 var crashApi = app.MapGroup("/crash");
-crashApi.MapGet("/", () => { Process.GetCurrentProcess().Kill(); return ""; });
+crashApi.MapGet("/", () => { Console.WriteLine("Good bye, I'm dying");  Process.GetCurrentProcess().Kill(); return ""; });
 app.Run();
 
 public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
