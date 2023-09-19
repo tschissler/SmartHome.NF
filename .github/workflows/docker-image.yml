@@ -19,16 +19,7 @@ jobs:
       run: |        
         # Build the Docker image with the package version tag.
         docker build -t tschissler/testservice:${{ github.sha }} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
-    
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.26.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
-        DEFAULT_BUMP: patch
 
     - name: Update Kubernetes deployment
       run: |
-        microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ steps.bump.outputs.newTag }}
-    - name: Deploy to Kubernetes
-      run: microk8s kubectl apply -f /home/thomasschissler/SmartHome/deploy.yaml
+        microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.sha }}
