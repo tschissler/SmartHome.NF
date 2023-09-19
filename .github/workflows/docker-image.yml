@@ -29,3 +29,6 @@ jobs:
       run: |        
         # Build the Docker image with the package version tag.
         docker build -t tschissler/testservice:${VERSION} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
+
+    - name: Deploy to Kubernetes
+      run: microk8s kubectl apply -f /home/thomasschissler/SmartHome/deploy.yaml
