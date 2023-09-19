@@ -1,3 +1,24 @@
-Start microk8s Dashboard
+# Install microk8s
+sudo snap install microk8s --classic
+micok8s start
+
+# Adding a node (optional)
+sudo microk8s.add-node
+microk8s.kubectl get node
+
+# Create an alias for kubectl
+nano ~/.bashrc
+-> Add to the end of this file: alias kubectl='microk8s kubectl'
+
+# Deploy an image
+kubectl apply -f deploy.yaml
+kubectl get pods
+kubectl get services
+
+# Enabling Dashboard
+microk8s enable dashboard
+microk8s kubectl describe secret -n kube-system microk8s-dashboard-token
+
+#Start Dashboard
  microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0
  ->> https://smarthomepi2:10443/

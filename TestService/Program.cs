@@ -25,7 +25,7 @@ todosApi.MapGet("/{id}", (int id) =>
         : Results.NotFound());
 
 var pingApi = app.MapGroup("/ping");
-pingApi.MapGet("/", () => "I am alive version 1.0");
+pingApi.MapGet("/", () => "I am alive version 1.1");
 app.Run();
 
 public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);

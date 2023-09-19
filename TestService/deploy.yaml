@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testservice
+  template:
+    metadata:
+      labels:
+        app: testservice
+    spec:
+      containers:
+        - name: testservice
+          image: tschissler/testservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: testservice-service
+spec:
+  selector:
+    app: testservice
+  ports:
+    - protocol: TCP
+      port: 31001
+      nodePort: 30001 # Port to access the service outside the cluste
+      targetPort: 8080  # Port your application is listening on inside the pods
+  type: NodePort      # Set the Service type to NodePort
