@@ -29,6 +29,6 @@ jobs:
 
     - name: Update Kubernetes deployment
       run: |
-        microk8s kubectl set tschissler/testservice your-testservice=tschissler/testservice:${{ steps.bump.outputs.newTag }}
+        microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ steps.bump.outputs.newTag }}
     - name: Deploy to Kubernetes
       run: microk8s kubectl apply -f /home/thomasschissler/SmartHome/deploy.yaml
