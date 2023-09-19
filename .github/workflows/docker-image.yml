@@ -14,21 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set Version Environment Variable
-      env:
-        VERSION: ${{ github.event_name == 'release' && github.ref == 'refs/tags/v*' && github.event.release.tag_name }}
-      run: |
-        # Use GitHub Actions context to set the VERSION environment variable.
-        if [ -n "$VERSION" ]; then
-          echo "Version is $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-        fi
         
     - name: Build and publish Docker image
       run: |        
         # Build the Docker image with the package version tag.
-        docker build -t tschissler/testservice:${VERSION} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
+        docker build -t tschissler/testservice:${{ github.sha }} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
 
-    - name: Deploy to Kubernetes
-      run: microk8s kubectl apply -f /home/thomasschissler/SmartHome/deploy.yaml
+    - name: Update Kubernetes deployment
+      run: |
+        microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.sha }}
