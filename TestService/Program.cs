@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -26,6 +27,9 @@ todosApi.MapGet("/{id}", (int id) =>
 
 var pingApi = app.MapGroup("/ping");
 pingApi.MapGet("/", () => "I am alive version 1.2");
+
+var crashApi = app.MapGroup("/crash");
+crashApi.MapGet("/", () => { Process.GetCurrentProcess().Kill(); return ""; });
 app.Run();
 
 public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
