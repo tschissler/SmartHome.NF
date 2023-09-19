@@ -17,8 +17,8 @@ To start MicroK8s automatically on your Raspberry Pi running Raspberry Pi OS (fo
    [Service]
    ExecStart=/snap/bin/microk8s.start
    Restart=always
-   User=<your_username>
-   Group=<your_group>
+   User=thomasschissler
+   Group=adm
 
    [Install]
    WantedBy=multi-user.target

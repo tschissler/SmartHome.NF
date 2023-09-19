@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C
 		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
 		microk8s as autostart service.txt = microk8s as autostart service.txt
+		microk8s Commands.txt = microk8s Commands.txt
 		start.ps1 = start.ps1
 	EndProjectSection
 EndProject
