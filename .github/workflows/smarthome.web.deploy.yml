@@ -1,10 +1,10 @@
-name: TestService Docker Image CD
+name: Smarthome.Web Docker Image CD
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - .github/workflows/docker-image.yml
+      - .github/workflows/smarthome.web.deploy.yml
       - Smarthome.Web/**
       - Smarthome.Controls/**
 
@@ -26,8 +26,8 @@ jobs:
     - name: Build and publish Docker image
       run: |        
         # Build the Docker image with the package version tag.
-        docker build -t tschissler/testservice:${{ github.run_id }} -t tschissler/testservice:latest -f ./TestService/Dockerfile --push .
+        docker build -t tschissler/smarthome.web:${{ github.run_id }} -t tschissler/smarthome.web:latest -f ./Smarthome.Web/Dockerfile --push .
 
-    - name: Update Kubernetes deployment
-      run: |
-        microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.run_id }}
+    #- name: Update Kubernetes deployment
+    #  run: |
+    #    microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.run_id }}
