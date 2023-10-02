@@ -1,0 +1,32 @@
+name: Smarthome.Web Docker Image CD
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - Smarthome.Web/**
+      - Smarthome.Controls/**
+
+jobs:
+
+  build:
+
+    runs-on: [self-hosted, linux]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get next version
+      uses: reecetech/version-increment@2023.4.1
+      id: version
+      with:
+        scheme: calver
+        increment: patch
+    - name: Build and publish Docker image
+      run: |        
+        # Build the Docker image with the package version tag.
+        docker build -t tschissler/smarthome.web:${{ github.run_id }} -t tschissler/smarthome.web:latest -f ./Smarthome.Web/Dockerfile --push .
+
+    #- name: Update Kubernetes deployment
+    #  run: |
+    #    microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.run_id }}
