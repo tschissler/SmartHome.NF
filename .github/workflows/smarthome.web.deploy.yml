@@ -28,6 +28,6 @@ jobs:
         # Build the Docker image with the package version tag.
         docker build -t tschissler/smarthome.web:${{ github.run_id }} -t tschissler/smarthome.web:latest -f ./Smarthome.Web/Dockerfile --push .
 
-    #- name: Update Kubernetes deployment
-    #  run: |
-    #    microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.run_id }}
+    - name: Update Kubernetes deployment
+      run: |
+        microk8s kubectl set image deployments/smarthome-web smarthome-web=tschissler/smarthome-web:${{ github.run_id }}
