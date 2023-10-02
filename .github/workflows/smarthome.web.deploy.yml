@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "master" ]
     paths:
-      - github/workflows/smarthome.web.deploy.yml
+      - .github/workflows/smarthome.web.deploy.yml
       - Smarthome.Web/**
       - Smarthome.Controls/**
 
