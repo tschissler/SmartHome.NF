@@ -1,10 +1,11 @@
-name: TestService Docker Image CI
+name: TestService Docker Image CD
 
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    paths:
+      - Smarthome.Web/**
+      - Smarthome.Controls/**
 
 jobs:
 
