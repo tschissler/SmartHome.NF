@@ -7,16 +7,14 @@ using System.Net;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*:5000;https://*:5001");
 
-string SyncfusionLicenseKeyEnvironmentVariable = "SyncfusionLicenseKey";
-
-if (!String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable)))
+try
 {
-    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(System.Environment.GetEnvironmentVariable(SyncfusionLicenseKeyEnvironmentVariable));
+    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SharedContracts.Configuration.Common.SyncfusionLicenseKey);
     ConsoleHelpers.PrintInformation("Setting license key for syncfusion components");
 }
-else
+catch (Exception ex)
 {
-    ConsoleHelpers.PrintInformation($"Could not find environment variable {SyncfusionLicenseKeyEnvironmentVariable}, cannot set license key for Syncfusion lib.");
+    ConsoleHelpers.PrintInformation(ex.Message);
 }
 
 // Add services to the container.
