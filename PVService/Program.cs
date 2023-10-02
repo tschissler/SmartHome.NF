@@ -57,4 +57,10 @@ app.MapGet("/readSensorsdata", string () =>
 })
 .WithName("ReadSensorsData");
 
+app.MapGet("/ping", string () =>
+{
+        return "I am alive!";
+})
+.WithName("Ping");
+
 app.Run();
