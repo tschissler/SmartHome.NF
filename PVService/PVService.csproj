@@ -25,7 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HelpersLib\HelpersLib.csproj" />
     <ProjectReference Include="..\PowerDog\PowerDogLib.csproj" />
-    <ProjectReference Include="..\Secrets\Secrets.csproj" />
     <ProjectReference Include="..\Shared.Contracts\SharedContracts.csproj" />
   </ItemGroup>
 

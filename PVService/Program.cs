@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PowerDogLib;
 using PVService;
-using Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +28,7 @@ Dictionary<string, string> sensorKeys = new()
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
 
-var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, PowerDogSecrets.Password);
+var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
 var pvStorageConnector = new PVStorageConnector(powerDog);
 
 TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(2);
