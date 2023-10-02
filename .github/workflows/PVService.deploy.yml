@@ -24,4 +24,5 @@ jobs:
     - name: Update Kubernetes deployment
       run: |
         microk8s kubectl set image deployments/pvservice pvservice=tschissler/pvservice:${{ github.run_id }}
+        microk8s kubectl set env deployment/smarthome-web PowerDogPassword="${{ secrets.POWERDOG_PASSWORD }}"
         
