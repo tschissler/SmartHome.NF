@@ -5,8 +5,7 @@ on:
     branches: [ "master" ]
     paths:
       - .github/workflows/docker-image.yml
-      - Smarthome.Web/**
-      - Smarthome.Controls/**
+      - Testservice/**
 
 jobs:
 
@@ -31,3 +30,4 @@ jobs:
     - name: Update Kubernetes deployment
       run: |
         microk8s kubectl set image deployments/testservice testservice=tschissler/testservice:${{ github.run_id }}
+        

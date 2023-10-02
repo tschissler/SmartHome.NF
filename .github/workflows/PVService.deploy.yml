@@ -1,0 +1,27 @@
+name: PVService Docker Image CD
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - .github/workflows/PVService.deploy.yml
+      - PVService/**
+      - PowerDogLib/**
+
+jobs:
+  build:
+
+    runs-on: [self-hosted, linux]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build and publish Docker image
+      run: |        
+        # Build the Docker image with the package version tag.
+        docker build -t tschissler/pvservice:${{ github.run_id }} -t tschissler/pvservice:latest -f ./PVService/Dockerfile --push .
+
+    - name: Update Kubernetes deployment
+      run: |
+        microk8s kubectl set image deployments/pvservice pvservice=tschissler/pvservice:${{ github.run_id }}
+        
