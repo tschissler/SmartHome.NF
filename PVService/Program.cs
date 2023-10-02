@@ -28,7 +28,18 @@ Dictionary<string, string> sensorKeys = new()
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
 
-var powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
+
+PowerDog powerDog = null;
+try
+{
+    powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+    throw;
+}
+
 var pvStorageConnector = new PVStorageConnector(powerDog);
 
 TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(2);
