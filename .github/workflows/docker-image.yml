@@ -5,8 +5,7 @@ on:
     branches: [ "master" ]
     paths:
       - .github/workflows/docker-image.yml
-      - Smarthome.Web/**
-      - Smarthome.Controls/**
+      - Testservice/**
 
 jobs:
 
