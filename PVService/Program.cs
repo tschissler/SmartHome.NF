@@ -29,33 +29,33 @@ Dictionary<string, string> sensorKeys = new()
             };
 
 
-//PowerDog powerDog = null;
-//try
-//{
-//    powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//    throw;
-//}
+PowerDog powerDog = null;
+try
+{
+    powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+    throw;
+}
 
-//var pvStorageConnector = new PVStorageConnector(powerDog);
+var pvStorageConnector = new PVStorageConnector(powerDog);
 
-//TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(2);
-//TimeSpan sendDataToCloudInterval = TimeSpan.FromSeconds(10);
+TimeSpan readDeviceDataInterval = TimeSpan.FromSeconds(2);
+TimeSpan sendDataToCloudInterval = TimeSpan.FromSeconds(10);
 
-//var refreshDataTimer = new Timer(new TimerCallback(powerDog.ReadSensorsData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
-//var sendDataToCloudTimer = new Timer(new TimerCallback(pvStorageConnector.SendDataToCloud), null, 0, (int)sendDataToCloudInterval.TotalMilliseconds);
+var refreshDataTimer = new Timer(new TimerCallback(powerDog.ReadSensorsData), null, 0, (int)readDeviceDataInterval.TotalMilliseconds);
+var sendDataToCloudTimer = new Timer(new TimerCallback(pvStorageConnector.SendDataToCloud), null, 0, (int)sendDataToCloudInterval.TotalMilliseconds);
 
-//app.MapGet("/readSensorsdata", string () =>
-//{
-//    lock (powerDog.Lockobject)
-//    {
-//        return JsonConvert.SerializeObject(powerDog.LocalDataPoints);
-//    }
-//})
-//.WithName("ReadSensorsData");
+app.MapGet("/readSensorsdata", string () =>
+{
+    lock (powerDog.Lockobject)
+    {
+        return JsonConvert.SerializeObject(powerDog.LocalDataPoints);
+    }
+})
+.WithName("ReadSensorsData");
 
 app.MapGet("/ping", string () =>
 {
