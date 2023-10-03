@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C8C28-CB59-4500-AFFC-B93CD82CE91F}"
 	ProjectSection(SolutionItems) = preProject
 		CreateAndroidPackage.txt = CreateAndroidPackage.txt
+		deploy.yaml = deploy.yaml
 		DeployToSmartHomePi.txt = DeployToSmartHomePi.txt
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
 		microk8s as autostart service.txt = microk8s as autostart service.txt
@@ -81,7 +82,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnphaseLib", "EnphaseLib\En
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnphaseLibTests", "EnphaseLibTests\EnphaseLibTests.csproj", "{FC7F1DB4-1D54-45EB-8341-7D9406041397}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestService", "TestService\TestService.csproj", "{369992C4-5143-4A54-B875-1895C20015C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestService", "TestService\TestService.csproj", "{369992C4-5143-4A54-B875-1895C20015C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Cloud.Web", "Smarthome.Cloud.Web\Smarthome.Cloud.Web.csproj", "{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +252,12 @@ Global
 		{369992C4-5143-4A54-B875-1895C20015C5}.Dev|Any CPU.Build.0 = Debug|Any CPU
 		{369992C4-5143-4A54-B875-1895C20015C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369992C4-5143-4A54-B875-1895C20015C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -278,6 +287,7 @@ Global
 		{4D9B6C68-8B2E-4695-9EF3-D8CBFBEA81D3} = {0FC44A16-58E5-4965-879D-A702BA4861A7}
 		{FC7F1DB4-1D54-45EB-8341-7D9406041397} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{369992C4-5143-4A54-B875-1895C20015C5} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
+		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE} = {7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}
