@@ -11,6 +11,7 @@ namespace SharedContracts.Configuration
     {
         public static string SyncfusionLicenseKey { get; set; }
         public static string PVServiceUrl { get; set; }
+        public static string ChargingServiceUrl { get; set; }
 
         static Common()
         {

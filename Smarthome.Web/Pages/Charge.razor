@@ -109,9 +109,9 @@
 
     public ChargingDataPoints ChargingDataPoints = new ChargingDataPoints();
 
-
     private Timer refreshTimer;
     private ChargingSettingsData settings = new();
+    private string chargingServiceEndpoint = $"{SharedContracts.Configuration.Common.ChargingServiceUrl}";
 
     protected override void OnInitialized()
     {
@@ -133,7 +133,7 @@
         //        minimumPVShare = ChargingControlDataPoints.MinimumPVShare.CurrentValue,
         //        manualCurrency = ChargingControlDataPoints.ManualChargingCurrency.CurrentValue
         //    };
-        Http.PostAsJsonAsync("http://localhost:5004/applychargingsettings", settings);
+        Http.PostAsJsonAsync($"{chargingServiceEndpoint}/applychargingsettings", settings);
     }
 
     private void Refresh(object? state)
@@ -144,7 +144,7 @@
             {
                 using (HttpClient Http = new HttpClient())
                 {
-                    var jsonString = Http.GetStringAsync("http://localhost:5004/readchargingsettings").Result;
+                    var jsonString = Http.GetStringAsync($"{chargingServiceEndpoint}/readchargingsettings").Result;
                     settings = JsonConvert.DeserializeObject<ChargingSettingsData>(jsonString);
                     settings.isInitialized = true;
                 }
@@ -159,7 +159,7 @@
         {
             using (HttpClient Http = new HttpClient())
             {
-                var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+                var jsonString = Http.GetStringAsync($"{chargingServiceEndpoint}/readdata").Result;
                 ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
                 InvokeAsync(StateHasChanged);
             }

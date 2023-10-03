@@ -74,6 +74,7 @@
 
     private Timer refreshTimer;
     private string pvServiceEndpoint = $"{SharedContracts.Configuration.Common.PVServiceUrl}/readSensorsdata";
+    private string chargingServiceEndpoint = $"{SharedContracts.Configuration.Common.ChargingServiceUrl}/readdata";
 
     public HistoryChartDataSeries PVProduction;
     public HistoryChartDataSeries GridSupply;
@@ -110,7 +111,7 @@
         {
             using (HttpClient Http = new HttpClient())
             {
-                var jsonString = Http.GetStringAsync("http://localhost:5004/readdata").Result;
+                var jsonString = Http.GetStringAsync(chargingServiceEndpoint).Result;
                 ChargingDataPoints = JsonConvert.DeserializeObject<ChargingDataPoints>(jsonString);
                 Cleanup(ChargingDataPoints.CurrentChargingPower);
             }

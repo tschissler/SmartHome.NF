@@ -90,6 +90,8 @@
 {
     private Timer refreshTimer;
     private ConsumptionDataPoints dataPoints = new();
+    private string pvServiceEndpoint = $"{SharedContracts.Configuration.Common.PVServiceUrl}/readSensorsdata";
+    private string chargingServiceEndpoint = $"{SharedContracts.Configuration.Common.ChargingServiceUrl}/readdata";
 
     public HistoryChartDataSeries PowerDevice1Data;
     public HistoryChartDataSeries PowerDevice2Data;
