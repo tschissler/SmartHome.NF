@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5E1C
 		IotHubEventsListener.ps1 = IotHubEventsListener.ps1
 		microk8s as autostart service.txt = microk8s as autostart service.txt
 		microk8s Commands.txt = microk8s Commands.txt
+		smarthome-web-service.yml = smarthome-web-service.yml
 		start.ps1 = start.ps1
 	EndProjectSection
 EndProject
@@ -85,6 +86,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestService", "TestService\TestService.csproj", "{369992C4-5143-4A54-B875-1895C20015C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Cloud.Web", "Smarthome.Cloud.Web\Smarthome.Cloud.Web.csproj", "{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Kube", ".Kube", "{1B741F80-30E7-47D1-80C0-4B91C650CDFD}"
+	ProjectSection(SolutionItems) = preProject
+		.kube\deploy.yaml = .kube\deploy.yaml
+		.kube\smarthome-web-service.yml = .kube\smarthome-web-service.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -288,6 +295,7 @@ Global
 		{FC7F1DB4-1D54-45EB-8341-7D9406041397} = {65E26E51-1BD7-4AE3-B557-45892C739814}
 		{369992C4-5143-4A54-B875-1895C20015C5} = {0E878E25-080D-4396-B729-4B22C2D21F9E}
 		{6C2D737A-2B0B-4FC4-B113-85C5B3626BBE} = {7B290B3F-B2FD-4C58-8636-250D6C3AD8B4}
+		{1B741F80-30E7-47D1-80C0-4B91C650CDFD} = {5E1C8C28-CB59-4500-AFFC-B93CD82CE91F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD87C37E-1325-4A17-8EB9-1D6AF1EB7800}

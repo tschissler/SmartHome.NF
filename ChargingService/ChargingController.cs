@@ -36,8 +36,32 @@ namespace ChargingService
                 { "Verbrauchgesamt", "arithmetic_1457432629" },
                 { "lieferung", "iec1107_1457430562" } // Vom Zähler
             };
-            powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "192.168.178.150", 20000).Uri, PowerDogSecrets.Password);
-            kebaConnector = new KebaDeviceConnector(new IPAddress(new byte[] { 192, 168, 178, 167 }), 7090);
+            try
+            {
+                powerDog = new PowerDog(sensorKeys, new UriBuilder("http", "powerdog", 20000).Uri, SharedContracts.Configuration.PowerDog.Password);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+
+            try
+            {
+                var kebaIP = Dns.GetHostAddresses(SharedContracts.Configuration.Keba.KebaIP_CarPort);
+                if (kebaIP.Length == 0)
+                {
+                    Console.WriteLine($"Could not read IP Address for host {SharedContracts.Configuration.Keba.KebaIP_CarPort}");
+                    throw new Exception($"Could not read IP Address for host {SharedContracts.Configuration.Keba.KebaIP_CarPort}");
+                }
+                Console.WriteLine($"-- Communicating with Keba Device {SharedContracts.Configuration.Keba.KebaIP_CarPort} on IP {kebaIP[0].ToString()}");
+                kebaConnector = new KebaDeviceConnector(kebaIP[0], 7090);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }            
 
             recalculationTimer = new Timer(CalculateData, null, 0, (int)recalculationFrequency.TotalMilliseconds);
             //if (Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE") != null && Environment.GetEnvironmentVariable("WRITE_TABLE_TO_TABLESTORAGE").ToLower() == "false")

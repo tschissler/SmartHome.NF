@@ -17,8 +17,8 @@ namespace EnphaseLib
             {
                 Username = Secrets.EnphaseSecrets.UserName,
                 Password = Secrets.EnphaseSecrets.Password,
-                EnvoyHost = "envoy.local",
-                EnphaseEntrezBaseUri = "https://entrez.enphaseenergy.com/"
+                //EnvoyHost = "envoy.local",
+                //EnphaseEntrezBaseUri = "https://entrez.enphaseenergy.com/"
             };
             return await EnvoyClient.FromLoginAsync(ci).ConfigureAwait(false);
         }
@@ -26,6 +26,7 @@ namespace EnphaseLib
         public static IEnumerable<RootMeterReading> GetMeterReadings()
         {
             var c = Login().Result;
+            Thread.Sleep(1000);
             return c.GetMeterReadingsAsync().Result;
         }
 
