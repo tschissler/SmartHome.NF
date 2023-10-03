@@ -52,7 +52,7 @@ app.MapPost("/applychargingsettings", bool ([FromBody] ChargingSettingsData char
 })
 .WithName("ApplyChargingSettings");
 
-app.MapPost("/ping", string () =>
+app.MapGet("/ping", string () =>
 {
     return "I am alive";
 })
