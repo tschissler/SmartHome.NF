@@ -172,10 +172,12 @@ namespace KebaLib
         internal string ExecuteUDPCommand(string command)
         {
             string result = "";
-            using (UdpClient udpClient = new UdpClient(uDPPort))
+            using (UdpClient udpClient = new UdpClient())
             {
                 try
                 {
+                    udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, uDPPort));
                     udpClient.Connect(ipAddress, uDPPort);
                     
                     // Sends a message to the host to which you have connected.
