@@ -2,7 +2,6 @@
 using KebaLib;
 using Newtonsoft.Json;
 using PowerDogLib;
-using Secrets;
 using SharedContracts;
 using SharedContracts.DataPointCollections;
 using SharedContracts.DataPoints;
