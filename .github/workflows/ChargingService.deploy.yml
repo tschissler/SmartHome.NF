@@ -23,7 +23,7 @@ jobs:
 
     - name: Update Kubernetes deployment
       run: |
-        microk8s kubectl set image deployments/chargingservice smarthome-web=tschissler/chargingservice:${{ github.run_id }}
-        microk8s kubectl set env deployment/chargingservice KebaIP_CarPort="keba-stellplatz"
-        microk8s kubectl set env deployment/charginservice PowerDogPassword="${{ secrets.POWERDOG_PASSWORD }}"
-        microk8s kubectl set env deployment/charginservice KEBA_WRITE_TO_DEVICE=false
+        microk8s kubectl set image deployments/chargingservice chargingservice=tschissler/chargingservice:${{ github.run_id }}
+        microk8s kubectl set env deployment/chargingservice KebaIP_CarPort="keba-garage"
+        microk8s kubectl set env deployment/chargingservice PowerDogPassword="${{ secrets.POWERDOG_PASSWORD }}"
+        microk8s kubectl set env deployment/chargingservice KEBA_WRITE_TO_DEVICE=false
