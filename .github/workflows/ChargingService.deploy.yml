@@ -6,6 +6,8 @@ on:
     paths:
       - .github/workflows/ChargingService.deploy.yml
       - ChargingService/**
+      - KebaLib/**
+      - PowerDogLib/**
 
 jobs:
 
