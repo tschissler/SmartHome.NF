@@ -21,7 +21,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//var chargingController = new ChargingController();
+var chargingController = new ChargingController();
 
 //app.MapGet("/readdata", string () =>
 //{

@@ -89,8 +89,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarthome.Cloud.Web", "Smar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Kube", ".Kube", "{1B741F80-30E7-47D1-80C0-4B91C650CDFD}"
 	ProjectSection(SolutionItems) = preProject
+		.kube\chargingservice-service.yaml = .kube\chargingservice-service.yaml
+		.kube\chargingservice.yaml = .kube\chargingservice.yaml
 		.kube\deploy.yaml = .kube\deploy.yaml
+		.kube\pvservice-service.yaml = .kube\pvservice-service.yaml
+		.kube\pvservice.yaml = .kube\pvservice.yaml
+		.kube\smarthome-web-service.yaml = .kube\smarthome-web-service.yaml
 		.kube\smarthome-web-service.yml = .kube\smarthome-web-service.yml
+		.kube\smarthome.web.yaml = .kube\smarthome.web.yaml
 	EndProjectSection
 EndProject
 Global

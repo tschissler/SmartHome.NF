@@ -24,10 +24,19 @@ https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/cre
  microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0
  ->> https://smarthomepi2:10443/
 
-#Get kube.config to allow access from a remote computer
+# Get kube.config to allow access from a remote computer
 microk8s config > kube.config
 scp kube.config pi@smarthomepi2:/home/pi/.kube/config
 setx KUBECONFIG "C:\path\to\your\kubeconfig\file"
 kubectl get nodes
 
-eyJhbGciOiJSUzI1NiIsImtpZCI6InpFVmVqbXA1NVpaakJRZTFXNERScU5FUzJQX2tjWEhYT1E1dmd5bWRHb3cifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJtaWNyb2s4cy1kYXNoYm9hcmQtdG9rZW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImQ1YTM2NDE0LTdhMDMtNDQ1NC1hMWM0LWQzOWE3MGRkNjE0YSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTpkZWZhdWx0In0.E_hGcnwktc4jRLV9gWQfot77S-F6wqPXMyqHLp1_eLoajwBBP3enTmBNbn42hO0Ni6f8gJ3Pf_3BfP4-m3WHexj34dNq30Ef-Pb78ThdyBn8CjkZOM8f-B3Eq64nDHvp1w-4zJWdnfflzHyZSLWlnVpjPVlealuslHj8apulcEjR1v5sRYg2nPRFb31-v8TnPHAtG-KXjvTbOoCbBk31WXvJyVXIQ7w7AibDc5LbGkyODGVsLbN7YTgN3ApMETXFEvMshYhL7PMpAUPoShPAc2NjPP03cePukUyTtz7qDeuYfmSDDyugS-CoAFSNPRkf5Eeqs7Ik0x-wR23gWR1Qzg
+# bashing into a pod
+kubectl exec -it chargingservice-84bd6f7b4d-sds7l -- bash
+apt install iputils-ping
+ping keba-garage
+apt install netcat-traditional
+nc -u -v -z -w 1 keba-garage 7090
+apt install dnsutils
+nslookup pvservice-service
+kubectl describe pod pvservice-57bfd86956-8x898
+kubectl get endpoints chargingservice-service
