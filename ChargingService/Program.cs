@@ -23,14 +23,14 @@ if (app.Environment.IsDevelopment())
 
 var chargingController = new ChargingController();
 
-//app.MapGet("/readdata", string () =>
-//{
-//    lock (chargingController.lockobject)
-//    {
-//        return JsonConvert.SerializeObject(chargingController.GetDataPoints());
-//    }
-//})
-//.WithName("ReadData");
+app.MapGet("/readdata", string () =>
+{
+    lock (chargingController.lockobject)
+    {
+        return JsonConvert.SerializeObject(chargingController.GetDataPoints());
+    }
+})
+.WithName("ReadData");
 
 //app.MapGet("/readchargingsettings", string () =>
 //{
@@ -54,7 +54,7 @@ var chargingController = new ChargingController();
 
 app.MapGet("/ping", string () =>
 {
-    return "I am alive";
+    return "I am alive 1.0";
 })
 .WithName("Ping");
 
