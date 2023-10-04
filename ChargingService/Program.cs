@@ -21,36 +21,36 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var chargingController = new ChargingController();
+//var chargingController = new ChargingController();
 
-app.MapGet("/readdata", string () =>
-{
-    lock (chargingController.lockobject)
-    {
-        return JsonConvert.SerializeObject(chargingController.GetDataPoints());
-    }
-})
-.WithName("ReadData");
+//app.MapGet("/readdata", string () =>
+//{
+//    lock (chargingController.lockobject)
+//    {
+//        return JsonConvert.SerializeObject(chargingController.GetDataPoints());
+//    }
+//})
+//.WithName("ReadData");
 
-app.MapGet("/readchargingsettings", string () =>
-{
-    return JsonConvert.SerializeObject(chargingController.GetChargingSettings());
-})
-.WithName("ReadChargingSettings");
+//app.MapGet("/readchargingsettings", string () =>
+//{
+//    return JsonConvert.SerializeObject(chargingController.GetChargingSettings());
+//})
+//.WithName("ReadChargingSettings");
 
-app.MapPost("/setchargingcurrency", bool ([FromBody] double chargingCurrency) =>
-{
-    chargingController.SetChargingCurrency(chargingCurrency);
-    return true;
-})
-.WithName("SetChargingCurrency");
+//app.MapPost("/setchargingcurrency", bool ([FromBody] double chargingCurrency) =>
+//{
+//    chargingController.SetChargingCurrency(chargingCurrency);
+//    return true;
+//})
+//.WithName("SetChargingCurrency");
 
-app.MapPost("/applychargingsettings", bool ([FromBody] ChargingSettingsData chargingSettingsData) =>
-{
-    chargingController.ApplyChargingSettings(chargingSettingsData);
-    return true;
-})
-.WithName("ApplyChargingSettings");
+//app.MapPost("/applychargingsettings", bool ([FromBody] ChargingSettingsData chargingSettingsData) =>
+//{
+//    chargingController.ApplyChargingSettings(chargingSettingsData);
+//    return true;
+//})
+//.WithName("ApplyChargingSettings");
 
 app.MapGet("/ping", string () =>
 {
