@@ -60,7 +60,7 @@ namespace KebaLib
         {
             GC.Collect();
             var gcInfo = GC.GetGCMemoryInfo();
-            Console.WriteLine($"Time {DateTime.Now.ToString("HH:mm:ss:ffff")}"); 
+            //Console.WriteLine($"Time {DateTime.Now.ToString("HH:mm:ss:ffff")}"); 
             //Console.WriteLine($"Heap: {gcInfo.HeapSizeBytes} \t| Load Bytes: {gcInfo.MemoryLoadBytes} \t| Available: {gcInfo.TotalAvailableMemoryBytes} \t | Commited: {gcInfo.TotalCommittedBytes}");
 
             KebaDeviceStatusData data = null;
