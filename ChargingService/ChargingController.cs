@@ -177,19 +177,19 @@ namespace ChargingService
 
                     if (dataPoints.AvailableChargingCurrency.CurrentValue >= minimumChargingCurrency)
                     {
-                        ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is high enough to start charging");
+                        //ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is high enough to start charging");
                         dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.AvailableChargingCurrency.CurrentValue;
                         chargingSessionLastChargingTime = DateTime.Now;
                     }
                     else if (!dataPoints.AutomaticCharging.CurrentValue && dataPoints.ManualChargingCurrency.CurrentValue >= 6)
                     {
-                        ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is greater than 0 so start charging");
+                        //ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is greater than 0 so start charging");
                         dataPoints.AdjustedCharingCurrency.CurrentValue = dataPoints.ManualChargingCurrency.CurrentValue;
                         chargingSessionLastChargingTime = DateTime.Now;
                     }
                     else if (dataPoints.AutomaticCharging.CurrentValue && dataPoints.AvailableChargingCurrency.CurrentValue >= dataPoints.MinimumActivationPVCurrency.CurrentValue)
                     {
-                        ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
+                        //ConsoleHelpers.PrintMessage($"----> Automatic charging is on and Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is greater than Minimum activation PV currency ({dataPoints.MinimumActivationPVCurrency.CurrentValue}) so start charging");
                         dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
                         chargingSessionLastChargingTime = DateTime.Now;
                     }
@@ -201,7 +201,7 @@ namespace ChargingService
                             // Damit Ladesitzung dann nicht sofort beendet wird, wird eine Mindestdauer von 60 Sek. erzwungen.
                             if ((DateTime.Now - chargingSessionStartTime).TotalSeconds < 60)
                             {
-                                ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorter than 60sec, so continuing");
+                                //ConsoleHelpers.PrintMessage($"----> Available charging currency too low but charging session shorter than 60sec, so continuing");
                                 dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
                             }
                             else
@@ -209,19 +209,19 @@ namespace ChargingService
                                 // Min. 10 Sek. weiterladen um kurfristige Aussetzer zu kompensieren
                                 if ((DateTime.Now - chargingSessionLastChargingTime).TotalSeconds < 10)
                                 {
-                                    ConsoleHelpers.PrintMessage($"----> Available charging currency too low but waiting for 10 more seconds before stopping but reducing to min currency yet.");
+                                    //ConsoleHelpers.PrintMessage($"----> Available charging currency too low but waiting for 10 more seconds before stopping but reducing to min currency yet.");
                                     dataPoints.AdjustedCharingCurrency.CurrentValue = minimumChargingCurrency;
                                 }
                                 else
                                 {
-                                    ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
+                                    //ConsoleHelpers.PrintMessage($"----> Available charging currency ({dataPoints.AvailableChargingCurrency.AssembleValueString()}) is not high enough to start charging");
                                     dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
                                 }
                             }
                         }
                         else
                         {
-                            ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is not greater than 0 so don't start charging");
+                            //ConsoleHelpers.PrintMessage($"----> Automatic charging is off and Manual charging currency ({dataPoints.ManualChargingCurrency.AssembleValueString()}) is not greater than 0 so don't start charging");
                             dataPoints.AdjustedCharingCurrency.CurrentValue = 0;
                         }
                     }
