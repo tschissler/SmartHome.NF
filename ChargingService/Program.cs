@@ -25,6 +25,7 @@ var chargingController = new ChargingController();
 
 app.MapGet("/readdata", string () =>
 {
+    Console.WriteLine($"  -> {DateTime.Now.ToLongTimeString()}: Calling ChargingService/readdata ..."  );
     lock (chargingController.lockobject)
     {
         return JsonConvert.SerializeObject(chargingController.GetDataPoints());
@@ -32,25 +33,25 @@ app.MapGet("/readdata", string () =>
 })
 .WithName("ReadData");
 
-//app.MapGet("/readchargingsettings", string () =>
-//{
-//    return JsonConvert.SerializeObject(chargingController.GetChargingSettings());
-//})
-//.WithName("ReadChargingSettings");
+app.MapGet("/readchargingsettings", string () =>
+{
+    return JsonConvert.SerializeObject(chargingController.GetChargingSettings());
+})
+.WithName("ReadChargingSettings");
 
-//app.MapPost("/setchargingcurrency", bool ([FromBody] double chargingCurrency) =>
-//{
-//    chargingController.SetChargingCurrency(chargingCurrency);
-//    return true;
-//})
-//.WithName("SetChargingCurrency");
+app.MapPost("/setchargingcurrency", bool ([FromBody] double chargingCurrency) =>
+{
+    chargingController.SetChargingCurrency(chargingCurrency);
+    return true;
+})
+.WithName("SetChargingCurrency");
 
-//app.MapPost("/applychargingsettings", bool ([FromBody] ChargingSettingsData chargingSettingsData) =>
-//{
-//    chargingController.ApplyChargingSettings(chargingSettingsData);
-//    return true;
-//})
-//.WithName("ApplyChargingSettings");
+app.MapPost("/applychargingsettings", bool ([FromBody] ChargingSettingsData chargingSettingsData) =>
+{
+    chargingController.ApplyChargingSettings(chargingSettingsData);
+    return true;
+})
+.WithName("ApplyChargingSettings");
 
 app.MapGet("/ping", string () =>
 {
