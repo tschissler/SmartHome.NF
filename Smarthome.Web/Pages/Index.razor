@@ -83,7 +83,7 @@
 
     protected override void OnInitialized()
     {
-        refreshTimer = new Timer(Refresh, null, 1000, 1000);
+        refreshTimer = new Timer(Refresh, null, 1000, Timeout.Infinite);
     }
 
     private void Refresh(object? state)
@@ -127,6 +127,7 @@
         CurrentCharging = new() { DataPoint = ChargingDataPoints.CurrentChargingPower, Type = ChartSeriesType.Line, Color = "#000099", Opacity = 1 };
 
         InvokeAsync(StateHasChanged);
+        refreshTimer.Change(1000, Timeout.Infinite);
 
     }
 
